@@ -1,0 +1,31 @@
+{
+  "repository": "https://github.com/zcash/zcash-test-vectors",
+  "commit": "78321beacb0e0477e33cd002b56585a107c2708c",
+  "license": "MIT",
+  "files": [
+    {
+      "file": "f4jumble.json",
+      "url": "https://raw.githubusercontent.com/zcash/zcash-test-vectors/78321beacb0e0477e33cd002b56585a107c2708c/test-vectors/json/f4jumble.json",
+      "sha256": "ef04da74e1a107d636dedb0842195682e60dead5d6253045d7315a7aad7c992b",
+      "bytes": 134845
+    },
+    {
+      "file": "ufvk.json",
+      "url": "https://raw.githubusercontent.com/zcash/zcash-test-vectors/78321beacb0e0477e33cd002b56585a107c2708c/test-vectors/json/unified_full_viewing_keys.json",
+      "sha256": "7fc1c16c8147a7c9f6bfd9a53b2adba0e593ad2a5a1ff38c7adbca26d3465cc4",
+      "bytes": 15942
+    },
+    {
+      "file": "uivk.json",
+      "url": "https://raw.githubusercontent.com/zcash/zcash-test-vectors/78321beacb0e0477e33cd002b56585a107c2708c/test-vectors/json/unified_incoming_viewing_keys.json",
+      "sha256": "0699737da1851211edfa1f2ebf52bb3e015520268c02c85f1fb5e641a9428d72",
+      "bytes": 12357
+    },
+    {
+      "file": "LICENSE-MIT",
+      "url": "https://raw.githubusercontent.com/zcash/zcash-test-vectors/78321beacb0e0477e33cd002b56585a107c2708c/LICENSE-MIT",
+      "sha256": "8216ebc6e4a396a2ef7b7727575acdf734df08b652e5430684511de441847bc7",
+      "bytes": 1097
+    }
+  ]
+}

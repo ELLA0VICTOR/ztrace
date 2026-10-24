@@ -1,0 +1,6 @@
+{
+  "provenance": "Generated locally during 24 October 2026 feasibility research using @ledgerhq/zcash-utils@2.8.0, synthetic keys, and a nonexistent transparent funding UTXO. Never broadcast; not mined settlement evidence.",
+  "format": "PCZT v2, transaction V6, Ironwood actions",
+  "sha256": "18f17b38627719a4d1b96f4539a3a09debec8d203dc333782c31b34f8224455d",
+  "library": "@ledgerhq/zcash-utils@2.8.0"
+}

@@ -1,0 +1,1605 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-24T19:42:49.678Z",
+  "corpusSha256": "440a17e1e2429363c20aac4255e08af3381824c97444d84d8f912f1f4d69bb96",
+  "evaluationPolicySha256": "0bdc49e19343520d775ce09a1735bfd98aa0d49ac1fa00d377a6f02c1a380c37",
+  "engineSha256": "101ce55812421c226a59a1214b534d6c48a263f5fd621fed7562af1821a1b1a3",
+  "provenance": "Self-authored, synthetic, API-based fixtures. Challenge cases are a first-run stress split, not an independent external evaluation.",
+  "summary": {
+    "TP": 28,
+    "FN": 2,
+    "FP": 0,
+    "TN": 30,
+    "reviewCases": 3,
+    "recall": 0.9333333333333333,
+    "precision": 1
+  },
+  "splits": {
+    "regression": {
+      "TP": 6,
+      "FN": 0,
+      "FP": 0,
+      "TN": 6,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
+    },
+    "integration": {
+      "TP": 17,
+      "FN": 0,
+      "FP": 0,
+      "TN": 17,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
+    },
+    "challenge": {
+      "TP": 5,
+      "FN": 2,
+      "FP": 0,
+      "TN": 7,
+      "reviewCases": 3,
+      "recall": 0.7142857142857143,
+      "precision": 1
+    }
+  },
+  "families": {
+    "control-flow": {
+      "TP": 4,
+      "FN": 0,
+      "FP": 0,
+      "TN": 4,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
+    },
+    "react": {
+      "TP": 3,
+      "FN": 0,
+      "FP": 0,
+      "TN": 3,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
+    },
+    "analytics": {
+      "TP": 2,
+      "FN": 0,
+      "FP": 0,
+      "TN": 2,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
+    },
+    "loops": {
+      "TP": 2,
+      "FN": 0,
+      "FP": 0,
+      "TN": 2,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
+    },
+    "cross-module": {
+      "TP": 2,
+      "FN": 0,
+      "FP": 0,
+      "TN": 2,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
+    },
+    "financial-data": {
+      "TP": 2,
+      "FN": 0,
+      "FP": 0,
+      "TN": 2,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
+    },
+    "transports": {
+      "TP": 3,
+      "FN": 0,
+      "FP": 0,
+      "TN": 3,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
+    },
+    "logging": {
+      "TP": 1,
+      "FN": 0,
+      "FP": 0,
+      "TN": 1,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
+    },
+    "classes": {
+      "TP": 1,
+      "FN": 0,
+      "FP": 0,
+      "TN": 1,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
+    },
+    "sources": {
+      "TP": 2,
+      "FN": 0,
+      "FP": 0,
+      "TN": 2,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
+    },
+    "zcash-artifacts": {
+      "TP": 2,
+      "FN": 0,
+      "FP": 0,
+      "TN": 2,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
+    },
+    "field-sensitivity": {
+      "TP": 3,
+      "FN": 0,
+      "FP": 0,
+      "TN": 3,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
+    },
+    "unmodeled-transport": {
+      "TP": 0,
+      "FN": 1,
+      "FP": 0,
+      "TN": 1,
+      "reviewCases": 1,
+      "recall": 0,
+      "precision": null
+    },
+    "dynamic-dispatch": {
+      "TP": 1,
+      "FN": 0,
+      "FP": 0,
+      "TN": 1,
+      "reviewCases": 2,
+      "recall": 1,
+      "precision": 1
+    },
+    "unmodeled-source": {
+      "TP": 0,
+      "FN": 1,
+      "FP": 0,
+      "TN": 1,
+      "reviewCases": 0,
+      "recall": 0,
+      "precision": null
+    }
+  },
+  "cases": [
+    {
+      "id": "audit-nullable-leak",
+      "family": "control-flow",
+      "split": "regression",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 56.112
+    },
+    {
+      "id": "audit-nullable-safe",
+      "family": "control-flow",
+      "split": "regression",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 4.229
+    },
+    {
+      "id": "audit-comma-leak",
+      "family": "control-flow",
+      "split": "regression",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 5.583
+    },
+    {
+      "id": "audit-comma-safe",
+      "family": "control-flow",
+      "split": "regression",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 4.802
+    },
+    {
+      "id": "audit-hook-leak",
+      "family": "react",
+      "split": "regression",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 3.013
+    },
+    {
+      "id": "audit-hook-safe",
+      "family": "react",
+      "split": "regression",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 3.692
+    },
+    {
+      "id": "audit-segment-leak",
+      "family": "analytics",
+      "split": "regression",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT003",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 4.561
+    },
+    {
+      "id": "audit-segment-safe",
+      "family": "analytics",
+      "split": "regression",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT003",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 3.391
+    },
+    {
+      "id": "audit-loop-leak",
+      "family": "loops",
+      "split": "regression",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 6.051
+    },
+    {
+      "id": "audit-loop-safe",
+      "family": "loops",
+      "split": "regression",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 5.824
+    },
+    {
+      "id": "audit-reachability-leak",
+      "family": "control-flow",
+      "split": "regression",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 2.824
+    },
+    {
+      "id": "audit-reachability-safe",
+      "family": "control-flow",
+      "split": "regression",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.423
+    },
+    {
+      "id": "checkout-telemetry-leak",
+      "family": "cross-module",
+      "split": "integration",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT003",
+        "file": "record.ts"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 6.941
+    },
+    {
+      "id": "checkout-telemetry-safe",
+      "family": "cross-module",
+      "split": "integration",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT003",
+        "file": "record.ts"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 2.785
+    },
+    {
+      "id": "payroll-balance-leak",
+      "family": "financial-data",
+      "split": "integration",
+      "vulnerable": true,
+      "expected": {
+        "kind": "wallet-balance",
+        "ruleId": "ZT002",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 2.58
+    },
+    {
+      "id": "payroll-balance-safe",
+      "family": "financial-data",
+      "split": "integration",
+      "vulnerable": false,
+      "expected": {
+        "kind": "wallet-balance",
+        "ruleId": "ZT002",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.876
+    },
+    {
+      "id": "support-history-leak",
+      "family": "financial-data",
+      "split": "integration",
+      "vulnerable": true,
+      "expected": {
+        "kind": "wallet-history",
+        "ruleId": "ZT002",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.692
+    },
+    {
+      "id": "support-history-safe",
+      "family": "financial-data",
+      "split": "integration",
+      "vulnerable": false,
+      "expected": {
+        "kind": "wallet-history",
+        "ruleId": "ZT002",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.619
+    },
+    {
+      "id": "invoice-axios-leak",
+      "family": "transports",
+      "split": "integration",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT002",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 2.237
+    },
+    {
+      "id": "invoice-axios-safe",
+      "family": "transports",
+      "split": "integration",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT002",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.871
+    },
+    {
+      "id": "session-websocket-leak",
+      "family": "transports",
+      "split": "integration",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT002",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 2.46
+    },
+    {
+      "id": "session-websocket-safe",
+      "family": "transports",
+      "split": "integration",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT002",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.72
+    },
+    {
+      "id": "session-xhr-leak",
+      "family": "transports",
+      "split": "integration",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT002",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.428
+    },
+    {
+      "id": "session-xhr-safe",
+      "family": "transports",
+      "split": "integration",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT002",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.443
+    },
+    {
+      "id": "server-pino-leak",
+      "family": "logging",
+      "split": "integration",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.415
+    },
+    {
+      "id": "server-pino-safe",
+      "family": "logging",
+      "split": "integration",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.564
+    },
+    {
+      "id": "sentry-context-leak",
+      "family": "analytics",
+      "split": "integration",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT003",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.558
+    },
+    {
+      "id": "sentry-context-safe",
+      "family": "analytics",
+      "split": "integration",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT003",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.35
+    },
+    {
+      "id": "react-effect-leak",
+      "family": "react",
+      "split": "integration",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 7.293
+    },
+    {
+      "id": "react-effect-safe",
+      "family": "react",
+      "split": "integration",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 2.114
+    },
+    {
+      "id": "react-resource-leak",
+      "family": "react",
+      "split": "integration",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT002",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.857
+    },
+    {
+      "id": "react-resource-safe",
+      "family": "react",
+      "split": "integration",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT002",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 4.117
+    },
+    {
+      "id": "class-logger-leak",
+      "family": "classes",
+      "split": "integration",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 4.99
+    },
+    {
+      "id": "class-logger-safe",
+      "family": "classes",
+      "split": "integration",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 3.174
+    },
+    {
+      "id": "injected-wallet-leak",
+      "family": "sources",
+      "split": "integration",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 2.189
+    },
+    {
+      "id": "injected-wallet-safe",
+      "family": "sources",
+      "split": "integration",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 0.948
+    },
+    {
+      "id": "ledger-pczt-leak",
+      "family": "zcash-artifacts",
+      "split": "integration",
+      "vulnerable": true,
+      "expected": {
+        "kind": "pczt",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.31
+    },
+    {
+      "id": "ledger-pczt-safe",
+      "family": "zcash-artifacts",
+      "split": "integration",
+      "vulnerable": false,
+      "expected": {
+        "kind": "pczt",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.565
+    },
+    {
+      "id": "viewing-key-leak",
+      "family": "zcash-artifacts",
+      "split": "integration",
+      "vulnerable": true,
+      "expected": {
+        "kind": "viewing-key",
+        "ruleId": "ZT002",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.57
+    },
+    {
+      "id": "viewing-key-safe",
+      "family": "zcash-artifacts",
+      "split": "integration",
+      "vulnerable": false,
+      "expected": {
+        "kind": "viewing-key",
+        "ruleId": "ZT002",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.291
+    },
+    {
+      "id": "alias-module-leak",
+      "family": "cross-module",
+      "split": "integration",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "src/events.ts"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 8.086
+    },
+    {
+      "id": "alias-module-safe",
+      "family": "cross-module",
+      "split": "integration",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "src/events.ts"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 2.625
+    },
+    {
+      "id": "indexed-loop-leak",
+      "family": "loops",
+      "split": "integration",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 22.626
+    },
+    {
+      "id": "indexed-loop-safe",
+      "family": "loops",
+      "split": "integration",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 2.4
+    },
+    {
+      "id": "serialized-fields-leak",
+      "family": "field-sensitivity",
+      "split": "integration",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.368
+    },
+    {
+      "id": "serialized-fields-safe",
+      "family": "field-sensitivity",
+      "split": "integration",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.46
+    },
+    {
+      "id": "challenge-rest-leak",
+      "family": "field-sensitivity",
+      "split": "challenge",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.561
+    },
+    {
+      "id": "challenge-rest-safe",
+      "family": "field-sensitivity",
+      "split": "challenge",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.426
+    },
+    {
+      "id": "challenge-conditional-function-leak",
+      "family": "control-flow",
+      "split": "challenge",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 2,
+      "detected": true,
+      "classification": "TP",
+      "findings": 2,
+      "reviewDiagnostics": [],
+      "milliseconds": 2.547
+    },
+    {
+      "id": "challenge-conditional-function-safe",
+      "family": "control-flow",
+      "split": "challenge",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 2.033
+    },
+    {
+      "id": "challenge-array-spread-leak",
+      "family": "field-sensitivity",
+      "split": "challenge",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.825
+    },
+    {
+      "id": "challenge-array-spread-safe",
+      "family": "field-sensitivity",
+      "split": "challenge",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.531
+    },
+    {
+      "id": "challenge-permission-event-leak",
+      "family": "sources",
+      "split": "challenge",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.425
+    },
+    {
+      "id": "challenge-permission-event-safe",
+      "family": "sources",
+      "split": "challenge",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.015
+    },
+    {
+      "id": "challenge-custom-transport-leak",
+      "family": "unmodeled-transport",
+      "split": "challenge",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT003",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "FN",
+      "findings": 0,
+      "reviewDiagnostics": [
+        "UNMODELED_CALL"
+      ],
+      "milliseconds": 1.491
+    },
+    {
+      "id": "challenge-custom-transport-safe",
+      "family": "unmodeled-transport",
+      "split": "challenge",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT003",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.296
+    },
+    {
+      "id": "challenge-reflective-sink-leak",
+      "family": "dynamic-dispatch",
+      "split": "challenge",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [
+        "DYNAMIC_DISPATCH_REVIEW"
+      ],
+      "milliseconds": 1.56
+    },
+    {
+      "id": "challenge-reflective-sink-safe",
+      "family": "dynamic-dispatch",
+      "split": "challenge",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [
+        "DYNAMIC_DISPATCH_REVIEW"
+      ],
+      "milliseconds": 1.241
+    },
+    {
+      "id": "challenge-native-code-leak",
+      "family": "unmodeled-source",
+      "split": "challenge",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "FN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 0.988
+    },
+    {
+      "id": "challenge-native-code-safe",
+      "family": "unmodeled-source",
+      "split": "challenge",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 0.961
+    }
+  ],
+  "withExplicitCustomAdapters": {
+    "adapters": {
+      "sources": [
+        {
+          "module": "unmodeled-native-wallet",
+          "export": "readAccount",
+          "kind": "shielded-address",
+          "path": "shielded"
+        }
+      ],
+      "sinks": [
+        {
+          "module": "custom-telemetry",
+          "export": "default.publish",
+          "kind": "analytics"
+        }
+      ]
+    },
+    "summary": {
+      "TP": 30,
+      "FN": 0,
+      "FP": 0,
+      "TN": 30,
+      "reviewCases": 2,
+      "recall": 1,
+      "precision": 1
+    },
+    "cases": [
+      {
+        "id": "audit-nullable-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-nullable-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-comma-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-comma-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-hook-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-hook-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-segment-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-segment-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-loop-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-loop-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-reachability-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-reachability-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "checkout-telemetry-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "checkout-telemetry-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "payroll-balance-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "payroll-balance-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "support-history-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "support-history-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "invoice-axios-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "invoice-axios-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "session-websocket-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "session-websocket-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "session-xhr-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "session-xhr-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "server-pino-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "server-pino-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "sentry-context-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "sentry-context-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "react-effect-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "react-effect-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "react-resource-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "react-resource-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "class-logger-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "class-logger-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "injected-wallet-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "injected-wallet-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "ledger-pczt-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "ledger-pczt-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "viewing-key-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "viewing-key-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "alias-module-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "alias-module-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "indexed-loop-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "indexed-loop-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "serialized-fields-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "serialized-fields-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "challenge-rest-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "challenge-rest-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "challenge-conditional-function-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "challenge-conditional-function-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "challenge-array-spread-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "challenge-array-spread-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "challenge-permission-event-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "challenge-permission-event-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "challenge-custom-transport-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "challenge-custom-transport-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "challenge-reflective-sink-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": [
+          "DYNAMIC_DISPATCH_REVIEW"
+        ]
+      },
+      {
+        "id": "challenge-reflective-sink-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": [
+          "DYNAMIC_DISPATCH_REVIEW"
+        ]
+      },
+      {
+        "id": "challenge-native-code-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "challenge-native-code-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      }
+    ]
+  }
+}

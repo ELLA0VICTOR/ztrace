@@ -1,0 +1,1 @@
+Fonts: Space Grotesk (Florian Karsten), Inter (Rasmus Andersson), IBM Plex Mono (IBM). Latin WOFF2 subsets fetched from the public Roster Finance reference stylesheet, 24 October 2026. Redistributed under the adjacent SIL Open Font Licenses. Fonts are self-hosted; visitors make no font CDN requests.

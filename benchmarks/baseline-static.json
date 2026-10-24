@@ -1,0 +1,848 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-24T18:38:16.514Z",
+  "corpusSha256": "440a17e1e2429363c20aac4255e08af3381824c97444d84d8f912f1f4d69bb96",
+  "engineSha256": "b1e015868aa61bddb3bcb166763b72fb2fbc9fe165e7c029b3d4e625421ca282",
+  "provenance": "Self-authored, synthetic, API-based fixtures. Challenge cases are a first-run stress split, not an independent external evaluation.",
+  "summary": {
+    "TP": 27,
+    "FN": 3,
+    "FP": 0,
+    "TN": 30,
+    "reviewCases": 2,
+    "recall": 0.9,
+    "precision": 1
+  },
+  "splits": {
+    "regression": {
+      "TP": 6,
+      "FN": 0,
+      "FP": 0,
+      "TN": 6,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
+    },
+    "integration": {
+      "TP": 17,
+      "FN": 0,
+      "FP": 0,
+      "TN": 17,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
+    },
+    "challenge": {
+      "TP": 4,
+      "FN": 3,
+      "FP": 0,
+      "TN": 7,
+      "reviewCases": 2,
+      "recall": 0.5714285714285714,
+      "precision": 1
+    }
+  },
+  "families": {
+    "control-flow": {
+      "TP": 4,
+      "FN": 0,
+      "FP": 0,
+      "TN": 4,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
+    },
+    "react": {
+      "TP": 3,
+      "FN": 0,
+      "FP": 0,
+      "TN": 3,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
+    },
+    "analytics": {
+      "TP": 2,
+      "FN": 0,
+      "FP": 0,
+      "TN": 2,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
+    },
+    "loops": {
+      "TP": 2,
+      "FN": 0,
+      "FP": 0,
+      "TN": 2,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
+    },
+    "cross-module": {
+      "TP": 2,
+      "FN": 0,
+      "FP": 0,
+      "TN": 2,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
+    },
+    "financial-data": {
+      "TP": 2,
+      "FN": 0,
+      "FP": 0,
+      "TN": 2,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
+    },
+    "transports": {
+      "TP": 3,
+      "FN": 0,
+      "FP": 0,
+      "TN": 3,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
+    },
+    "logging": {
+      "TP": 1,
+      "FN": 0,
+      "FP": 0,
+      "TN": 1,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
+    },
+    "classes": {
+      "TP": 1,
+      "FN": 0,
+      "FP": 0,
+      "TN": 1,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
+    },
+    "sources": {
+      "TP": 2,
+      "FN": 0,
+      "FP": 0,
+      "TN": 2,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
+    },
+    "zcash-artifacts": {
+      "TP": 2,
+      "FN": 0,
+      "FP": 0,
+      "TN": 2,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
+    },
+    "field-sensitivity": {
+      "TP": 3,
+      "FN": 0,
+      "FP": 0,
+      "TN": 3,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
+    },
+    "unmodeled-transport": {
+      "TP": 0,
+      "FN": 1,
+      "FP": 0,
+      "TN": 1,
+      "reviewCases": 1,
+      "recall": 0,
+      "precision": null
+    },
+    "dynamic-dispatch": {
+      "TP": 0,
+      "FN": 1,
+      "FP": 0,
+      "TN": 1,
+      "reviewCases": 1,
+      "recall": 0,
+      "precision": null
+    },
+    "unmodeled-source": {
+      "TP": 0,
+      "FN": 1,
+      "FP": 0,
+      "TN": 1,
+      "reviewCases": 0,
+      "recall": 0,
+      "precision": null
+    }
+  },
+  "cases": [
+    {
+      "id": "audit-nullable-leak",
+      "family": "control-flow",
+      "split": "regression",
+      "vulnerable": true,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 53.19
+    },
+    {
+      "id": "audit-nullable-safe",
+      "family": "control-flow",
+      "split": "regression",
+      "vulnerable": false,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 3.914
+    },
+    {
+      "id": "audit-comma-leak",
+      "family": "control-flow",
+      "split": "regression",
+      "vulnerable": true,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 5.746
+    },
+    {
+      "id": "audit-comma-safe",
+      "family": "control-flow",
+      "split": "regression",
+      "vulnerable": false,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 6.627
+    },
+    {
+      "id": "audit-hook-leak",
+      "family": "react",
+      "split": "regression",
+      "vulnerable": true,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 3.479
+    },
+    {
+      "id": "audit-hook-safe",
+      "family": "react",
+      "split": "regression",
+      "vulnerable": false,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 8.239
+    },
+    {
+      "id": "audit-segment-leak",
+      "family": "analytics",
+      "split": "regression",
+      "vulnerable": true,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 5.914
+    },
+    {
+      "id": "audit-segment-safe",
+      "family": "analytics",
+      "split": "regression",
+      "vulnerable": false,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 3.602
+    },
+    {
+      "id": "audit-loop-leak",
+      "family": "loops",
+      "split": "regression",
+      "vulnerable": true,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 4.678
+    },
+    {
+      "id": "audit-loop-safe",
+      "family": "loops",
+      "split": "regression",
+      "vulnerable": false,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 2.653
+    },
+    {
+      "id": "audit-reachability-leak",
+      "family": "control-flow",
+      "split": "regression",
+      "vulnerable": true,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 2.447
+    },
+    {
+      "id": "audit-reachability-safe",
+      "family": "control-flow",
+      "split": "regression",
+      "vulnerable": false,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.389
+    },
+    {
+      "id": "checkout-telemetry-leak",
+      "family": "cross-module",
+      "split": "integration",
+      "vulnerable": true,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 6.98
+    },
+    {
+      "id": "checkout-telemetry-safe",
+      "family": "cross-module",
+      "split": "integration",
+      "vulnerable": false,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 2.652
+    },
+    {
+      "id": "payroll-balance-leak",
+      "family": "financial-data",
+      "split": "integration",
+      "vulnerable": true,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 2.528
+    },
+    {
+      "id": "payroll-balance-safe",
+      "family": "financial-data",
+      "split": "integration",
+      "vulnerable": false,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.87
+    },
+    {
+      "id": "support-history-leak",
+      "family": "financial-data",
+      "split": "integration",
+      "vulnerable": true,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.768
+    },
+    {
+      "id": "support-history-safe",
+      "family": "financial-data",
+      "split": "integration",
+      "vulnerable": false,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.641
+    },
+    {
+      "id": "invoice-axios-leak",
+      "family": "transports",
+      "split": "integration",
+      "vulnerable": true,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 2.163
+    },
+    {
+      "id": "invoice-axios-safe",
+      "family": "transports",
+      "split": "integration",
+      "vulnerable": false,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.957
+    },
+    {
+      "id": "session-websocket-leak",
+      "family": "transports",
+      "split": "integration",
+      "vulnerable": true,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 2.475
+    },
+    {
+      "id": "session-websocket-safe",
+      "family": "transports",
+      "split": "integration",
+      "vulnerable": false,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.681
+    },
+    {
+      "id": "session-xhr-leak",
+      "family": "transports",
+      "split": "integration",
+      "vulnerable": true,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.444
+    },
+    {
+      "id": "session-xhr-safe",
+      "family": "transports",
+      "split": "integration",
+      "vulnerable": false,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.472
+    },
+    {
+      "id": "server-pino-leak",
+      "family": "logging",
+      "split": "integration",
+      "vulnerable": true,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.476
+    },
+    {
+      "id": "server-pino-safe",
+      "family": "logging",
+      "split": "integration",
+      "vulnerable": false,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.637
+    },
+    {
+      "id": "sentry-context-leak",
+      "family": "analytics",
+      "split": "integration",
+      "vulnerable": true,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.397
+    },
+    {
+      "id": "sentry-context-safe",
+      "family": "analytics",
+      "split": "integration",
+      "vulnerable": false,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.401
+    },
+    {
+      "id": "react-effect-leak",
+      "family": "react",
+      "split": "integration",
+      "vulnerable": true,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 7.97
+    },
+    {
+      "id": "react-effect-safe",
+      "family": "react",
+      "split": "integration",
+      "vulnerable": false,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 2.388
+    },
+    {
+      "id": "react-resource-leak",
+      "family": "react",
+      "split": "integration",
+      "vulnerable": true,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 7.209
+    },
+    {
+      "id": "react-resource-safe",
+      "family": "react",
+      "split": "integration",
+      "vulnerable": false,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.431
+    },
+    {
+      "id": "class-logger-leak",
+      "family": "classes",
+      "split": "integration",
+      "vulnerable": true,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 4.756
+    },
+    {
+      "id": "class-logger-safe",
+      "family": "classes",
+      "split": "integration",
+      "vulnerable": false,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 2.494
+    },
+    {
+      "id": "injected-wallet-leak",
+      "family": "sources",
+      "split": "integration",
+      "vulnerable": true,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.471
+    },
+    {
+      "id": "injected-wallet-safe",
+      "family": "sources",
+      "split": "integration",
+      "vulnerable": false,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 0.827
+    },
+    {
+      "id": "ledger-pczt-leak",
+      "family": "zcash-artifacts",
+      "split": "integration",
+      "vulnerable": true,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.027
+    },
+    {
+      "id": "ledger-pczt-safe",
+      "family": "zcash-artifacts",
+      "split": "integration",
+      "vulnerable": false,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 7.205
+    },
+    {
+      "id": "viewing-key-leak",
+      "family": "zcash-artifacts",
+      "split": "integration",
+      "vulnerable": true,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.429
+    },
+    {
+      "id": "viewing-key-safe",
+      "family": "zcash-artifacts",
+      "split": "integration",
+      "vulnerable": false,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.161
+    },
+    {
+      "id": "alias-module-leak",
+      "family": "cross-module",
+      "split": "integration",
+      "vulnerable": true,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 2.248
+    },
+    {
+      "id": "alias-module-safe",
+      "family": "cross-module",
+      "split": "integration",
+      "vulnerable": false,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.907
+    },
+    {
+      "id": "indexed-loop-leak",
+      "family": "loops",
+      "split": "integration",
+      "vulnerable": true,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 4.288
+    },
+    {
+      "id": "indexed-loop-safe",
+      "family": "loops",
+      "split": "integration",
+      "vulnerable": false,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.945
+    },
+    {
+      "id": "serialized-fields-leak",
+      "family": "field-sensitivity",
+      "split": "integration",
+      "vulnerable": true,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.287
+    },
+    {
+      "id": "serialized-fields-safe",
+      "family": "field-sensitivity",
+      "split": "integration",
+      "vulnerable": false,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.296
+    },
+    {
+      "id": "challenge-rest-leak",
+      "family": "field-sensitivity",
+      "split": "challenge",
+      "vulnerable": true,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.598
+    },
+    {
+      "id": "challenge-rest-safe",
+      "family": "field-sensitivity",
+      "split": "challenge",
+      "vulnerable": false,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.636
+    },
+    {
+      "id": "challenge-conditional-function-leak",
+      "family": "control-flow",
+      "split": "challenge",
+      "vulnerable": true,
+      "detected": true,
+      "classification": "TP",
+      "findings": 2,
+      "reviewDiagnostics": [],
+      "milliseconds": 19.757
+    },
+    {
+      "id": "challenge-conditional-function-safe",
+      "family": "control-flow",
+      "split": "challenge",
+      "vulnerable": false,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 2.317
+    },
+    {
+      "id": "challenge-array-spread-leak",
+      "family": "field-sensitivity",
+      "split": "challenge",
+      "vulnerable": true,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.834
+    },
+    {
+      "id": "challenge-array-spread-safe",
+      "family": "field-sensitivity",
+      "split": "challenge",
+      "vulnerable": false,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.599
+    },
+    {
+      "id": "challenge-permission-event-leak",
+      "family": "sources",
+      "split": "challenge",
+      "vulnerable": true,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.475
+    },
+    {
+      "id": "challenge-permission-event-safe",
+      "family": "sources",
+      "split": "challenge",
+      "vulnerable": false,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.012
+    },
+    {
+      "id": "challenge-custom-transport-leak",
+      "family": "unmodeled-transport",
+      "split": "challenge",
+      "vulnerable": true,
+      "detected": false,
+      "classification": "FN",
+      "findings": 0,
+      "reviewDiagnostics": [
+        "UNMODELED_CALL"
+      ],
+      "milliseconds": 1.484
+    },
+    {
+      "id": "challenge-custom-transport-safe",
+      "family": "unmodeled-transport",
+      "split": "challenge",
+      "vulnerable": false,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.307
+    },
+    {
+      "id": "challenge-reflective-sink-leak",
+      "family": "dynamic-dispatch",
+      "split": "challenge",
+      "vulnerable": true,
+      "detected": false,
+      "classification": "FN",
+      "findings": 0,
+      "reviewDiagnostics": [
+        "UNMODELED_CALL"
+      ],
+      "milliseconds": 1.458
+    },
+    {
+      "id": "challenge-reflective-sink-safe",
+      "family": "dynamic-dispatch",
+      "split": "challenge",
+      "vulnerable": false,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.195
+    },
+    {
+      "id": "challenge-native-code-leak",
+      "family": "unmodeled-source",
+      "split": "challenge",
+      "vulnerable": true,
+      "detected": false,
+      "classification": "FN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 0.99
+    },
+    {
+      "id": "challenge-native-code-safe",
+      "family": "unmodeled-source",
+      "split": "challenge",
+      "vulnerable": false,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 0.959
+    }
+  ]
+}

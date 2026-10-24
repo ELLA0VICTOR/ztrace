@@ -1,0 +1,75 @@
+{
+  "name": "ztrace",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Local source analysis for privacy leaks in Zcash applications.",
+  "files": [
+    "dist-tools/packages",
+    "README.md",
+    "docs",
+    "benchmarks/METHODOLOGY.md"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
+  "bin": {
+    "ztrace": "./dist-tools/packages/cli/src/cli.js"
+  },
+  "exports": {
+    "./protocol": {
+      "types": "./dist-tools/packages/protocol/src/index.d.ts",
+      "import": "./dist-tools/packages/protocol/src/index.js"
+    },
+    "./runtime": {
+      "types": "./dist-tools/packages/runtime/src/index.d.ts",
+      "import": "./dist-tools/packages/runtime/src/index.js"
+    },
+    "./scanner": {
+      "types": "./dist-tools/packages/core/src/index.d.ts",
+      "import": "./dist-tools/packages/core/src/index.js"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "predev": "npm run prepare:ui",
+    "prepare:ui": "npm run build:tools && node scripts/prepare-ui.mjs",
+    "build": "npm run prepare:ui && tsc -b && vite build",
+    "build:tools": "tsc -p tsconfig.tools.json",
+    "prepack": "npm run build:tools",
+    "prescan": "npm run build:tools",
+    "scan": "node dist-tools/packages/cli/src/cli.js scan",
+    "benchmark": "npm run build:tools && node benchmarks/run.mjs --check",
+    "test:runtime": "npm run build:tools && node --test dist-tools/tests/runtime/*.test.js",
+    "test": "npm run build:tools && node --test dist-tools/tests/*.test.js",
+    "lint": "oxlint",
+    "test:ui": "npm run build && node tests/ui/smoke.mjs",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@noble/hashes": "2.0.1",
+    "@scure/base": "2.4.0",
+    "lucide-react": "1.61.0",
+    "motion": "14.6.0",
+    "playwright-core": "1.64.1",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-markdown": "10.1.0",
+    "remark-gfm": "4.0.1",
+    "typescript": "~6.0.3"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@tailwindcss/vite": "4.3.3",
+    "@types/node": "^24.19.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "oxlint": "^1.88.0",
+    "tailwindcss": "4.3.3",
+    "vite": "^8.3.4"
+  },
+  "optionalDependencies": {
+    "@ledgerhq/zcash-utils": "2.8.0"
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "generatedAt": "2026-10-24T19:42:58.602Z",
+  "provenance": "New executions of five local synthetic pages/flows in an installed Chromium; no wallet transaction was performed.",
+  "deliveredSensitiveRequests": 0,
+  "reports": [
+    {
+      "schemaVersion": 1,
+      "mode": "runtime-canary",
+      "completion": "completed",
+      "browserVersion": "153.0.8010.12",
+      "findings": [
+        {
+          "channel": "request",
+          "canary": "address",
+          "kind": "shielded-address",
+          "encoding": "base64",
+          "destination": "https://external.example"
+        },
+        {
+          "channel": "console",
+          "canary": "address",
+          "kind": "shielded-address",
+          "encoding": "plain",
+          "destination": "local-console"
+        },
+        {
+          "channel": "request",
+          "canary": "viewing_key",
+          "kind": "viewing-key",
+          "encoding": "plain",
+          "destination": "http://127.0.0.1:63569"
+        }
+      ],
+      "diagnostics": [],
+      "summary": {
+        "actionsCompleted": 1,
+        "requestsObserved": 3,
+        "requestsBlocked": 2,
+        "consoleEventsObserved": 3
+      },
+      "scope": "Only supplied synthetic canaries, supported encodings, executed actions, and the bounded observation window were checked. External HTTP and all WebSocket upstream connections were blocked. No payloads, screenshots, HAR, or browser traces were retained."
+    },
+    {
+      "schemaVersion": 1,
+      "mode": "runtime-canary",
+      "completion": "completed",
+      "browserVersion": "153.0.8010.12",
+      "findings": [],
+      "diagnostics": [],
+      "summary": {
+        "actionsCompleted": 1,
+        "requestsObserved": 2,
+        "requestsBlocked": 0,
+        "consoleEventsObserved": 1
+      },
+      "scope": "Only supplied synthetic canaries, supported encodings, executed actions, and the bounded observation window were checked. External HTTP and all WebSocket upstream connections were blocked. No payloads, screenshots, HAR, or browser traces were retained."
+    },
+    {
+      "schemaVersion": 1,
+      "mode": "runtime-canary",
+      "completion": "completed",
+      "browserVersion": "153.0.8010.12",
+      "findings": [
+        {
+          "channel": "websocket",
+          "canary": "address",
+          "kind": "shielded-address",
+          "encoding": "plain",
+          "destination": "wss://external.example"
+        }
+      ],
+      "diagnostics": [],
+      "summary": {
+        "actionsCompleted": 1,
+        "requestsObserved": 1,
+        "requestsBlocked": 0,
+        "consoleEventsObserved": 0
+      },
+      "scope": "Only supplied synthetic canaries, supported encodings, executed actions, and the bounded observation window were checked. External HTTP and all WebSocket upstream connections were blocked. No payloads, screenshots, HAR, or browser traces were retained."
+    },
+    {
+      "schemaVersion": 1,
+      "mode": "runtime-canary",
+      "completion": "completed",
+      "browserVersion": "153.0.8010.12",
+      "findings": [
+        {
+          "channel": "request",
+          "canary": "address",
+          "kind": "shielded-address",
+          "encoding": "plain",
+          "destination": "http://127.0.0.1:63569"
+        }
+      ],
+      "diagnostics": [],
+      "summary": {
+        "actionsCompleted": 1,
+        "requestsObserved": 2,
+        "requestsBlocked": 1,
+        "consoleEventsObserved": 1
+      },
+      "scope": "Only supplied synthetic canaries, supported encodings, executed actions, and the bounded observation window were checked. External HTTP and all WebSocket upstream connections were blocked. No payloads, screenshots, HAR, or browser traces were retained."
+    },
+    {
+      "schemaVersion": 1,
+      "mode": "runtime-canary",
+      "completion": "incomplete",
+      "browserVersion": "153.0.8010.12",
+      "findings": [],
+      "diagnostics": [
+        "REDIRECT_BLOCKED",
+        "RUNTIME_FLOW_INCOMPLETE"
+      ],
+      "summary": {
+        "actionsCompleted": 0,
+        "requestsObserved": 1,
+        "requestsBlocked": 1,
+        "consoleEventsObserved": 0
+      },
+      "scope": "Only supplied synthetic canaries, supported encodings, executed actions, and the bounded observation window were checked. External HTTP and all WebSocket upstream connections were blocked. No payloads, screenshots, HAR, or browser traces were retained."
+    }
+  ]
+}
