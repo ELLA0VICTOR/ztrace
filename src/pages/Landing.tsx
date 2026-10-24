@@ -65,10 +65,31 @@ function Example() {
   </Reveal>
 }
 
-const technologies = [{name: 'TypeScript',mark: 'TS'}, {name: 'React', mark: 'react'}, {name: 'Noir Wallet',mark: 'N'}, {name: 'RHEA',mark: 'R'}, {name: 'Ledger',mark: 'ledger'}, {name: 'PostHog',mark: 'P'}, {name: 'Sentry',mark: 'sentry'}, {name: 'Axios',mark: '↗'}]
+const technologies = [
+  {name: 'TypeScript', asset: 'typescript.png'},
+  {name: 'React', asset: 'react.svg'},
+  {name: 'Zcash', asset: 'zcash.svg'},
+  {name: 'Noir Wallet', asset: 'noir.png'},
+  {name: 'RHEA', asset: 'rhea.svg'},
+  {name: 'Ledger', asset: 'ledger.svg', wordmark: true},
+  {name: 'PostHog', asset: 'posthog.svg'},
+  {name: 'Sentry', asset: 'sentry.svg'},
+  {name: 'Axios', asset: 'axios-mark.svg'},
+]
 function TechnologyStrip() {
   const [paused, setPaused] = useState(false)
-  return <section className="technology-section ruled"><div className="strip-label"><p>Built for the application layer</p><button aria-label={paused ? 'Resume technology strip' : 'Pause technology strip'} aria-pressed={paused} onClick={() => setPaused(!paused)}>{paused ? 'Resume' : 'Pause'} {paused ? <Play size={10}/> : <Pause size={10}/>}</button></div><div className={`marquee ${paused ? 'paused' : ''}`}><div className="marquee-track">{[0, 1].map(copy => <div className="marquee-group" aria-hidden={copy === 1 ? true : undefined} key={copy}>{technologies.map(tech => <span className="technology" key={tech.name}>{tech.mark === 'react' ? <svg viewBox="0 0 32 32" width="29" height="29" aria-hidden="true"><g fill="none" stroke="currentColor" strokeWidth="1.3"><ellipse cx="16" cy="16" rx="15" ry="6"/><ellipse cx="16" cy="16" rx="15" ry="6" transform="rotate(60 16 16)"/><ellipse cx="16" cy="16" rx="15" ry="6" transform="rotate(120 16 16)"/></g><circle cx="16" cy="16" r="2.4" fill="currentColor"/></svg> : tech.mark === 'ledger' ? <svg viewBox="0 0 26 26" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M10 2H2v8m14-8h8v8M2 16v8h8m6 0h8v-8M10 10v6h6"/></svg> : tech.mark === 'sentry' ? <svg viewBox="0 0 30 28" width="28" height="27" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="m14 2 14 24H17A17 17 0 0 0 8 11l3-5a24 24 0 0 1 13 20M5 16a12 12 0 0 1 7 10H1l3-5"/></svg> : <span className={`technology-mark mark-${tech.mark === 'TS' ? 'ts' : 'letter'}`} aria-hidden="true">{tech.mark}</span>}{tech.name}</span>)}</div>)}</div></div><p className="strip-note">Language support and modeled source/destination integrations.</p></section>
+  return <section className="technology-section ruled">
+    <div className="strip-label"><p>Built for the application layer</p><button aria-label={paused ? 'Resume technology strip' : 'Pause technology strip'} aria-pressed={paused} onClick={() => setPaused(!paused)}>{paused ? 'Resume' : 'Pause'} {paused ? <Play size={10}/> : <Pause size={10}/>}</button></div>
+    <div className={`marquee ${paused ? 'paused' : ''}`}><div className="marquee-track">
+      {[0, 1].map(copy => <div className="marquee-group" aria-hidden={copy === 1 ? true : undefined} key={copy}>
+        {technologies.map(tech => <span className="technology" key={tech.name}>
+          <img className={`technology-logo${tech.wordmark ? ' technology-wordmark' : ''}`} src={'/brands/' + tech.asset} width={tech.wordmark ? 108 : 32} height={32} alt="" decoding="async"/>
+          <span className={tech.wordmark ? 'sr-only' : undefined}>{tech.name}</span>
+        </span>)}
+      </div>)}
+    </div></div>
+    <p className="strip-note">Language support and modeled source/destination integrations.</p>
+  </section>
 }
 
 function FlowIllustration() {
