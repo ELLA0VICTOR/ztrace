@@ -83,8 +83,8 @@ function TechnologyStrip() {
     <div className={`marquee ${paused ? 'paused' : ''}`}><div className="marquee-track">
       {[0, 1].map(copy => <div className="marquee-group" aria-hidden={copy === 1 ? true : undefined} key={copy}>
         {technologies.map(tech => <span className="technology" key={tech.name}>
-          <img className={`technology-logo${tech.wordmark ? ' technology-wordmark' : ''}`} src={'/brands/' + tech.asset} width={tech.wordmark ? 108 : 32} height={32} alt="" decoding="async"/>
-          <span className={tech.wordmark ? 'sr-only' : undefined}>{tech.name}</span>
+          <img className={`technology-logo${tech.wordmark ? ' technology-wordmark' : ''}`} src={'/brands/' + tech.asset} width={tech.wordmark ? 108 : 32} height={32} alt={tech.wordmark ? tech.name : ''} decoding="async"/>
+          {!tech.wordmark && <span>{tech.name}</span>}
         </span>)}
       </div>)}
     </div></div>

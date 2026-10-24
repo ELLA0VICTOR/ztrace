@@ -22,14 +22,14 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Node.js-24%2B-1a1a1a?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js 24 or later" />
-  <img src="https://img.shields.io/badge/TypeScript-6-1a1a1a?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript 6" />
-  <img src="https://img.shields.io/badge/React-19-1a1a1a?style=for-the-badge&logo=react&logoColor=white" alt="React 19" />
-  <img src="https://img.shields.io/badge/Vite-8-1a1a1a?style=for-the-badge&logo=vite&logoColor=white" alt="Vite 8" />
+  <img src="https://img.shields.io/badge/Node.js-24%2B-5FA04E?style=for-the-badge&logo=nodedotjs&logoColor=5FA04E&labelColor=20232A" alt="Node.js 24 or later" />
+  <img src="https://img.shields.io/badge/TypeScript-6-3178C6?style=for-the-badge&logo=typescript&logoColor=3178C6&labelColor=20232A" alt="TypeScript 6" />
+  <img src="https://img.shields.io/badge/React-19-58C4DC?style=for-the-badge&logo=react&logoColor=58C4DC&labelColor=20232A" alt="React 19" />
+  <img src="https://img.shields.io/badge/Vite-8-9135FF?style=for-the-badge&logo=vite&logoColor=9135FF&labelColor=20232A" alt="Vite 8" />
   <br />
-  <img src="https://img.shields.io/badge/Tailwind_CSS-4-555555?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS 4" />
-  <img src="https://img.shields.io/badge/Playwright-1.64-555555?style=for-the-badge" alt="Playwright 1.64" />
-  <img src="https://img.shields.io/badge/Zcash-ZIP_316_%2F_374-555555?style=for-the-badge&logo=zcash&logoColor=white" alt="Zcash ZIP 316 and ZIP 374" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=06B6D4&labelColor=20232A" alt="Tailwind CSS 4" />
+  <img src="https://img.shields.io/badge/Playwright-1.64-2EAD33?style=for-the-badge&labelColor=20232A" alt="Playwright 1.64" />
+  <img src="https://img.shields.io/badge/Zcash-ZIP_316_%2F_374-F4B728?style=for-the-badge&logo=zcash&logoColor=F4B728&labelColor=20232A" alt="Zcash ZIP 316 and ZIP 374" />
   <img src="https://img.shields.io/badge/Version-0.1.0-555555?style=for-the-badge" alt="Version 0.1.0" />
 </p>
 

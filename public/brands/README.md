@@ -19,3 +19,5 @@ Retrieved 24 October 2026.
 Sentry uses the official glyph with its brand purple (`#362D59`). Ledger retains the black mark supplied by its official website.
 
 `axios-mark.svg` uses the glyph viewport from the official Axios logo; its artwork and colors are preserved.
+
+The Zcash SVG viewport trims the source artboard?s transparent outer padding for consistent icon sizing; the brandmark path and official yellow are unchanged.
