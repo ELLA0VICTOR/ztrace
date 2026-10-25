@@ -8,7 +8,9 @@
     "dist-tools/packages",
     "README.md",
     "docs",
-    "benchmarks/METHODOLOGY.md"
+    "benchmarks/METHODOLOGY.md",
+    "LICENSE",
+    "public/ztrace.svg"
   ],
   "engines": {
     "node": ">=24"
@@ -44,19 +46,17 @@
     "test": "npm run build:tools && node --test dist-tools/tests/*.test.js",
     "lint": "oxlint",
     "test:ui": "npm run build && node tests/ui/smoke.mjs",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:package": "npm run build:tools && node tests/integration/package.mjs",
+    "test:adversarial": "npm run build:tools && node tests/adversarial/run.mjs",
+    "test:external": "npm run build:tools && node scripts/evaluate-upstream.mjs",
+    "test:site-base": "npm run prepare:ui && node tests/ui/base-path.mjs"
   },
   "dependencies": {
     "@noble/hashes": "2.0.1",
     "@scure/base": "2.4.0",
-    "lucide-react": "1.61.0",
-    "motion": "14.6.0",
     "playwright-core": "1.64.1",
-    "react": "^19.3.1",
-    "react-dom": "^19.3.1",
-    "react-markdown": "10.1.0",
-    "remark-gfm": "4.0.1",
-    "typescript": "~6.0.3"
+    "typescript": "6.0.3"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",
@@ -67,9 +67,31 @@
     "@vitejs/plugin-react": "^6.1.2",
     "oxlint": "^1.88.0",
     "tailwindcss": "4.3.3",
-    "vite": "^8.3.4"
+    "vite": "^8.3.4",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "motion": "14.6.0",
+    "lucide-react": "1.61.0",
+    "react-markdown": "10.1.0",
+    "remark-gfm": "4.0.1"
   },
   "optionalDependencies": {
     "@ledgerhq/zcash-utils": "2.8.0"
-  }
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ELLA0VICTOR/ztrace.git"
+  },
+  "homepage": "https://github.com/ELLA0VICTOR/ztrace#readme",
+  "bugs": {
+    "url": "https://github.com/ELLA0VICTOR/ztrace/issues"
+  },
+  "keywords": [
+    "zcash",
+    "privacy",
+    "typescript",
+    "static-analysis",
+    "developer-tools"
+  ]
 }

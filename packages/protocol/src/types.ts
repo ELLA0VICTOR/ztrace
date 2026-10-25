@@ -12,4 +12,5 @@ export interface PcztDisclosureReport {
   decision: 'reject' | 'explicit-private-role'
   warnings: string[]
   coverage: 'signer-projection-only'
+  projection?: {shieldedActions:number;transparentInputs:number;transparentOutputs:number;fieldsInventoried:number}
 }

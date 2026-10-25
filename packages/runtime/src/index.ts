@@ -3,7 +3,7 @@ import { join } from 'node:path'
 import { chromium } from 'playwright-core'
 import { sensitiveKinds } from '../../core/src/index.js'
 import type {RuntimeOptions,RuntimeFinding,RuntimeReport} from './types.js'
-export type {Canary,RuntimeAction,RuntimeOptions,RuntimeFinding,RuntimeReport} from './types.js'
+export type {Canary,RuntimeAction,RuntimeOptions,RuntimeFinding,RuntimeReport,RuntimeExpectations} from './types.js'
 
 function localUrl(value: string): URL {
   const url = new URL(value)
@@ -42,6 +42,16 @@ export async function auditBrowser(options: RuntimeOptions): Promise<RuntimeRepo
   if (!Number.isInteger(timeout) || timeout < 100 || timeout > 30_000 || !Number.isInteger(settle) || settle < 0 || settle > 2000) throw new Error('Invalid runtime time bounds.')
   if ((options.actions?.length ?? 0) > 100) throw new Error('At most 100 runtime actions are supported.')
   for (const action of options.actions ?? []) if (!['click', 'fill', 'waitFor'].includes(action.type) || typeof action.selector !== 'string' || (action.type === 'fill' && typeof action.value !== 'string')) throw new Error('Invalid runtime action.')
+  const expectations = options.expectations
+  const validName = (value: unknown): value is string => typeof value === 'string' && /^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/u.test(value)
+  if (expectations !== undefined) {
+    if (!expectations || typeof expectations !== 'object' || Array.isArray(expectations) || Object.keys(expectations).some(key => !['canariesRead', 'checkpoints', 'minActions'].includes(key))) throw new Error('Invalid runtime expectations.')
+    for (const list of [expectations.canariesRead, expectations.checkpoints]) if (list !== undefined && (!Array.isArray(list) || list.length > 100 || !list.every(validName))) throw new Error('Invalid runtime expectation names.')
+    if (expectations.canariesRead?.some(name => !names.has(name))) throw new Error('Expected canary name is not declared.')
+    if (expectations.minActions !== undefined && (!Number.isInteger(expectations.minActions) || expectations.minActions < 1 || expectations.minActions > 100)) throw new Error('Invalid expected action count.')
+    if (!(expectations.canariesRead?.length || expectations.checkpoints?.length || expectations.minActions)) throw new Error('Provide at least one execution expectation.')
+  }
+  const canariesRead = new Set<string>(), checkpointsReached = new Set<string>()
   const executablePath = options.browserPath ?? await findBrowserPath()
   if (!executablePath) throw new Error('No installed Chromium found. Set ZTRACE_BROWSER_PATH or browserPath. ZTrace does not download a browser automatically.')
   const patterns = options.canaries.flatMap(canary => [
@@ -76,9 +86,47 @@ export async function auditBrowser(options: RuntimeOptions): Promise<RuntimeRepo
   try {
     const context = await browser.newContext({ serviceWorkers: 'block', acceptDownloads: false })
     context.setDefaultTimeout(timeout)
-    await context.addInitScript(data => {
-      Object.defineProperty(window, '__ZTRACE_TEST_DATA__', { value: data, writable: false, configurable: false })
-    }, options.testData ?? {})
+    await context.exposeBinding('__ZTRACE_RUNTIME_SIGNAL__', (_source, signal: unknown) => {
+      if (!signal || typeof signal !== 'object') return
+      const item = signal as {type?: unknown; name?: unknown}
+      if (!validName(item.name)) return
+      if (item.type === 'canary-read' && names.has(item.name)) canariesRead.add(item.name)
+      if (item.type === 'checkpoint' && expectations?.checkpoints?.includes(item.name)) checkpointsReached.add(item.name)
+    })
+    await context.addInitScript(({data, canaries, trackReads, checkpoints}) => {
+      const target = window as unknown as Record<string, unknown>
+      const pending = new Set<Promise<unknown>>()
+      const sent = new Set<string>()
+      const signal = (type: string, name: string): Promise<unknown> => {
+        const key = `${type}:${name}`
+        if ((type === 'checkpoint' && !checkpoints.includes(name)) || sent.has(key)) return Promise.resolve()
+        sent.add(key)
+        const send = target.__ZTRACE_RUNTIME_SIGNAL__ as (value: unknown) => Promise<unknown>
+        const job = send({type, name}).catch(() => {})
+        pending.add(job)
+        void job.then(() => pending.delete(job))
+        return job
+      }
+      if (trackReads) {
+        const queue: object[] = [data], visited = new WeakSet<object>()
+        while (queue.length) {
+          const object = queue.pop()!
+          if (visited.has(object)) continue
+          visited.add(object)
+          for (const key of Object.keys(object)) {
+            let value = (object as Record<string, unknown>)[key]
+            if (value && typeof value === 'object') queue.push(value)
+            Object.defineProperty(object, key, {enumerable: true, configurable: true,
+              get() {for (const canary of canaries) if (value === canary.value) void signal('canary-read', canary.name); return value},
+              set(next: unknown) {value = next},
+            })
+          }
+        }
+      }
+      Object.defineProperty(window, '__ZTRACE_TEST_DATA__', {value: data, writable: false, configurable: false})
+      Object.defineProperty(window, '__ZTRACE_CHECKPOINT__', {value: (name: string) => signal('checkpoint', name), writable: false, configurable: false})
+      Object.defineProperty(window, '__ZTRACE_FLUSH__', {value: () => Promise.allSettled([...pending]), writable: false, configurable: false})
+    }, {data: options.testData ?? {}, canaries: options.canaries.map(({name, value}) => ({name, value})), trackReads: !!expectations?.canariesRead?.length, checkpoints: expectations?.checkpoints ?? []})
     await context.route('**/*', async route => {
       const request = route.request()
       summary.requestsObserved++
@@ -136,6 +184,12 @@ export async function auditBrowser(options: RuntimeOptions): Promise<RuntimeRepo
     }
     // A bounded observation window is explicit; no claim is made about later activity.
     if (settle) await page.waitForTimeout(settle)
+    for (const observedPage of context.pages()) for (const frame of observedPage.frames()) {
+      await frame.evaluate(async () => {
+        const flush = (window as unknown as {__ZTRACE_FLUSH__?: () => Promise<unknown>}).__ZTRACE_FLUSH__
+        if (flush) await flush()
+      }).catch(() => {if (expectations) {completed = false; diagnostics.add('EXECUTION_SIGNALS_UNREADABLE')}})
+    }
     await Promise.allSettled([...pending])
   } catch {
     completed = false
@@ -143,7 +197,14 @@ export async function auditBrowser(options: RuntimeOptions): Promise<RuntimeRepo
   } finally {
     await browser.close()
   }
+  const expectationsSatisfied = (!expectations?.minActions || summary.actionsCompleted >= expectations.minActions)
+    && (expectations?.canariesRead ?? []).every(name => canariesRead.has(name))
+    && (expectations?.checkpoints ?? []).every(name => checkpointsReached.has(name))
+  if (expectations?.minActions && summary.actionsCompleted < expectations.minActions) diagnostics.add('EXPECTED_ACTIONS_MISSING')
+  for (const name of expectations?.canariesRead ?? []) if (!canariesRead.has(name)) diagnostics.add(`CANARY_NOT_READ:${name}`)
+  for (const name of expectations?.checkpoints ?? []) if (!checkpointsReached.has(name)) diagnostics.add(`CHECKPOINT_NOT_REACHED:${name}`)
   return { schemaVersion: 1, mode: 'runtime-canary', completion: completed && !diagnostics.size ? 'completed' : 'incomplete', browserVersion: browser.version(),
+    execution: {canariesRead: [...canariesRead].sort(), checkpointsReached: [...checkpointsReached].sort(), expectationsConfigured: !!expectations, expectationsSatisfied: expectations ? expectationsSatisfied : null},
     findings: [...findings.values()], diagnostics: [...diagnostics], summary,
     scope: 'Only supplied synthetic canaries, supported encodings, executed actions, and the bounded observation window were checked. External HTTP and all WebSocket upstream connections were blocked. No payloads, screenshots, HAR, or browser traces were retained.' }
 }

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-24T19:42:58.602Z",
+  "generatedAt": "2026-10-25T00:12:42.342Z",
   "provenance": "New executions of five local synthetic pages/flows in an installed Chromium; no wallet transaction was performed.",
   "deliveredSensitiveRequests": 0,
   "reports": [
@@ -8,6 +8,12 @@
       "mode": "runtime-canary",
       "completion": "completed",
       "browserVersion": "153.0.8010.12",
+      "execution": {
+        "canariesRead": [],
+        "checkpointsReached": [],
+        "expectationsConfigured": false,
+        "expectationsSatisfied": null
+      },
       "findings": [
         {
           "channel": "request",
@@ -28,7 +34,7 @@
           "canary": "viewing_key",
           "kind": "viewing-key",
           "encoding": "plain",
-          "destination": "http://127.0.0.1:63569"
+          "destination": "http://127.0.0.1:52784"
         }
       ],
       "diagnostics": [],
@@ -45,6 +51,12 @@
       "mode": "runtime-canary",
       "completion": "completed",
       "browserVersion": "153.0.8010.12",
+      "execution": {
+        "canariesRead": [],
+        "checkpointsReached": [],
+        "expectationsConfigured": false,
+        "expectationsSatisfied": null
+      },
       "findings": [],
       "diagnostics": [],
       "summary": {
@@ -60,6 +72,12 @@
       "mode": "runtime-canary",
       "completion": "completed",
       "browserVersion": "153.0.8010.12",
+      "execution": {
+        "canariesRead": [],
+        "checkpointsReached": [],
+        "expectationsConfigured": false,
+        "expectationsSatisfied": null
+      },
       "findings": [
         {
           "channel": "websocket",
@@ -83,13 +101,19 @@
       "mode": "runtime-canary",
       "completion": "completed",
       "browserVersion": "153.0.8010.12",
+      "execution": {
+        "canariesRead": [],
+        "checkpointsReached": [],
+        "expectationsConfigured": false,
+        "expectationsSatisfied": null
+      },
       "findings": [
         {
           "channel": "request",
           "canary": "address",
           "kind": "shielded-address",
           "encoding": "plain",
-          "destination": "http://127.0.0.1:63569"
+          "destination": "http://127.0.0.1:52784"
         }
       ],
       "diagnostics": [],
@@ -106,6 +130,12 @@
       "mode": "runtime-canary",
       "completion": "incomplete",
       "browserVersion": "153.0.8010.12",
+      "execution": {
+        "canariesRead": [],
+        "checkpointsReached": [],
+        "expectationsConfigured": false,
+        "expectationsSatisfied": null
+      },
       "findings": [],
       "diagnostics": [
         "REDIRECT_BLOCKED",

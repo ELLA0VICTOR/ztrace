@@ -41,6 +41,26 @@ Your controlled application must wire the supplied synthetic values into its tes
 
 Supported actions: `click`, `fill`, and `waitFor` with a selector. The API is also exported as `ztrace/runtime` for use from existing test suites. Runtime exit codes: 0 completed without observed canary exposure; 1 observed exposure; 2 incomplete/error. A zero result is not a privacy guarantee or evidence that all canaries were exercised.
 
+## Required execution checkpoints
+
+Declare expectations when a completed run must establish that a particular test flow was exercised:
+
+```json
+{
+  "expectations": {
+    "canariesRead": ["customer_address"],
+    "checkpoints": ["checkout_complete"],
+    "minActions": 1
+  }
+}
+```
+
+Merge this into the runtime specification above. At the end of the application's tested flow, await `window.__ZTRACE_CHECKPOINT__('checkout_complete')`. The harness injects that function alongside the synthetic test data. A typed integration is included in [the consumer application](../integration/checkout/src/globals.d.ts).
+
+For declared `canariesRead`, getters track access to matching synthetic values in `window.__ZTRACE_TEST_DATA__`, including nested fields. Signals are deduplicated and flushed before completion. Checkpoints are cooperative application instrumentation. A read establishes that the synthetic input was accessed; it does not establish that every subsequent branch or transformation was exercised.
+
+Missing reads, checkpoints, or minimum actions make the run incomplete. Reports retain only declared names in `execution`, including `expectationsConfigured` and `expectationsSatisfied`. Without configured expectations, the latter is `null`; completion describes the bounded observation run.
+
 ## Network and data handling
 
 - The initial app must use HTTP(S) loopback without URL credentials.

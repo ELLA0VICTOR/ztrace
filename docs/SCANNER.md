@@ -10,6 +10,8 @@ The Noir adapter recognizes the actual import binding of `getNoirWallet` from `@
 | `getAddresses` | `shielded` address and linked `transparent` address |
 | `getBalance`, `getMaxTransfer` | Result and its fields, conservatively treated as wallet financial data |
 | `getTransactionHistory` | Result and its fields, including private history/memos |
+| `getPublicKey` | Linked `pubkey`, `address`, and `originAddress` fields |
+| `checkLendingMcaAccount` | Linked `mcaId` and `publicKey` fields |
 
 Additional sources now include `window.noirwallet.zcash`, imported `useWallet` from the RHEA adapter root or `/react` entry point, and constructed `NoirZcashWalletAdapter` clients. Hook fields `shieldedAddress`, `transparentAddress`, `accounts`, and `balance` carry sensitivity; `isConnected` does not. The `accountsChanged` callback is modeled as potentially receiving account addresses. These are syntactic/API models, not a claim that every extension version or transport implements the same capabilities.
 
@@ -27,7 +29,7 @@ Finite loops are expanded up to 128 iterations; symbolic collections use bounded
 
 Analysis is conservative: both unknown conditional branches are considered, and array callback elements can be combined. Constant branches can be pruned, but general reachability is not proved. Direct, known JSON stringify/parse round trips retain fields; arbitrary serialization or library transformations can still lose precision.
 
-Inheritance, accessors, recursive expansion, dynamic code, complex framework lifecycles, dynamic module loading, switch statements, and arbitrary library internals are not fully modeled. Detected unsupported syntax, unresolved local imports, unknown calls receiving sensitive inputs/callbacks, and exhausted budgets produce review diagnostics. Dynamic console methods are treated as possible supported loggers and also require review. Only selected unsupported cases can be detected. An unrecognized source may produce no diagnostics at all: coverage always remains limited.
+Inheritance, accessors, recursive expansion, dynamic code, complex framework lifecycles, dynamic module loading, and arbitrary library internals are not fully modeled. Detected unsupported syntax, unresolved local imports, unknown calls receiving sensitive inputs/callbacks, and exhausted budgets produce review diagnostics. Dynamic console methods are treated as possible supported loggers and also require review. Only selected unsupported cases can be detected. An unrecognized source may produce no diagnostics at all: coverage always remains limited.
 
 This is not a general JavaScript runtime or a complete taint-analysis system. It does not analyze implicit control-flow disclosure, timing, address reuse, network metadata, or cryptographic soundness.
 
@@ -77,3 +79,36 @@ Prefer `disclosurePolicies`: approvals match a static HTTPS origin, exact pathna
 CLI exclusions use Node's `path.matchesGlob` syntax. Default skipped directories: `node_modules`, `.git`, `.next`, `.nuxt`, `.turbo`, `.vercel`, `dist`, `dist-tools`, `build`, `coverage`. Declaration files and directory-entry symlinks are skipped. `.gitignore` rules are not currently interpreted; use explicit `exclude` patterns. The CLI reads at most 1000 files, 1 MB per file, and 20 MB total; size/count skips make coverage incomplete. The default analysis budget is 100000 steps.
 
 No broad suppress-comment or automatic source-code editing mechanism is implemented. Review and fix findings manually.
+
+## Coverage inventory and required sources
+
+Every new report includes `modelCoverage`: imported package identifiers, available model roles, recognized sensitive categories, and whether configured source requirements were met. Import classifications are `built-in`, `configured`, `local`, or `unmodeled`. They describe model availability; the recognized `sourceKinds` list describes source categories actually encountered by the analysis. URL import credentials and query strings are omitted from the inventory.
+
+The CLI requires at least one recognized sensitive source by default. Keep that intent explicit in CI:
+
+```sh
+node dist-tools/packages/cli/src/cli.js scan ./app --require-sources
+```
+
+Or specify the categories your integration expects in `ztrace.config.json`:
+
+```json
+{
+  "requireSources": true,
+  "requiredSourceKinds": ["shielded-address", "wallet-balance", "wallet-history"]
+}
+```
+
+An unmet requirement produces `SOURCE_REQUIREMENT_UNMET`, incomplete coverage, and CLI exit code 2. This catches a missing wallet model even when no disclosure was detected. Requirements describe static source recognition; runtime execution expectations are configured separately.
+
+For a deliberate scan of source-free utilities, use `--allow-no-sources` or set `requireSources` to `false` in the JSON policy. CLI flags override the policy. The reusable `scanSources` API enables requirements through its options.
+
+## Additional application constructs
+
+Switch analysis follows strict literal selection, default search order, fall-through, breaks, returns, and enclosing-loop continues. Unknown selectors join possible entry paths; computed cases and ambiguous control transfers can require review. Switches are limited to 128 clauses.
+
+Promise `catch`/`finally`, array `find`/`findIndex`/`some`/`every`, mutable array `push`, numeric conversions, Date formatting, regular-expression transformations, and Map containers preserve supported sensitive flows. Map models include construction, get/set, entries/keys/values, clear/delete, and forEach. Ambiguous object aliases from multiple map entries produce review diagnostics. Symbolic-loop array growth is widened to a combined element state so data categories can converge within the loop bound.
+
+Nested callback analysis retains observed lexical contexts, including React state setters. Closure expansion has an eight-context bound for entry analysis, and additional contexts are reported for review. These are bounded possible-flow models.
+
+Explicit thrown values propagate into catch bindings, including throws from local function calls and nested catches. Standard Error-family message, stack, and cause fields preserve their respective data flows. Object enumeration and the SDK's pure signing-verification/address-conversion helpers also preserve supported sensitivity. Complex exception control transfers and asynchronous scheduling remain conservative approximations.

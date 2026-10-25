@@ -1,8 +1,8 @@
 import ts from 'typescript'
-import { isAnalyticsReference, kindLabels, loggingMethods } from './rules.js'
+import { isAnalyticsReference, kindLabels, loggingMethods, sensitiveKinds } from './rules.js'
 import { inspectViewingCapability } from '../../protocol/src/unified.js'
 import type {
-  Diagnostic, Finding, Location, ScanOptions, ScanReport, SensitiveKind, SourceFile, TraceStep,
+  Diagnostic, Finding, Location, ModelCoverage, ScanOptions, ScanReport, SensitiveKind, SourceFile, TraceStep,
 } from './types.js'
 
 interface Flow {
@@ -64,6 +64,7 @@ function mergeValues(values: Value[], seen: Set<Map<string, Value>>): Value {
   if (values.some(value => seen.has(value.fields))) return { ...empty(), flows: uniqueFlows(values.flatMap(value => allFlows(value))) }
   values.forEach(value => seen.add(value.fields))
   const result = empty()
+  if (values.some(value => value.array)) result.array = true
   result.flows = uniqueFlows(values.flatMap(value => value.flows.map(flow => ({ ...flow, trace: [...flow.trace, ...(value.trail ?? [])] }))))
   const keys = new Set(values.flatMap(value => [...value.fields.keys()]))
   for (const key of keys) result.fields.set(key, mergeValues(values.map(value => {
@@ -105,6 +106,15 @@ function fork(env: Environment): Environment {
 
 /** Static source analysis only. No scanned module or configuration code is executed. */
 export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): ScanReport {
+  if (!Array.isArray(inputs) || inputs.length > 1000 || inputs.some(input => !input || typeof input.path !== 'string' || !input.path || input.path.length > 4096 || typeof input.content !== 'string')) throw new Error('Provide at most 1000 source files with valid paths and text.')
+  let inputBytes = 0
+  for (const input of inputs) {
+    const size = new TextEncoder().encode(input.content).length
+    inputBytes += size
+    if (size > 1_000_000 || inputBytes > 20_000_000) throw new Error('Source input exceeds the analysis size limit.')
+  }
+  if (options.requireSources !== undefined && typeof options.requireSources !== 'boolean') throw new Error('requireSources must be a boolean.')
+  if (options.requiredSourceKinds !== undefined && (!Array.isArray(options.requiredSourceKinds) || !options.requiredSourceKinds.every(kind => sensitiveKinds.includes(kind)))) throw new Error('Invalid required source categories.')
   const files = new Map(inputs.map(input => [normalize(input.path), input.content]))
   if (files.size !== inputs.length) throw new Error('Source paths must be unique after normalization.')
   const displayPaths = new Map(inputs.map(input => [normalize(input.path), input.path.replaceAll('\\', '/')]))
@@ -149,9 +159,16 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
   const findings = new Map<string, Finding>()
   const diagnostics = new Map<string, Diagnostic>()
   const sources = new Set<string>()
+  const observedKinds = new Set<SensitiveKind>()
+  const importInventory = new Map<string, ModelCoverage['imports'][number]>()
   const functions: FunctionNode[] = []
+  const expandedFunctions = new Set<FunctionNode>()
+  const closureContexts = new Map<FunctionNode, Set<Environment>>()
   const thisStack: Value[] = []
+  const exceptionFrames: Value[][] = []
   let loopDepth = 0
+  let symbolicLoopDepth = 0
+  let switchDepth = 0
   let steps = 0
   const maxSteps = options.maxSteps ?? 100_000
   if (!Number.isInteger(maxSteps) || maxSteps < 1 || maxSteps > 1_000_000) throw new Error('maxSteps must be an integer between 1 and 1000000.')
@@ -168,6 +185,24 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
     diagnostics.set(`${code}:${at.file}:${at.line}:${at.column}`, { ...at, code, message })
   }
 
+  function recordImport(name: string, node: ts.Node, local: boolean): void {
+    const customSource = options.sources?.some(rule => rule.module === name)
+    const customSink = options.sinks?.some(rule => rule.module === name)
+    const builtSource = ['@noir-wallet/sdk', '@rhea-finance/zcash-wallet-adapter', '@rhea-finance/zcash-wallet-adapter/react', '@rhea-finance/zcash-wallet-adapter/walletconnect', '@ledgerhq/zcash-utils'].includes(name)
+    const builtSink = ['axios', 'posthog-js', '@segment/analytics-next', '@sentry/browser', '@sentry/react', '@sentry/node', 'pino', 'winston'].includes(name)
+    const transform = ['react', '@noir-wallet/sdk', '@noir-wallet/sdk/chains/zcash'].includes(name)
+    // URL imports may contain credentials or query tokens. Inventory package identifiers only.
+    const identifier = /^[@\w./-]{1,160}$/u.test(name) ? name : '[non-package-specifier]'
+    const item: ModelCoverage['imports'][number] = importInventory.get(identifier) ?? {module: identifier, model: customSource || customSink ? 'configured' : builtSource || builtSink || transform ? 'built-in' : local ? 'local' : 'unmodeled', roles: [], locations: []}
+    if (customSource || builtSource) item.roles.push('source')
+    if (customSink || builtSink) item.roles.push('sink')
+    if (transform) item.roles.push('transform')
+    item.roles = [...new Set(item.roles)]
+    const at = location(node)
+    if (!item.locations.some(other => other.file === at.file && other.line === at.line && other.column === at.column)) item.locations.push(at)
+    importInventory.set(identifier, item)
+  }
+
   function tick(node: ts.Node): void {
     if (++steps > maxSteps) {
       diagnostic(node, 'ANALYSIS_LIMIT', 'Analysis stopped at the configured step limit. Some code was not checked.')
@@ -175,10 +210,20 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
     }
   }
 
+  function functionValue(fn: FunctionNode, env: Environment): Value {
+    if (expandedFunctions.has(fn)) return {...empty(), fn, closure: env}
+    const contexts = closureContexts.get(fn) ?? new Set<Environment>()
+    if (contexts.size < 8) contexts.add(env)
+    else if (!contexts.has(env)) diagnostic(fn, 'CLOSURE_CONTEXT_LIMIT', 'Additional closure contexts require review.')
+    closureContexts.set(fn, contexts)
+    return {...empty(), fn, closure: env}
+  }
+
   function source(node: ts.Node, kind: SensitiveKind, label: string): Value {
     const at = location(node)
     const id = `${kind}:${at.file}:${at.line}:${at.column}`
     sources.add(id)
+    observedKinds.add(kind)
     return { ...empty(), flows: [{ id, kind, trace: [{ ...at, kind: 'source', label }] }] }
   }
 
@@ -231,7 +276,7 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
     resolving.add(key)
     let value = empty()
     for (const declaration of key.declarations ?? []) {
-      if (isFunction(declaration)) value = { ...empty(), fn: declaration, closure: env }
+      if (isFunction(declaration)) value = functionValue(declaration, env)
       else if (ts.isClassDeclaration(declaration)) value = { ...empty(), classNode: declaration }
       else if (ts.isVariableDeclaration(declaration) && declaration.initializer) value = evaluate(declaration.initializer, env)
     }
@@ -243,9 +288,10 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
   function property(value: Value, key: string): Value {
     if (value.state) return property(value.state.value, key)
     if (value.alternatives) return merge(...value.alternatives.map(alternative => property(alternative, key)))
-    if (key === 'length' && value.array && !value.flows.length && !value.fields.has('*')) return { ...empty(), literal: [...value.fields.keys()].filter(field => /^\d+$/u.test(field)).length }
+    if (value.reference === 'builtin:map' && key === 'size') return {...empty(), flows: value.flows}
     const child = value.fields.get(key)
     if (child) return { ...child, trail: [...(child.trail ?? []), ...(value.trail ?? [])] }
+    if (key === 'length' && value.array && !value.flows.length && !value.fields.has('*')) return { ...empty(), literal: [...value.fields.keys()].filter(field => /^\d+$/u.test(field)).length }
     const wildcard = value.fields.get('*')
     if (wildcard && key !== 'length') return { ...wildcard, trail: [...(wildcard.trail ?? []), ...(value.trail ?? [])] }
     if (value.reference === 'noir:root' && key === 'zcash') return ref('noir:wallet')
@@ -293,6 +339,8 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
       return addresses
     }
     if (['getBalance', 'getMaxTransfer'].includes(method)) return source(node, 'wallet-balance', `Noir ${method}(): private wallet balance`)
+    if (method === 'getPublicKey') return {...empty(), fields: new Map(['pubkey', 'address', 'originAddress'].map(field => [field, source(node, 'wallet-account', 'Noir signing identity: linked account information')]))}
+    if (method === 'checkLendingMcaAccount') return {...empty(), fields: new Map(['mcaId', 'publicKey'].map(field => [field, source(node, 'wallet-account', 'Noir lending identity: linked account information')]))}
     if (method === 'getTransactionHistory') return source(node, 'wallet-history', 'Noir getTransactionHistory(): private history and memos')
     return undefined
   }
@@ -347,6 +395,7 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
   }
 
   function invoke(fn: FunctionNode, args: Value[], caller: Environment, node: ts.Node, closure?: Environment, instance?: Value): Value {
+    expandedFunctions.add(fn)
     if (activeFunctions.has(fn)) {
       diagnostic(node, 'RECURSION', 'A recursive call was not expanded. Its inputs remain sensitive; review this path.')
       return merge(...args)
@@ -456,8 +505,8 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
       if (result) return result
       if (['disconnect', 'sendTransaction', 'shieldFunds', 'signMessage', 'getPublicKey'].includes(method)) return empty()
       if (method === 'signAndSendTransaction') return empty()
-      if (method === 'on' && args[0]?.literal === 'accountsChanged' && args[1]?.fn) {
-        invoke(args[1].fn, [noirResult('getAddresses', node)!], env, node, args[1].closure)
+      if (method === 'on' && ['accountsChanged', 'chainChanged', 'connect', 'disconnect'].includes(String(args[0]?.literal)) && args[1]?.fn) {
+        invoke(args[1].fn, [args[0]?.literal === 'accountsChanged' ? noirResult('getAddresses', node)! : empty()], env, node, args[1].closure)
         return empty()
       }
       diagnostic(node, 'UNMODELED_WALLET_METHOD', 'This wallet method has no privacy model in this release. Review its returned data.')
@@ -489,13 +538,84 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
     }
     if (reference === 'global:Promise.all') return args[0] ?? empty()
     if (reference === 'global:Promise.resolve') return args[0] ?? empty()
+    if (/^global:(?:Error|TypeError|RangeError|ReferenceError|SyntaxError|URIError|EvalError)$/u.test(reference)) return errorValue(args)
+    if (['import:@noir-wallet/sdk:verifyMessageSignature', 'import:@noir-wallet/sdk:publicKeyToAddress', 'import:@noir-wallet/sdk/chains/zcash:verifyMessageSignature', 'import:@noir-wallet/sdk/chains/zcash:publicKeyToAddress'].includes(reference)) return {...empty(), flows: uniqueFlows(args.flatMap(value => allFlows(value)))}
+    if (['global:Object.entries', 'global:Object.keys', 'global:Object.values'].includes(reference)) {
+      const object = args[0] ?? empty()
+      const items = [...object.fields].map(([key, value]) => reference === 'global:Object.keys' ? {...empty(), literal: key}
+        : reference === 'global:Object.values' ? value
+          : {...empty(), array: true, fields: new Map([['0', {...empty(), literal: key}], ['1', value]])})
+      const fields = new Map(items.map((item, index) => [String(index), item]))
+      if (object.flows.length) fields.set('*', reference === 'global:Object.entries' ? {...empty(), array: true, fields: new Map([['0', {...empty(), flows: object.flows}], ['1', {...empty(), flows: object.flows}]])} : {...empty(), flows: object.flows})
+      return {...empty(), array: true, fields}
+    }
+    if (['global:parseFloat', 'global:parseInt', 'global:Number', 'global:Boolean'].includes(reference)) return {...empty(), flows: uniqueFlows(args.flatMap(value => allFlows(value)))}
+    if (reference === 'global:Array.from') {
+      const input = args[0] ?? empty()
+      if (!args[1]?.fn) return input
+      const element = merge(...[...input.fields.values()])
+      return {...empty(), array: true, fields: new Map([['*', invoke(args[1].fn, [element], env, node, args[1].closure)]])}
+    }
+    if (reference.startsWith('builtin:map.') && receiver) {
+      const method = reference.slice('builtin:map.'.length)
+      const entries = [...receiver.fields.entries()].filter(([key]) => key.startsWith('entry:')).map(([, entry]) => entry)
+      const key = args[0]?.literal !== undefined ? `entry:${typeof args[0].literal}:${String(args[0].literal)}` : 'entry:*'
+      if (method === 'set') {
+        const entry = {...empty(), fields: new Map([['key', args[0] ?? empty()], ['value', args[1] ?? empty()]])}
+        receiver.fields.set(key, key === 'entry:*' && receiver.fields.has(key) ? merge(receiver.fields.get(key)!, entry) : entry)
+        return receiver
+      }
+      if (method === 'get') {
+        const values = (key === 'entry:*' ? entries : [receiver.fields.get(key), receiver.fields.get('entry:*')].filter((value): value is Value => !!value)).map(entry => entry.fields.get('value') ?? empty())
+        if (values.length === 1) return {...values[0]!, flows: uniqueFlows([...values[0]!.flows, ...receiver.flows])}
+        if (!values.length) return receiver.flows.length ? {...empty(), flows: receiver.flows} : ref('global:undefined')
+        if (values.some(value => value.fields.size)) diagnostic(node, 'MAP_ALIAS_REVIEW', 'Several map entries may be returned; review mutations through this ambiguous alias.')
+        return merge(...values, {...empty(), flows: receiver.flows})
+      }
+      if (method === 'clear') {receiver.fields.clear(); return empty()}
+      if (method === 'delete') {if (key !== 'entry:*') receiver.fields.delete(key); return {...empty(), flows: uniqueFlows([...receiver.flows, ...allFlows(args[0] ?? empty()), ...entries.flatMap(entry => allFlows(entry.fields.get('key') ?? empty()))])}}
+      if (method === 'has') return {...empty(), flows: uniqueFlows([...receiver.flows, ...allFlows(args[0] ?? empty()), ...entries.flatMap(entry => allFlows(entry.fields.get('key') ?? empty()))])}
+      if (['entries', 'values', 'keys'].includes(method)) return {...empty(), array: true, flows: receiver.flows, fields: new Map(entries.map((entry, index) => [String(index), method === 'entries' ? {...empty(), array: true, fields: new Map([['0', entry.fields.get('key') ?? empty()], ['1', entry.fields.get('value') ?? empty()]])} : entry.fields.get(method === 'keys' ? 'key' : 'value') ?? empty()]))}
+      if (method === 'forEach' && args[0]?.fn) {
+        for (const entry of entries) invoke(args[0].fn, [entry.fields.get('value') ?? empty(), entry.fields.get('key') ?? empty(), receiver], env, node, args[0].closure)
+        if (receiver.flows.length) invoke(args[0].fn, [{...empty(), flows: receiver.flows}, {...empty(), flows: receiver.flows}, receiver], env, node, args[0].closure)
+        return empty()
+      }
+    }
+    if (['global:window.addEventListener', 'global:globalThis.addEventListener', 'global:addEventListener'].includes(reference)) {
+      if (args[1]?.fn) invoke(args[1].fn, [empty()], env, node, args[1].closure)
+      else if (args[1] && allFlows(args[1]).length) diagnostic(node, 'EVENT_HANDLER_REVIEW', 'A dynamic event handler needs review.')
+      return empty()
+    }
+    if (['global:window.removeEventListener', 'global:globalThis.removeEventListener', 'global:removeEventListener'].includes(reference)) return empty()
+    if (/^builtin:(?:date|regexp)\./u.test(reference)) return {...empty(), flows: uniqueFlows([...allFlows(receiver ?? empty()), ...args.flatMap(value => allFlows(value))])}
     if (ts.isPropertyAccessExpression(node.expression)) {
       const method = node.expression.name.text
       const base = receiver ?? empty()
-      if (['then', 'map', 'forEach', 'filter', 'flatMap'].includes(method) && args[0]?.fn) {
+      if (method === 'push' && base.array) {
+        if (symbolicLoopDepth) {
+          const values = [...base.fields.values(), ...args]
+          base.fields.clear()
+          base.fields.set('*', merge(...values))
+          return empty()
+        }
+        let index = [...base.fields.keys()].filter(key => /^\d+$/u.test(key)).reduce((largest, key) => Math.max(largest, Number(key) + 1), 0)
+        for (const value of args) {
+          if (base.fields.has('*')) base.fields.set('*', merge(base.fields.get('*')!, value))
+          else base.fields.set(String(index++), value)
+        }
+        return base.fields.has('*') ? empty() : {...empty(), literal: index}
+      }
+      if (['catch', 'finally'].includes(method) && args[0]?.fn) {
+        const output = invoke(args[0].fn, method === 'catch' ? [base] : [], env, node, args[0].closure)
+        return method === 'finally' ? base : merge(base, output)
+      }
+      if (['then', 'map', 'forEach', 'filter', 'flatMap', 'find', 'findIndex', 'some', 'every'].includes(method) && args[0]?.fn) {
         const elements = [...base.fields.entries()].filter(([key]) => /^\d+$/u.test(key)).map(([, value]) => value)
-        const input = elements.length ? merge(...elements) : { ...empty(), flows: allFlows(base) }
+        const input = method === 'then' ? base : elements.length ? merge(...elements, ...(base.fields.has('*') ? [base.fields.get('*')!] : [])) : base.fields.get('*') ?? { ...empty(), flows: allFlows(base) }
         const output = invoke(args[0].fn, [input], env, node, args[0].closure)
+        if (method === 'find') return input
+        if (['findIndex', 'some', 'every'].includes(method)) return {...empty(), flows: uniqueFlows([...allFlows(input), ...allFlows(output)])}
         return method === 'filter' ? base : method === 'forEach' ? empty() : method === 'then' ? output : { ...empty(), array: true, fields: new Map([['*', output]]) }
       }
       if (['toString', 'toFixed', 'slice', 'substring', 'replace', 'replaceAll', 'join', 'trim', 'toLowerCase', 'toUpperCase'].includes(method)) {
@@ -521,7 +641,9 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
     if (node.kind === ts.SyntaxKind.TrueKeyword || node.kind === ts.SyntaxKind.FalseKeyword) return { ...empty(), literal: node.kind === ts.SyntaxKind.TrueKeyword }
     if (node.kind === ts.SyntaxKind.NullKeyword) return { ...empty(), literal: null }
     if (ts.isAwaitExpression(node) || ts.isParenthesizedExpression(node) || ts.isAsExpression(node) || ts.isTypeAssertionExpression(node) || ts.isNonNullExpression(node) || ts.isSatisfiesExpression(node)) return evaluate(node.expression, env)
-    if (ts.isArrowFunction(node) || ts.isFunctionExpression(node)) return { ...empty(), fn: node, closure: env }
+    if (ts.isArrowFunction(node) || ts.isFunctionExpression(node)) return functionValue(node, env)
+    if (ts.isRegularExpressionLiteral(node)) return ref('builtin:regexp')
+    if (ts.isMetaProperty(node) && node.keywordToken === ts.SyntaxKind.ImportKeyword) return ref('meta:import')
     if (ts.isCallExpression(node)) return call(node, env)
     if (ts.isPropertyAccessExpression(node)) {
       const base = evaluate(node.expression, env)
@@ -663,6 +785,19 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
       if (/^import:@rhea-finance\/zcash-wallet-adapter(?:\/walletconnect)?:[A-Za-z]*ZcashWalletAdapter$/u.test(target.reference ?? '')) return ref('noir:wallet')
       if (target.reference === 'global:WebSocket') return ref('transport:websocket')
       if (target.reference === 'global:XMLHttpRequest') return ref('transport:xhr')
+      if (/^global:(?:Error|TypeError|RangeError|ReferenceError|SyntaxError|URIError|EvalError)$/u.test(target.reference ?? '')) return errorValue(args)
+      if (target.reference === 'global:Date' || target.reference === 'global:RegExp') return {...ref(target.reference === 'global:Date' ? 'builtin:date' : 'builtin:regexp'), flows: uniqueFlows(args.flatMap(value => allFlows(value)))}
+      if (target.reference === 'global:Map') {
+        const result = ref('builtin:map')
+        result.flows = args[0]?.flows ?? []
+        for (const entry of args[0]?.fields.values() ?? []) {
+          const key = entry.fields.get('0') ?? empty(), value = entry.fields.get('1') ?? empty()
+          const name = key.literal !== undefined ? `entry:${typeof key.literal}:${String(key.literal)}` : 'entry:*'
+          const item = {...empty(), fields: new Map([['key', key], ['value', value]])}
+          result.fields.set(name, name === 'entry:*' && result.fields.has(name) ? merge(result.fields.get(name)!, item) : item)
+        }
+        return result
+      }
       if (args.some(value => allFlows(value).length)) diagnostic(node, 'UNMODELED_CONSTRUCTOR', 'A constructor receives sensitive data. Its side effects need manual review.')
       return { ...empty(), flows: uniqueFlows(args.flatMap(value => allFlows(value))) }
     }
@@ -673,8 +808,12 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
 
   function truth(value: Value): boolean | undefined {
     if (value.literal !== undefined) return Boolean(value.literal)
-    if (value.reference === 'global:undefined') return false
+    if (value.reference === 'global:undefined' && !value.fields.size && !value.array && !allFlows(value).length) return false
     return undefined
+  }
+
+  function errorValue(args: Value[]): Value {
+    return {...empty(), fields: new Map([['message', args[0] ?? empty()], ['stack', args[0] ?? empty()], ['cause', args[1]?.fields.get('cause') ?? empty()]])}
   }
 
   function jsx(node: ts.JsxElement | ts.JsxSelfClosingElement | ts.JsxFragment, env: Environment): Value {
@@ -744,9 +883,10 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
 
   function loop(node: ts.ForOfStatement | ts.ForInStatement | ts.ForStatement | ts.WhileStatement | ts.DoStatement, env: Environment): Execution {
     const results: Value[] = []
-    const runBody = (): Execution => {
+    const runBody = (symbolic = false): Execution => {
       loopDepth++
-      try { return statements([node.statement], env) } finally { loopDepth-- }
+      if (symbolic) symbolicLoopDepth++
+      try { return statements([node.statement], env) } finally { loopDepth--; if (symbolic) symbolicLoopDepth-- }
     }
     if (ts.isForOfStatement(node) || ts.isForInStatement(node)) {
       const collection = evaluate(node.expression, env)
@@ -758,7 +898,7 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
       for (const item of items.slice(0, 128)) {
         if (ts.isVariableDeclarationList(node.initializer)) for (const declaration of node.initializer.declarations) bind(declaration.name, item, env, declaration)
         else assign(node.initializer, item, env, node)
-        const body = runBody()
+        const body = runBody(!known)
         results.push(body.value)
         if (body.returned) {
           if (!known) { env.clear(); for (const [key, value] of before) env.set(key, value) }
@@ -773,7 +913,7 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
         for (let iteration = 0; iteration < 16; iteration++) {
           const previous = stateSignature(env)
           const beforeIteration = fork(env)
-          const body = runBody()
+          const body = runBody(true)
           results.push(body.value)
           joinEnvironments(env, beforeIteration, fork(env))
           if (stateSignature(env) === previous) break
@@ -793,7 +933,7 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
       if (decision === false) break
       const before = fork(env)
       const previous = stateSignature(env)
-      const body = runBody()
+      const body = runBody(decision === undefined)
       results.push(body.value)
       if (body.returned) {
         if (decision === undefined) { env.clear(); for (const [key, value] of before) env.set(key, value) }
@@ -818,6 +958,58 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
       return base + '{' + [...value.fields].sort(([a], [b]) => a.localeCompare(b)).map(([field, child]) => `${field}:${signature(child, next)}`).join('|') + '}'
     }
     return [...env].map(([key, value]) => `${key.getName()}:${signature(value)}`).sort().join('|')
+  }
+
+  function switchStatement(node: ts.SwitchStatement, env: Environment): Execution {
+    const selector = evaluate(node.expression, env)
+    const clauses = node.caseBlock.clauses
+    if (clauses.length > 128) {
+      diagnostic(node, 'SWITCH_LIMIT', 'Switch exceeds the 128-clause analysis bound.')
+      return {value: empty(), returned: false}
+    }
+    const searching = fork(env)
+    const entries: Array<{index: number; state: Environment}> = []
+    let fallback = -1, guaranteedMatch = false
+    for (let index = 0; index < clauses.length; index++) {
+      const clause = clauses[index]!
+      tick(clause)
+      if (ts.isDefaultClause(clause)) {fallback = index; continue}
+      const candidate = evaluate(clause.expression, searching)
+      const known = selector.literal !== undefined && candidate.literal !== undefined
+      if (known && selector.literal !== candidate.literal) continue
+      entries.push({index, state: fork(searching)})
+      if (known) {guaranteedMatch = true; break}
+      if (candidate.literal === undefined) diagnostic(clause, 'SWITCH_CASE_REVIEW', 'A computed case expression requires conservative entry-path analysis.')
+    }
+    if (!guaranteedMatch) entries.push({index: fallback, state: fork(searching)})
+    const paths: Array<{state: Environment; result: Execution}> = []
+    switchDepth++
+    try {
+      for (const entry of entries) {
+        const returned: Value[] = []
+        let result: Execution = {value: empty(), returned: false}
+        if (entry.index >= 0) for (let index = entry.index; index < clauses.length; index++) {
+          result = statements(clauses[index]!.statements, entry.state)
+          returned.push(result.value)
+          if (result.returned || result.control) break
+        }
+        paths.push({state: entry.state, result: {...result, value: merge(...returned)}})
+      }
+    } finally {switchDepth--}
+    const continuing = paths.filter(path => !path.result.returned)
+    if (continuing.length) {
+      let joined = continuing[0]!.state
+      for (const path of continuing.slice(1)) {
+        const next: Environment = new Map()
+        joinEnvironments(next, joined, path.state)
+        joined = next
+      }
+      for (const [key, value] of joined) env.set(key, value)
+    }
+    const controls = continuing.map(path => path.result.control === 'break' ? undefined : path.result.control)
+    const control = controls.length && controls.every(value => value === 'continue') ? 'continue' as const : undefined
+    if (controls.some(value => value === 'continue') && !control) diagnostic(node, 'CONTROL_FLOW_REVIEW', 'A possible continue leaves this switch; review enclosing loop reachability.')
+    return {value: merge(...paths.map(path => path.result.value)), returned: paths.length > 0 && continuing.length === 0, control}
   }
 
   function statements(nodes: ts.NodeArray<ts.Statement> | readonly ts.Statement[], env: Environment): Execution {
@@ -851,30 +1043,41 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
         if (first.returned && second.returned) return { value: merge(...returns), returned: true }
         if (first.control && first.control === second.control) return { value: merge(...returns), returned: false, control: first.control }
         if (first.control || second.control) diagnostic(node, 'CONTROL_FLOW_REVIEW', 'A conditional break or continue was approximated. Review loop reachability.')
+      } else if (ts.isSwitchStatement(node)) {
+        const result = switchStatement(node, env)
+        returns.push(result.value)
+        if (result.returned || result.control) return {...result, value: merge(...returns)}
       } else if (ts.isForOfStatement(node) || ts.isForInStatement(node) || ts.isForStatement(node) || ts.isWhileStatement(node) || ts.isDoStatement(node)) {
         const result = loop(node, env)
         returns.push(result.value)
         if (result.returned) return { value: merge(...returns), returned: true }
       } else if (ts.isBreakStatement(node) || ts.isContinueStatement(node)) {
-        if (node.label || !loopDepth) diagnostic(node, 'CONTROL_FLOW_REVIEW', 'Labeled or non-loop control flow needs review.')
+        if (node.label || (!loopDepth && (!switchDepth || ts.isContinueStatement(node)))) diagnostic(node, 'CONTROL_FLOW_REVIEW', 'Labeled or out-of-context control flow needs review.')
         return { value: merge(...returns), returned: false, control: ts.isBreakStatement(node) ? 'break' : 'continue' }
       } else if (ts.isClassDeclaration(node) && node.name) {
         const key = symbol(node.name)
         if (key) env.set(key, { ...empty(), classNode: node })
       } else if (ts.isFunctionDeclaration(node) && node.name) {
         const key = symbol(node.name)
-        if (key) env.set(key, { ...empty(), fn: node, closure: env })
+        if (key) env.set(key, functionValue(node, env))
       } else if (ts.isTryStatement(node)) {
         const bodyEnv = fork(env), catchEnv = fork(env)
-        const body = statements(node.tryBlock.statements, bodyEnv)
+        const thrown: Value[] = []
+        exceptionFrames.push(thrown)
+        let body: Execution
+        try {body = statements(node.tryBlock.statements, bodyEnv)} finally {exceptionFrames.pop()}
+        if (node.catchClause?.variableDeclaration) bind(node.catchClause.variableDeclaration.name, merge(...thrown), catchEnv, node.catchClause.variableDeclaration)
+        if (!node.catchClause) exceptionFrames.at(-1)?.push(...thrown)
         const caught = node.catchClause ? statements(node.catchClause.block.statements, catchEnv) : { value: empty(), returned: false }
         joinEnvironments(env, bodyEnv, catchEnv)
         returns.push(body.value, caught.value)
         if (node.finallyBlock) returns.push(statements(node.finallyBlock.statements, env).value)
+      } else if (ts.isExportAssignment(node) && !node.isExportEquals) {
+        evaluate(node.expression, env)
       } else if (ts.isImportDeclaration(node) || ts.isExportDeclaration(node) || ts.isInterfaceDeclaration(node) || ts.isTypeAliasDeclaration(node) || ts.isEmptyStatement(node)) {
         // Type declarations and imports have no executable effects here.
       } else if (ts.isThrowStatement(node)) {
-        if (node.expression) evaluate(node.expression, env)
+        if (node.expression) exceptionFrames.at(-1)?.push(evaluate(node.expression, env))
         return { value: merge(...returns), returned: true }
       } else {
         diagnostic(node, 'UNMODELED_STATEMENT', `Statement ${ts.SyntaxKind[node.kind]} is not modeled. Its contents require review.`)
@@ -888,6 +1091,7 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
       if ((ts.isImportDeclaration(statement) || ts.isExportDeclaration(statement)) && statement.moduleSpecifier && ts.isStringLiteral(statement.moduleSpecifier)) {
         const name = statement.moduleSpecifier.text
         const local = name.startsWith('.') || Object.keys(options.moduleAliases ?? {}).some(pattern => pattern.includes('*') ? name.startsWith(pattern.split('*')[0]!) : name === pattern)
+        recordImport(name, statement, local)
         if (local && !/\.(?:css|svg|png|jpg|json)$/u.test(name) && !checker.getSymbolAtLocation(statement.moduleSpecifier)) diagnostic(statement, 'UNRESOLVED_IMPORT', 'A local JavaScript or TypeScript import could not be resolved within the scanned files. Include that module in the scan.')
       }
     }
@@ -898,19 +1102,35 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
         code: 'PARSE_ERROR', message: 'This file contains a syntax error. Repair it before relying on its analysis.' }
       diagnostics.set(`parse:${item.file}:${item.line}:${item.column}`, item)
     }
-    const collect = (node: ts.Node): void => { if (isFunction(node) && node.body) functions.push(node); ts.forEachChild(node, collect) }
-    collect(file)
+    const pending: ts.Node[] = [file]
+    while (pending.length) {
+      const node = pending.pop()!
+      if (isFunction(node) && node.body) functions.push(node)
+      if (ts.isCallExpression(node) && ts.isIdentifier(node.expression) && node.expression.text === 'require' && node.arguments.length === 1 && ts.isStringLiteral(node.arguments[0]!)) {
+        const binding = checker.getSymbolAtLocation(node.expression)
+        if (!binding?.declarations?.length) recordImport(node.arguments[0]!.text, node, node.arguments[0]!.text.startsWith('.'))
+      }
+      const children: ts.Node[] = []
+      ts.forEachChild(node, child => {children.push(child)})
+      pending.push(...children.reverse())
+    }
   }
   try {
     for (const file of program.getSourceFiles()) statements(file.statements, environment)
-    for (const fn of functions) invoke(fn, [], environment, fn, environment)
+    for (const fn of functions) if (!expandedFunctions.has(fn)) {
+      for (const closure of closureContexts.get(fn) ?? [environment]) invoke(fn, [], environment, fn, closure)
+    }
   } catch (error) {
     if (error !== budgetExceeded) throw error
   }
   const orderedFindings = [...findings.values()].sort((a, b) => a.sink.file.localeCompare(b.sink.file) || a.sink.line - b.sink.line || a.id.localeCompare(b.id))
+  const missingKinds = (options.requiredSourceKinds ?? []).filter(kind => !observedKinds.has(kind))
+  const requirementsSatisfied = (!options.requireSources || sources.size > 0) && missingKinds.length === 0
+  if (!requirementsSatisfied) diagnostics.set('required-sources', {file: '<analysis>', line: 1, column: 1, code: 'SOURCE_REQUIREMENT_UNMET', message: 'Expected sensitive source models were not observed. Check wallet integration, adapters, and required source categories.'})
   return {
     schemaVersion: 1, toolVersion: '0.1.0', files: inputs.map(input => input.path.replaceAll('\\', '/')).sort(),
     findings: orderedFindings,
+    modelCoverage: {imports: [...importInventory.values()].sort((a, b) => a.module.localeCompare(b.module)), sourceKinds: [...observedKinds].sort(), requirementsSatisfied},
     diagnostics: [...diagnostics.values()].sort((a, b) => a.file.localeCompare(b.file) || a.line - b.line || a.column - b.column),
     summary: { filesScanned: inputs.length, sourcesDetected: sources.size,
       errors: orderedFindings.filter(finding => finding.severity === 'error').length,

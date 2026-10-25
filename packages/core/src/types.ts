@@ -36,6 +36,16 @@ export interface ScanOptions {
   maxSteps?: number
   moduleAliases?: Record<string, string[]>
   disclosurePolicies?: DisclosurePolicy[]
+  /** Require at least one recognized sensitive source before accepting this analysis. */
+  requireSources?: boolean
+  /** Sensitive categories expected to be exercised by the analyzed source. */
+  requiredSourceKinds?: SensitiveKind[]
+}
+
+export interface ModelCoverage {
+  imports: Array<{module: string; model: 'built-in' | 'configured' | 'unmodeled' | 'local'; roles: Array<'source' | 'sink' | 'transform'>; locations: Location[]}>
+  sourceKinds: SensitiveKind[]
+  requirementsSatisfied: boolean
 }
 
 export interface SinkRule {
@@ -77,6 +87,7 @@ export interface ScanReport {
   files: string[]
   findings: Finding[]
   diagnostics: Diagnostic[]
+  modelCoverage?: ModelCoverage
   summary: {
     filesScanned: number
     sourcesDetected: number

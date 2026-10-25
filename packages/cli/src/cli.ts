@@ -15,6 +15,8 @@ Usage: ztrace scan [path] [options]
   --format text|json       Report format (default: text)
   --output <file>          Write a report instead of printing it
   --config <file>          Read a JSON policy (default: ztrace.config.json)
+  --require-sources       Require a recognized sensitive source
+  --allow-no-sources      Explicitly permit zero recognized sources
   --fail-on warning|error|never
                           Finding threshold (default: warning)
   --help                  Show usage
@@ -33,8 +35,10 @@ interface Configuration extends ScanOptions { exclude?: string[] }
 function parseConfiguration(value: unknown): Configuration {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Configuration must be a JSON object.')
   const data = value as Record<string, unknown>
-  const known = new Set(['sources', 'sinks', 'allowedNetworkOrigins', 'maxSteps', 'exclude', 'moduleAliases', 'disclosurePolicies'])
+  const known = new Set(['sources', 'sinks', 'allowedNetworkOrigins', 'maxSteps', 'exclude', 'moduleAliases', 'disclosurePolicies', 'requireSources', 'requiredSourceKinds'])
   for (const key of Object.keys(data)) if (!known.has(key)) throw new Error(`Unknown configuration option: ${key}`)
+  if (data.requireSources !== undefined && typeof data.requireSources !== 'boolean') throw new Error('requireSources must be a boolean.')
+  if (data.requiredSourceKinds !== undefined && (!Array.isArray(data.requiredSourceKinds) || !data.requiredSourceKinds.every(kind => sensitiveKinds.includes(kind)))) throw new Error('Invalid required source categories.')
   if (data.maxSteps !== undefined && (!Number.isInteger(data.maxSteps) || Number(data.maxSteps) < 100 || Number(data.maxSteps) > 1_000_000)) throw new Error('maxSteps must be an integer between 100 and 1000000.')
   for (const key of ['exclude', 'allowedNetworkOrigins']) {
     if (data[key] !== undefined && (!Array.isArray(data[key]) || !data[key].every(entry => typeof entry === 'string'))) throw new Error(`${key} must be an array of strings.`)
@@ -87,6 +91,10 @@ function formatText(report: ScanReport): string {
   for (const diagnostic of report.diagnostics) lines.push(`REVIEW ${diagnostic.code}  ${diagnostic.file}:${diagnostic.line}:${diagnostic.column}\n  ${diagnostic.message}`)
   const { filesScanned, sourcesDetected, errors, warnings, coverage } = report.summary
   lines.push('', `${filesScanned} files · ${sourcesDetected} sensitive sources · ${errors} errors · ${warnings} warnings`)
+  if (report.modelCoverage) {
+    lines.push(`Recognized source categories: ${report.modelCoverage.sourceKinds.join(', ') || 'none'}`)
+    for (const item of report.modelCoverage.imports) lines.push(`  ${item.model.padEnd(10)} ${item.module}  ${item.roles.join(', ') || 'no declared model'}`)
+  }
   lines.push(coverage === 'incomplete' ? 'Coverage incomplete: review diagnostics before relying on this scan.' : 'Coverage limited to the documented models. No findings does not establish privacy.')
   return `${lines.join('\n')}\n`
 }
@@ -101,9 +109,15 @@ async function main(): Promise<number> {
   let target = '.', format = 'text', failOn = 'warning'
   let output: string | undefined, configPath: string | undefined
   let positional = false
+  let sourceRequirement: boolean | undefined
   while (args.length) {
     const arg = args.shift()!
-    if (['--format', '--output', '--config', '--fail-on'].includes(arg)) {
+    if (arg === '--require-sources' || arg === '--allow-no-sources') {
+      const required = arg === '--require-sources'
+      if (sourceRequirement !== undefined && sourceRequirement !== required) throw new Error('Conflicting source requirements.')
+      sourceRequirement = required
+    }
+    else if (['--format', '--output', '--config', '--fail-on'].includes(arg)) {
       const value = args.shift()
       if (!value || value.startsWith('--')) throw new Error(`Missing value for ${arg}`)
       if (arg === '--format') format = value
@@ -121,10 +135,14 @@ async function main(): Promise<number> {
   const root = info.isDirectory() ? absolute : dirname(absolute)
   const policyPath = configPath ? resolve(configPath) : join(root, 'ztrace.config.json')
   let configuration: Configuration = {}
-  try { configuration = parseConfiguration(JSON.parse(await readFile(policyPath, 'utf8'))) }
+  try {
+    if ((await stat(policyPath)).size > 100000) throw new Error('Configuration exceeds size limit.')
+    configuration = parseConfiguration(JSON.parse(await readFile(policyPath, 'utf8')))
+  }
   catch (error) { if (configPath || (error as NodeJS.ErrnoException).code !== 'ENOENT') throw error }
   const project = configuration.moduleAliases ? { aliases: configuration.moduleAliases, diagnostics: [] } : await projectAliases(root)
   configuration.moduleAliases = project.aliases
+  configuration.requireSources = sourceRequirement ?? configuration.requireSources ?? true
   const ignored = new Set(['node_modules', '.git', '.next', '.nuxt', '.turbo', '.vercel', 'dist', 'dist-tools', 'build', 'coverage'])
   const extensions = new Set(['.ts', '.tsx', '.js', '.jsx', '.mts', '.cts', '.mjs', '.cjs'])
   const files: SourceFile[] = []

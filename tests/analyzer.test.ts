@@ -163,7 +163,7 @@ test('reports unsupported side effects rather than silently claiming full covera
 })
 
 test('reports loops, syntax errors, and analysis-budget exhaustion', () => {
-  assert.ok(scan(`switch (flag) { case true: break; }`).diagnostics.some(diagnostic => diagnostic.code === 'UNMODELED_STATEMENT'))
+  assert.ok(scan(`debugger;`).diagnostics.some(diagnostic => diagnostic.code === 'UNMODELED_STATEMENT'))
   assert.ok(scan('const broken = ;').diagnostics.some(diagnostic => diagnostic.code === 'PARSE_ERROR'))
   assert.ok(scan('console.log(connection.shielded)', { maxSteps: 1 }).diagnostics.some(diagnostic => diagnostic.code === 'ANALYSIS_LIMIT'))
 })

@@ -33,3 +33,11 @@ node dist-tools/packages/cli/src/cli.js inspect pczt ./transaction.pczt.hex --re
 That produces an `explicit-private-role` decision, **not** a guarantee of minimal disclosure. A delegated prover learns private note information; proof outsourcing is not automatically blind. Broadcast the extracted transaction rather than PCZT construction bytes. See [ZIP 374 privacy implications](https://zips.z.cash/zip-0374#privacy-implications).
 
 The binary fixture is a genuine, locally generated V6/Ironwood PCZT using synthetic keys and a nonexistent funding UTXO. It was never broadcast and is not evidence of mined settlement. Its provenance and hash are retained separately.
+
+## Expanded signer-projection inventory
+
+The inventory also records presence of shielded key-origin fingerprints, transparent outpoints, transparent values and scripts, linked public keys, and individual transparent derivation fields. These fields can disclose construction context or account linkage. Reports include `projection` counts for shielded actions, transparent inputs/outputs, and inventoried fields; field contents remain inside the parser process.
+
+Input sizes are checked before binary-to-hex allocation. The worker bounds action/input/output counts and total inventory size, while the parent validates the returned schema and parser version. Native parsing retains a ten-second deadline and a 128 MB JavaScript heap ceiling. The heap ceiling applies to JavaScript allocations; native library allocations are governed by the host process and operating system.
+
+Memos, full viewing keys, witnesses, proprietary fields, and unsupported redaction variants still require a parser exposing the complete PCZT structure. The current projection remains explicitly labeled in each report.

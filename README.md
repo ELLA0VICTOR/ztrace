@@ -53,6 +53,7 @@
 - [Documentation](#documentation)
 - [Data handling](#data-handling)
 - [Contributing](#contributing)
+- [License](#license)
 - [Third-party notices](#third-party-notices)
 
 ## Overview
@@ -176,10 +177,10 @@ npm run scan -- ../your-zcash-app
 For automation, invoke the compiled CLI directly:
 
 ```sh
-node dist-tools/packages/cli/src/cli.js scan ../your-zcash-app --format json --output privacy-report.json
+node dist-tools/packages/cli/src/cli.js scan ../your-zcash-app --require-sources --format json --output privacy-report.json
 ```
 
-A finding contains its rule, data category, severity, sensitive source, destination, intermediate trace steps, and remediation guidance. Reports also include review diagnostics and a coverage summary.
+A finding contains its rule, data category, severity, sensitive source, destination, intermediate trace steps, and remediation guidance. Reports also include review diagnostics, an import-model inventory, recognized source categories, and a coverage summary. The CLI requires source recognition by default. `requireSources` and `requiredSourceKinds` configure expected wallet integration coverage; `--allow-no-sources` explicitly permits source-free utilities.
 
 ### Detection rules
 
@@ -191,7 +192,7 @@ A finding contains its rule, data category, severity, sensitive source, destinat
 
 Built-in integrations include selected Noir wallet SDK methods, the injected Noir provider, RHEA wallet adapter hooks and clients, and Ledger utility outputs. Destination models include console methods, selected Pino/Winston methods, Fetch, Beacon, Axios, XHR, WebSocket, PostHog, Segment, and Sentry.
 
-Supported flows include local ES-module imports, functions, async values, object and array fields, destructuring, aliases, conditional joins, bounded loops, local classes, selected React hooks, JSX handlers, and JSON round trips.
+Supported flows include local ES-module imports, functions, async values, object and array fields, destructuring, aliases, conditional joins, switches, bounded loops, Map containers, local classes, selected React hooks, JSX handlers, and JSON round trips.
 
 ### Project discovery
 
@@ -235,7 +236,9 @@ Place `ztrace.config.json` at the root of the application being scanned, or pass
     "@/*": ["src/*"]
   },
   "exclude": ["**/*.test.ts", "generated/**"],
-  "maxSteps": 100000
+  "maxSteps": 100000,
+  "requireSources": true,
+  "requiredSourceKinds": ["shielded-address"]
 }
 ```
 
@@ -265,6 +268,8 @@ ztrace inspect pczt <local-file> --recipient <role> [--acknowledge-private-discl
 | `--format text\|json` | Select human-readable or structured output; default is `text`. |
 | `--output <file>` | Create a new report file. |
 | `--config <file>` | Load a JSON configuration file. |
+| `--require-sources` | Require a recognized sensitive source; enabled by default in the CLI. |
+| `--allow-no-sources` | Explicitly permit scanning code without recognized sensitive sources. |
 | `--fail-on warning\|error\|never` | Select the finding threshold; default is `warning`. |
 | `--help` | Print command usage. |
 | `--version` | Print the package version. |
@@ -344,6 +349,7 @@ const report = await auditBrowser({
   testData: { address: marker },
   actions: [{ type: 'click', selector: '[data-test=checkout]' }],
   settleMs: 200,
+  expectations: {canariesRead: ['customer_address'], checkpoints: ['checkout_complete'], minActions: 1},
 })
 
 console.log(report.findings, report.completion)
@@ -389,11 +395,16 @@ Save a specification as `ztrace.runtime.json`:
   "actions": [
     { "type": "click", "selector": "[data-test=checkout]" }
   ],
-  "settleMs": 200
+  "settleMs": 200,
+  "expectations": {
+    "canariesRead": ["customer_address"],
+    "checkpoints": ["checkout_complete"],
+    "minActions": 1
+  }
 }
 ```
 
-Wire the application under test to read the supplied data from `window.__ZTRACE_TEST_DATA__`. Supported actions are `click`, `fill`, and `waitFor`.
+Wire the application under test to read the supplied data from `window.__ZTRACE_TEST_DATA__`. Supported actions are `click`, `fill`, and `waitFor`. Complete the declared flow with `await window.__ZTRACE_CHECKPOINT__('checkout_complete')`. Missing required reads, checkpoints, or actions make the run incomplete.
 
 ```sh
 node dist-tools/packages/cli/src/cli.js runtime ./ztrace.runtime.json --output runtime-report.json
@@ -479,6 +490,13 @@ npm run test:ui
 npm run lint
 ```
 
+
+### Consumer and adversarial validation
+
+`npm run test:package` installs the packed tool into a fresh temporary consumer, compiles a React application using `@noir-wallet/sdk@0.1.9`, checks installed CLI/API/type entry points, and exercises leaking/corrected browser flows with required reads and checkpoints. Evidence is retained in [validation/consumer/latest.json](validation/consumer/latest.json).
+
+`npm run test:adversarial` runs deterministic source, key-encoding, and PCZT mutation cases under process time and heap limits. [Retained results](validation/adversarial/latest.json) describe their scope. [Pinned upstream observations](validation/external/noir-sdk-latest.json) are recorded separately from the labeled synthetic corpus.
+
 ## Development commands
 
 | Command | Purpose |
@@ -493,6 +511,10 @@ npm run lint
 | `npm run benchmark` | Evaluate the fixed corpus and check regression/integration expectations. |
 | `npm run test:runtime` | Run the Chromium canary integration tests. |
 | `npm run test:ui` | Build and verify the production website in Chromium. |
+| `npm run test:package` | Verify a packed installation and actual SDK consumer in a fresh external directory. |
+| `npm run test:adversarial` | Run deterministic input mutations and resource-bound checks. |
+| `npm run test:external` | Observe the pinned, unmodified upstream Noir SDK example. |
+| `npm run test:site-base` | Verify fonts, brand images, workers, and docs under a deployment subpath. |
 | `npm run lint` | Check source with Oxlint. |
 
 ## Repository structure
@@ -536,6 +558,8 @@ ztrace/
 | [Introduction](docs/INTRODUCTION.md) | Product concepts and analysis modes |
 | [Quickstart](docs/QUICKSTART.md) | Installation, example scans, and application setup |
 | [CLI & integration](docs/CLI.md) | Commands, exit codes, CI, and local package integration |
+| [Consumer walkthrough](docs/INTEGRATION.md) | Install, detect, correct, and verify with the actual Noir SDK |
+| [Verification & release](docs/RELEASING.md) | CI, package artifacts, and website deployment |
 | [Sources, adapters & policies](docs/SCANNER.md) | Supported APIs, language flows, adapters, and configuration |
 | [Runtime testing](docs/RUNTIME.md) | Synthetic data, browser setup, actions, and network handling |
 | [Disclosure inspection](docs/PROTOCOL.md) | Viewing capabilities, PCZT inventories, and recipient roles |
@@ -555,6 +579,10 @@ Reports contain locations, categories, trace labels, destination context, and di
 Use a focused change with an explanation of the affected behavior and relevant verification. For a new source, sink, or language-flow model, include a leaking example and its safe counterpart. Update the coverage documentation when the supported boundary changes.
 
 Run `npm test`, `npm run benchmark`, and `npm run lint` for engine changes. Run the runtime or UI suite when changing those layers. Preserve protocol-vector provenance and intentionally review any corpus or fixture updates.
+
+## License
+
+ZTrace is licensed under the [MIT License](LICENSE). See [CHANGELOG.md](CHANGELOG.md) for release-candidate changes.
 
 ## Third-party notices
 

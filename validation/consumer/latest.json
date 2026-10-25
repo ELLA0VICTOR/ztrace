@@ -1,0 +1,555 @@
+{
+  "generatedAt": "2026-10-25T00:09:29.743Z",
+  "package": {
+    "version": "0.1.0",
+    "bytes": 85127,
+    "sha256": "f9dff7aaa964f310485b5fe253c6ba8ce493b5c49232cb60bb93490021367468"
+  },
+  "integration": {
+    "sdk": "@noir-wallet/sdk",
+    "version": "0.1.9",
+    "provider": "Synthetic extension-provider boundary; actual published SDK and React application executed"
+  },
+  "static": {
+    "leaking": {
+      "schemaVersion": 1,
+      "toolVersion": "0.1.0",
+      "files": [
+        "App.tsx",
+        "leaking-entry.tsx",
+        "leaking.ts",
+        "package-types.ts",
+        "provider-fixture.ts"
+      ],
+      "findings": [
+        {
+          "id": "ZT003:shielded-address:leaking.ts:7:25:leaking.ts:11:3",
+          "ruleId": "ZT003",
+          "kind": "shielded-address",
+          "severity": "error",
+          "title": "Shielded address reaches analytics",
+          "message": "Sensitive wallet data reaches analytics, where it can be retained or shared outside the wallet.",
+          "source": {
+            "file": "leaking.ts",
+            "line": 7,
+            "column": 25,
+            "kind": "source",
+            "label": "Noir getAccounts(): shielded address"
+          },
+          "sink": {
+            "file": "leaking.ts",
+            "line": 11,
+            "column": 3,
+            "kind": "sink",
+            "label": "Configured disclosure destination"
+          },
+          "trace": [
+            {
+              "file": "leaking.ts",
+              "line": 7,
+              "column": 25,
+              "kind": "source",
+              "label": "Noir getAccounts(): shielded address"
+            },
+            {
+              "file": "leaking.ts",
+              "line": 7,
+              "column": 9,
+              "kind": "assignment",
+              "label": "Assigned to account"
+            },
+            {
+              "file": "leaking.ts",
+              "line": 11,
+              "column": 3,
+              "kind": "sink",
+              "label": "Configured disclosure destination"
+            }
+          ],
+          "remediation": "Remove wallet details from the analytics payload. Record a public event name without wallet identifiers or financial data."
+        },
+        {
+          "id": "ZT001:wallet-balance:leaking.ts:9:25:leaking.ts:12:3",
+          "ruleId": "ZT001",
+          "kind": "wallet-balance",
+          "severity": "error",
+          "title": "Wallet balance reaches logging",
+          "message": "Sensitive wallet data reaches logging, where it can be retained or shared outside the wallet.",
+          "source": {
+            "file": "leaking.ts",
+            "line": 9,
+            "column": 25,
+            "kind": "source",
+            "label": "Noir getBalance(): private wallet balance"
+          },
+          "sink": {
+            "file": "leaking.ts",
+            "line": 12,
+            "column": 3,
+            "kind": "sink",
+            "label": "console.debug"
+          },
+          "trace": [
+            {
+              "file": "leaking.ts",
+              "line": 9,
+              "column": 25,
+              "kind": "source",
+              "label": "Noir getBalance(): private wallet balance"
+            },
+            {
+              "file": "leaking.ts",
+              "line": 9,
+              "column": 9,
+              "kind": "assignment",
+              "label": "Assigned to balance"
+            },
+            {
+              "file": "leaking.ts",
+              "line": 12,
+              "column": 3,
+              "kind": "sink",
+              "label": "console.debug"
+            }
+          ],
+          "remediation": "Remove the sensitive value from this log. Log a public status or event name instead."
+        },
+        {
+          "id": "ZT002:wallet-history:leaking.ts:10:25:leaking.ts:13:9",
+          "ruleId": "ZT002",
+          "kind": "wallet-history",
+          "severity": "warning",
+          "title": "Wallet transaction history reaches network",
+          "message": "Sensitive wallet data reaches a network request without an explicit destination policy. Review whether disclosure is necessary.",
+          "source": {
+            "file": "leaking.ts",
+            "line": 10,
+            "column": 25,
+            "kind": "source",
+            "label": "Noir getTransactionHistory(): private history and memos"
+          },
+          "sink": {
+            "file": "leaking.ts",
+            "line": 13,
+            "column": 9,
+            "kind": "sink",
+            "label": "fetch"
+          },
+          "trace": [
+            {
+              "file": "leaking.ts",
+              "line": 10,
+              "column": 25,
+              "kind": "source",
+              "label": "Noir getTransactionHistory(): private history and memos"
+            },
+            {
+              "file": "leaking.ts",
+              "line": 10,
+              "column": 9,
+              "kind": "assignment",
+              "label": "Assigned to history"
+            },
+            {
+              "file": "leaking.ts",
+              "line": 13,
+              "column": 9,
+              "kind": "sink",
+              "label": "fetch"
+            }
+          ],
+          "remediation": "Remove the sensitive payload or explicitly approve a necessary HTTPS origin in ztrace.config.json after reviewing the disclosure."
+        }
+      ],
+      "modelCoverage": {
+        "imports": [
+          {
+            "module": "./App",
+            "model": "local",
+            "roles": [],
+            "locations": [
+              {
+                "file": "leaking-entry.tsx",
+                "line": 2,
+                "column": 1
+              }
+            ]
+          },
+          {
+            "module": "./leaking",
+            "model": "local",
+            "roles": [],
+            "locations": [
+              {
+                "file": "leaking-entry.tsx",
+                "line": 3,
+                "column": 1
+              }
+            ]
+          },
+          {
+            "module": "./provider-fixture",
+            "model": "local",
+            "roles": [],
+            "locations": [
+              {
+                "file": "leaking-entry.tsx",
+                "line": 4,
+                "column": 1
+              }
+            ]
+          },
+          {
+            "module": "@noir-wallet/sdk",
+            "model": "built-in",
+            "roles": [
+              "source",
+              "transform"
+            ],
+            "locations": [
+              {
+                "file": "leaking.ts",
+                "line": 1,
+                "column": 1
+              }
+            ]
+          },
+          {
+            "module": "checkout-telemetry",
+            "model": "configured",
+            "roles": [
+              "sink"
+            ],
+            "locations": [
+              {
+                "file": "leaking.ts",
+                "line": 2,
+                "column": 1
+              }
+            ]
+          },
+          {
+            "module": "react",
+            "model": "built-in",
+            "roles": [
+              "transform"
+            ],
+            "locations": [
+              {
+                "file": "App.tsx",
+                "line": 1,
+                "column": 1
+              }
+            ]
+          },
+          {
+            "module": "react-dom/client",
+            "model": "unmodeled",
+            "roles": [],
+            "locations": [
+              {
+                "file": "leaking-entry.tsx",
+                "line": 1,
+                "column": 1
+              }
+            ]
+          },
+          {
+            "module": "ztrace/protocol",
+            "model": "unmodeled",
+            "roles": [],
+            "locations": [
+              {
+                "file": "package-types.ts",
+                "line": 3,
+                "column": 1
+              }
+            ]
+          },
+          {
+            "module": "ztrace/runtime",
+            "model": "unmodeled",
+            "roles": [],
+            "locations": [
+              {
+                "file": "package-types.ts",
+                "line": 2,
+                "column": 1
+              }
+            ]
+          },
+          {
+            "module": "ztrace/scanner",
+            "model": "unmodeled",
+            "roles": [],
+            "locations": [
+              {
+                "file": "package-types.ts",
+                "line": 1,
+                "column": 1
+              }
+            ]
+          }
+        ],
+        "sourceKinds": [
+          "shielded-address",
+          "wallet-account",
+          "wallet-balance",
+          "wallet-history"
+        ],
+        "requirementsSatisfied": true
+      },
+      "diagnostics": [],
+      "summary": {
+        "filesScanned": 5,
+        "sourcesDetected": 4,
+        "errors": 2,
+        "warnings": 1,
+        "coverage": "limited"
+      }
+    },
+    "corrected": {
+      "schemaVersion": 1,
+      "toolVersion": "0.1.0",
+      "files": [
+        "App.tsx",
+        "corrected-entry.tsx",
+        "corrected.ts",
+        "package-types.ts",
+        "provider-fixture.ts"
+      ],
+      "findings": [],
+      "modelCoverage": {
+        "imports": [
+          {
+            "module": "./App",
+            "model": "local",
+            "roles": [],
+            "locations": [
+              {
+                "file": "corrected-entry.tsx",
+                "line": 2,
+                "column": 1
+              }
+            ]
+          },
+          {
+            "module": "./corrected",
+            "model": "local",
+            "roles": [],
+            "locations": [
+              {
+                "file": "corrected-entry.tsx",
+                "line": 3,
+                "column": 1
+              }
+            ]
+          },
+          {
+            "module": "./provider-fixture",
+            "model": "local",
+            "roles": [],
+            "locations": [
+              {
+                "file": "corrected-entry.tsx",
+                "line": 4,
+                "column": 1
+              }
+            ]
+          },
+          {
+            "module": "@noir-wallet/sdk",
+            "model": "built-in",
+            "roles": [
+              "source",
+              "transform"
+            ],
+            "locations": [
+              {
+                "file": "corrected.ts",
+                "line": 1,
+                "column": 1
+              }
+            ]
+          },
+          {
+            "module": "checkout-telemetry",
+            "model": "configured",
+            "roles": [
+              "sink"
+            ],
+            "locations": [
+              {
+                "file": "corrected.ts",
+                "line": 2,
+                "column": 1
+              }
+            ]
+          },
+          {
+            "module": "react",
+            "model": "built-in",
+            "roles": [
+              "transform"
+            ],
+            "locations": [
+              {
+                "file": "App.tsx",
+                "line": 1,
+                "column": 1
+              }
+            ]
+          },
+          {
+            "module": "react-dom/client",
+            "model": "unmodeled",
+            "roles": [],
+            "locations": [
+              {
+                "file": "corrected-entry.tsx",
+                "line": 1,
+                "column": 1
+              }
+            ]
+          },
+          {
+            "module": "ztrace/protocol",
+            "model": "unmodeled",
+            "roles": [],
+            "locations": [
+              {
+                "file": "package-types.ts",
+                "line": 3,
+                "column": 1
+              }
+            ]
+          },
+          {
+            "module": "ztrace/runtime",
+            "model": "unmodeled",
+            "roles": [],
+            "locations": [
+              {
+                "file": "package-types.ts",
+                "line": 2,
+                "column": 1
+              }
+            ]
+          },
+          {
+            "module": "ztrace/scanner",
+            "model": "unmodeled",
+            "roles": [],
+            "locations": [
+              {
+                "file": "package-types.ts",
+                "line": 1,
+                "column": 1
+              }
+            ]
+          }
+        ],
+        "sourceKinds": [
+          "shielded-address",
+          "wallet-account",
+          "wallet-balance",
+          "wallet-history"
+        ],
+        "requirementsSatisfied": true
+      },
+      "diagnostics": [],
+      "summary": {
+        "filesScanned": 5,
+        "sourcesDetected": 4,
+        "errors": 0,
+        "warnings": 0,
+        "coverage": "limited"
+      }
+    }
+  },
+  "runtime": {
+    "leaking": {
+      "schemaVersion": 1,
+      "mode": "runtime-canary",
+      "completion": "completed",
+      "browserVersion": "153.0.8010.12",
+      "execution": {
+        "canariesRead": [
+          "address",
+          "balance",
+          "history"
+        ],
+        "checkpointsReached": [
+          "checkout_complete",
+          "zcash_getAccounts",
+          "zcash_getBalance",
+          "zcash_getTransactionHistory"
+        ],
+        "expectationsConfigured": true,
+        "expectationsSatisfied": true
+      },
+      "findings": [
+        {
+          "channel": "console",
+          "canary": "balance",
+          "kind": "wallet-balance",
+          "encoding": "plain",
+          "destination": "local-console"
+        },
+        {
+          "channel": "request",
+          "canary": "address",
+          "kind": "shielded-address",
+          "encoding": "plain",
+          "destination": "http://127.0.0.1:49687"
+        },
+        {
+          "channel": "request",
+          "canary": "history",
+          "kind": "wallet-history",
+          "encoding": "plain",
+          "destination": "http://127.0.0.1:49687"
+        }
+      ],
+      "diagnostics": [],
+      "summary": {
+        "actionsCompleted": 1,
+        "requestsObserved": 5,
+        "requestsBlocked": 2,
+        "consoleEventsObserved": 3
+      },
+      "scope": "Only supplied synthetic canaries, supported encodings, executed actions, and the bounded observation window were checked. External HTTP and all WebSocket upstream connections were blocked. No payloads, screenshots, HAR, or browser traces were retained."
+    },
+    "corrected": {
+      "schemaVersion": 1,
+      "mode": "runtime-canary",
+      "completion": "completed",
+      "browserVersion": "153.0.8010.12",
+      "execution": {
+        "canariesRead": [
+          "address",
+          "balance",
+          "history"
+        ],
+        "checkpointsReached": [
+          "checkout_complete",
+          "zcash_getAccounts",
+          "zcash_getBalance",
+          "zcash_getTransactionHistory"
+        ],
+        "expectationsConfigured": true,
+        "expectationsSatisfied": true
+      },
+      "findings": [],
+      "diagnostics": [],
+      "summary": {
+        "actionsCompleted": 1,
+        "requestsObserved": 5,
+        "requestsBlocked": 0,
+        "consoleEventsObserved": 1
+      },
+      "scope": "Only supplied synthetic canaries, supported encodings, executed actions, and the bounded observation window were checked. External HTTP and all WebSocket upstream connections were blocked. No payloads, screenshots, HAR, or browser traces were retained."
+    },
+    "sensitiveDeliveries": 0
+  }
+}

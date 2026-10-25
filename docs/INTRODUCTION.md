@@ -28,4 +28,4 @@ The landing-page example uses engine-generated fixture results. Its **Run local 
 
 The scanner models selected APIs and language constructs. Unsupported sources can escape recognition, and unsupported flows may require review. Runtime matching is limited to exercised paths and supported representations. Protocol inspection does not prove ownership, settlement, cryptographic validity, or complete PCZT redaction.
 
-Read the [threat model](THREAT-MODEL.md) and [benchmark methodology](METHODOLOGY.md) alongside the results.
+Read the [threat model](THREAT-MODEL.md) and [benchmark methodology](../benchmarks/METHODOLOGY.md) alongside the results.

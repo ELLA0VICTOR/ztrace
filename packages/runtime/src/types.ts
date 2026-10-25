@@ -1,6 +1,11 @@
 import type { SensitiveKind } from '../../core/src/types.js'
 export interface Canary {name:string;kind:SensitiveKind;value:string;synthetic:true}
 export type RuntimeAction={type:'click'|'waitFor';selector:string}|{type:'fill';selector:string;value:string}
+export interface RuntimeExpectations {
+  canariesRead?: string[]
+  checkpoints?: string[]
+  minActions?: number
+}
 export interface RuntimeOptions {
   url:string
   canaries:Canary[]
@@ -9,6 +14,7 @@ export interface RuntimeOptions {
   browserPath?:string
   timeoutMs?:number
   settleMs?:number
+  expectations?:RuntimeExpectations
 }
 export interface RuntimeFinding {channel:'request'|'console'|'websocket';canary:string;kind:SensitiveKind;encoding:string;destination:string}
 export interface RuntimeReport {
@@ -20,4 +26,5 @@ export interface RuntimeReport {
   diagnostics:string[]
   summary:{actionsCompleted:number;requestsObserved:number;requestsBlocked:number;consoleEventsObserved:number}
   scope:string
+  execution?:{canariesRead:string[];checkpointsReached:string[];expectationsConfigured:boolean;expectationsSatisfied:boolean|null}
 }

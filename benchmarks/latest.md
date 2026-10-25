@@ -1,7 +1,7 @@
 # ZTrace corpus results
 
 Corpus SHA-256: 440a17e1e2429363c20aac4255e08af3381824c97444d84d8f912f1f4d69bb96
-Engine SHA-256: 101ce55812421c226a59a1214b534d6c48a263f5fd621fed7562af1821a1b1a3
+Engine SHA-256: d2891f7f535a962683f98e5fcfeff2bf02a617721118e1bcdd4e570df30fc7ae
 
 Self-authored, synthetic, API-based fixtures. Challenge cases are a first-run stress split, not an independent external evaluation.
 

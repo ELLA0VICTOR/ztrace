@@ -1,0 +1,31 @@
+{
+  "repository": "https://github.com/NoirWallet/noir-wallet-sdk",
+  "commit": "1677b56cc5bc3ecf7f9555e348bce7ea1df28586",
+  "license": "MIT",
+  "files": [
+    {
+      "path": "example/src/App.tsx",
+      "url": "https://raw.githubusercontent.com/NoirWallet/noir-wallet-sdk/1677b56cc5bc3ecf7f9555e348bce7ea1df28586/example/src/App.tsx",
+      "sha256": "22a1c9bbbd7388760826a9d23c1e3009e06058ae0ef1b971924fec497a18d7c9",
+      "bytes": 52841
+    },
+    {
+      "path": "example/src/main.tsx",
+      "url": "https://raw.githubusercontent.com/NoirWallet/noir-wallet-sdk/1677b56cc5bc3ecf7f9555e348bce7ea1df28586/example/src/main.tsx",
+      "sha256": "64fd83aa02930427c4a945138cd81989163067bb92ff9f1004088937bdf88b49",
+      "bytes": 231
+    },
+    {
+      "path": "example/package.json",
+      "url": "https://raw.githubusercontent.com/NoirWallet/noir-wallet-sdk/1677b56cc5bc3ecf7f9555e348bce7ea1df28586/example/package.json",
+      "sha256": "600eb679f8f9de1c65ff4607faa8b47cdfdcb00129d9cf8b73dac3d2624422ea",
+      "bytes": 622
+    },
+    {
+      "path": "LICENSE",
+      "url": "https://raw.githubusercontent.com/NoirWallet/noir-wallet-sdk/1677b56cc5bc3ecf7f9555e348bce7ea1df28586/LICENSE",
+      "sha256": "f6610ae74650f2586becd0d73cd6658a1d40df4894cec2851d7c3c64dc1635c4",
+      "bytes": 1081
+    }
+  ]
+}

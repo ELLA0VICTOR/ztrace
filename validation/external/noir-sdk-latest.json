@@ -1,0 +1,509 @@
+{
+  "generatedAt": "2026-10-25T00:09:01.412Z",
+  "source": {
+    "repository": "https://github.com/NoirWallet/noir-wallet-sdk",
+    "commit": "1677b56cc5bc3ecf7f9555e348bce7ea1df28586",
+    "files": [
+      {
+        "path": "example/src/App.tsx",
+        "sha256": "22a1c9bbbd7388760826a9d23c1e3009e06058ae0ef1b971924fec497a18d7c9"
+      },
+      {
+        "path": "example/src/main.tsx",
+        "sha256": "64fd83aa02930427c4a945138cd81989163067bb92ff9f1004088937bdf88b49"
+      },
+      {
+        "path": "example/package.json",
+        "sha256": "600eb679f8f9de1c65ff4607faa8b47cdfdcb00129d9cf8b73dac3d2624422ea"
+      },
+      {
+        "path": "LICENSE",
+        "sha256": "f6610ae74650f2586becd0d73cd6658a1d40df4894cec2851d7c3c64dc1635c4"
+      }
+    ]
+  },
+  "engineSha256": "ade9ed62e7937e6f3b6bfa1143b2f08f1a57ebeebca559dfb1a4e6d56bbe805d",
+  "assessment": "Unmodified, independently authored upstream SDK example. Findings are candidate disclosures for review; no production vulnerability or labeled accuracy estimate is asserted.",
+  "milliseconds": 450,
+  "report": {
+    "schemaVersion": 1,
+    "toolVersion": "0.1.0",
+    "files": [
+      "example/src/App.tsx",
+      "example/src/main.tsx"
+    ],
+    "findings": [
+      {
+        "id": "ZT002:wallet-history:example/src/App.tsx:332:33:example/src/App.tsx:199:27",
+        "ruleId": "ZT002",
+        "kind": "wallet-history",
+        "severity": "warning",
+        "title": "Wallet transaction history reaches network",
+        "message": "Sensitive wallet data reaches a network request without an explicit destination policy. Review whether disclosure is necessary.",
+        "source": {
+          "file": "example/src/App.tsx",
+          "line": 332,
+          "column": 33,
+          "kind": "source",
+          "label": "Noir getTransactionHistory(): private history and memos"
+        },
+        "sink": {
+          "file": "example/src/App.tsx",
+          "line": 199,
+          "column": 27,
+          "kind": "sink",
+          "label": "JSX resource or navigation URL"
+        },
+        "trace": [
+          {
+            "file": "example/src/App.tsx",
+            "line": 332,
+            "column": 33,
+            "kind": "source",
+            "label": "Noir getTransactionHistory(): private history and memos"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 332,
+            "column": 17,
+            "kind": "assignment",
+            "label": "Assigned to history"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 1315,
+            "column": 24,
+            "kind": "call",
+            "label": "Passed into a local function"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 93,
+            "column": 3,
+            "kind": "assignment",
+            "label": "Assigned to txs"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 96,
+            "column": 14,
+            "kind": "assignment",
+            "label": "Assigned to tx"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 1318,
+            "column": 28,
+            "kind": "call",
+            "label": "Passed into a local function"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 1318,
+            "column": 37,
+            "kind": "assignment",
+            "label": "Assigned to tx"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 1319,
+            "column": 29,
+            "kind": "call",
+            "label": "Passed into a local function"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 146,
+            "column": 3,
+            "kind": "assignment",
+            "label": "Assigned to tx"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 185,
+            "column": 16,
+            "kind": "call",
+            "label": "Passed into a local function"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 185,
+            "column": 46,
+            "kind": "assignment",
+            "label": "Assigned to val"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 189,
+            "column": 19,
+            "kind": "assignment",
+            "label": "Assigned to display"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 199,
+            "column": 27,
+            "kind": "sink",
+            "label": "JSX resource or navigation URL"
+          }
+        ],
+        "remediation": "Remove the sensitive payload or explicitly approve a necessary HTTPS origin in ztrace.config.json after reviewing the disclosure."
+      },
+      {
+        "id": "ZT002:wallet-history:example/src/App.tsx:370:33:example/src/App.tsx:199:27",
+        "ruleId": "ZT002",
+        "kind": "wallet-history",
+        "severity": "warning",
+        "title": "Wallet transaction history reaches network",
+        "message": "Sensitive wallet data reaches a network request without an explicit destination policy. Review whether disclosure is necessary.",
+        "source": {
+          "file": "example/src/App.tsx",
+          "line": 370,
+          "column": 33,
+          "kind": "source",
+          "label": "Noir getTransactionHistory(): private history and memos"
+        },
+        "sink": {
+          "file": "example/src/App.tsx",
+          "line": 199,
+          "column": 27,
+          "kind": "sink",
+          "label": "JSX resource or navigation URL"
+        },
+        "trace": [
+          {
+            "file": "example/src/App.tsx",
+            "line": 370,
+            "column": 33,
+            "kind": "source",
+            "label": "Noir getTransactionHistory(): private history and memos"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 370,
+            "column": 17,
+            "kind": "assignment",
+            "label": "Assigned to history"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 1315,
+            "column": 24,
+            "kind": "call",
+            "label": "Passed into a local function"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 93,
+            "column": 3,
+            "kind": "assignment",
+            "label": "Assigned to txs"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 96,
+            "column": 14,
+            "kind": "assignment",
+            "label": "Assigned to tx"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 1318,
+            "column": 28,
+            "kind": "call",
+            "label": "Passed into a local function"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 1318,
+            "column": 37,
+            "kind": "assignment",
+            "label": "Assigned to tx"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 1319,
+            "column": 29,
+            "kind": "call",
+            "label": "Passed into a local function"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 146,
+            "column": 3,
+            "kind": "assignment",
+            "label": "Assigned to tx"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 185,
+            "column": 16,
+            "kind": "call",
+            "label": "Passed into a local function"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 185,
+            "column": 46,
+            "kind": "assignment",
+            "label": "Assigned to val"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 189,
+            "column": 19,
+            "kind": "assignment",
+            "label": "Assigned to display"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 199,
+            "column": 27,
+            "kind": "sink",
+            "label": "JSX resource or navigation URL"
+          }
+        ],
+        "remediation": "Remove the sensitive payload or explicitly approve a necessary HTTPS origin in ztrace.config.json after reviewing the disclosure."
+      },
+      {
+        "id": "ZT002:wallet-history:example/src/App.tsx:657:29:example/src/App.tsx:199:27",
+        "ruleId": "ZT002",
+        "kind": "wallet-history",
+        "severity": "warning",
+        "title": "Wallet transaction history reaches network",
+        "message": "Sensitive wallet data reaches a network request without an explicit destination policy. Review whether disclosure is necessary.",
+        "source": {
+          "file": "example/src/App.tsx",
+          "line": 657,
+          "column": 29,
+          "kind": "source",
+          "label": "Noir getTransactionHistory(): private history and memos"
+        },
+        "sink": {
+          "file": "example/src/App.tsx",
+          "line": 199,
+          "column": 27,
+          "kind": "sink",
+          "label": "JSX resource or navigation URL"
+        },
+        "trace": [
+          {
+            "file": "example/src/App.tsx",
+            "line": 657,
+            "column": 29,
+            "kind": "source",
+            "label": "Noir getTransactionHistory(): private history and memos"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 657,
+            "column": 13,
+            "kind": "assignment",
+            "label": "Assigned to history"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 1315,
+            "column": 24,
+            "kind": "call",
+            "label": "Passed into a local function"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 93,
+            "column": 3,
+            "kind": "assignment",
+            "label": "Assigned to txs"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 96,
+            "column": 14,
+            "kind": "assignment",
+            "label": "Assigned to tx"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 1318,
+            "column": 28,
+            "kind": "call",
+            "label": "Passed into a local function"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 1318,
+            "column": 37,
+            "kind": "assignment",
+            "label": "Assigned to tx"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 1319,
+            "column": 29,
+            "kind": "call",
+            "label": "Passed into a local function"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 146,
+            "column": 3,
+            "kind": "assignment",
+            "label": "Assigned to tx"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 185,
+            "column": 16,
+            "kind": "call",
+            "label": "Passed into a local function"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 185,
+            "column": 46,
+            "kind": "assignment",
+            "label": "Assigned to val"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 189,
+            "column": 19,
+            "kind": "assignment",
+            "label": "Assigned to display"
+          },
+          {
+            "file": "example/src/App.tsx",
+            "line": 199,
+            "column": 27,
+            "kind": "sink",
+            "label": "JSX resource or navigation URL"
+          }
+        ],
+        "remediation": "Remove the sensitive payload or explicitly approve a necessary HTTPS origin in ztrace.config.json after reviewing the disclosure."
+      }
+    ],
+    "modelCoverage": {
+      "imports": [
+        {
+          "module": "./App",
+          "model": "local",
+          "roles": [],
+          "locations": [
+            {
+              "file": "example/src/main.tsx",
+              "line": 3,
+              "column": 1
+            }
+          ]
+        },
+        {
+          "module": "./App.css",
+          "model": "local",
+          "roles": [],
+          "locations": [
+            {
+              "file": "example/src/App.tsx",
+              "line": 17,
+              "column": 1
+            }
+          ]
+        },
+        {
+          "module": "./index.css",
+          "model": "local",
+          "roles": [],
+          "locations": [
+            {
+              "file": "example/src/main.tsx",
+              "line": 4,
+              "column": 1
+            }
+          ]
+        },
+        {
+          "module": "@noir-wallet/sdk",
+          "model": "built-in",
+          "roles": [
+            "source",
+            "transform"
+          ],
+          "locations": [
+            {
+              "file": "example/src/App.tsx",
+              "line": 2,
+              "column": 1
+            }
+          ]
+        },
+        {
+          "module": "react",
+          "model": "built-in",
+          "roles": [
+            "transform"
+          ],
+          "locations": [
+            {
+              "file": "example/src/App.tsx",
+              "line": 1,
+              "column": 1
+            },
+            {
+              "file": "example/src/main.tsx",
+              "line": 1,
+              "column": 1
+            }
+          ]
+        },
+        {
+          "module": "react-dom/client",
+          "model": "unmodeled",
+          "roles": [],
+          "locations": [
+            {
+              "file": "example/src/main.tsx",
+              "line": 2,
+              "column": 1
+            }
+          ]
+        }
+      ],
+      "sourceKinds": [
+        "shielded-address",
+        "wallet-account",
+        "wallet-balance",
+        "wallet-history"
+      ],
+      "requirementsSatisfied": true
+    },
+    "diagnostics": [
+      {
+        "file": "example/src/App.tsx",
+        "line": 559,
+        "column": 13,
+        "code": "UNMODELED_CALL",
+        "message": "This external call receives sensitive data or a callback. External side effects and callback scheduling need manual review; known sensitive inputs propagate to the result."
+      },
+      {
+        "file": "example/src/App.tsx",
+        "line": 561,
+        "column": 7,
+        "code": "UNMODELED_CALL",
+        "message": "This external call receives sensitive data or a callback. External side effects and callback scheduling need manual review; known sensitive inputs propagate to the result."
+      },
+      {
+        "file": "example/src/App.tsx",
+        "line": 561,
+        "column": 18,
+        "code": "CLOSURE_CONTEXT_LIMIT",
+        "message": "Additional closure contexts require review."
+      }
+    ],
+    "summary": {
+      "filesScanned": 2,
+      "sourcesDetected": 24,
+      "errors": 0,
+      "warnings": 3,
+      "coverage": "incomplete"
+    }
+  }
+}

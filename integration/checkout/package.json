@@ -1,0 +1,24 @@
+{
+  "name": "ztrace-checkout-consumer",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build",
+    "check:leaking": "ztrace scan src --config ztrace.leaking.json --format json",
+    "check:corrected": "ztrace scan src --config ztrace.corrected.json --format json"
+  },
+  "dependencies": {
+    "@noir-wallet/sdk": "0.1.9",
+    "checkout-telemetry": "file:./telemetry-client",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "typescript": "6.0.3",
+    "vite": "8.3.5"
+  }
+}

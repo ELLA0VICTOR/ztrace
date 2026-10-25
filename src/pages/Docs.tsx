@@ -13,6 +13,8 @@ import protocol from '../../docs/PROTOCOL.md?raw'
 import threat from '../../docs/THREAT-MODEL.md?raw'
 import methodology from '../../benchmarks/METHODOLOGY.md?raw'
 import troubleshooting from '../../docs/TROUBLESHOOTING.md?raw'
+import integration from '../../docs/INTEGRATION.md?raw'
+import releasing from '../../docs/RELEASING.md?raw'
 import {CopyButton} from '../components/primitives'
 import './Docs.css'
 
@@ -20,12 +22,14 @@ const documents = {
   introduction: {title: 'Introduction', navigation: 'Introduction', body: introduction, file: 'INTRODUCTION.md', group: 'Getting started', icon: FileText},
   quickstart: {title: 'Quickstart', navigation: 'Quickstart', body: quickstart, file: 'QUICKSTART.md', group: 'Getting started', icon: Terminal},
   cli: {title: 'CLI & integration', navigation: 'CLI & integration', body: cli, file: 'CLI.md', group: 'Getting started', icon: Braces},
+  integration: {title: 'Consumer walkthrough', navigation: 'Consumer walkthrough', body: integration, file: 'INTEGRATION.md', group: 'Getting started', icon: Route},
   coverage: {title: 'Sources, adapters & policies', navigation: 'Sources & policies', body: scanner, file: 'SCANNER.md', group: 'Guides', icon: Route},
   runtime: {title: 'Runtime testing', navigation: 'Runtime testing', body: runtime, file: 'RUNTIME.md', group: 'Guides', icon: Radio},
   protocol: {title: 'Disclosure inspection', navigation: 'Disclosure inspection', body: protocol, file: 'PROTOCOL.md', group: 'Guides', icon: KeyRound},
   evidence: {title: 'Benchmark methodology', navigation: 'Benchmark methodology', body: methodology, file: 'METHODOLOGY.md', group: 'Reference', icon: ChartNoAxesCombined},
   boundaries: {title: 'Threat model', navigation: 'Threat model', body: threat, file: 'THREAT-MODEL.md', group: 'Reference', icon: ShieldCheck},
   troubleshooting: {title: 'Troubleshooting', navigation: 'Troubleshooting', body: troubleshooting, file: 'TROUBLESHOOTING.md', group: 'Reference', icon: LifeBuoy},
+  releasing: {title: 'Verification & release', navigation: 'Verification & release', body: releasing, file: 'RELEASING.md', group: 'Reference', icon: ShieldCheck},
 }
 const entries = Object.entries(documents)
 const slug = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')

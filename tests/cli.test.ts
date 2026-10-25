@@ -34,6 +34,23 @@ test('unknown commands and missing paths return exit code 2', () => {
   assert.equal(run('scan', '.', '--format', 'xml').status, 2)
 })
 
+test('CLI source requirements fail on an unknown wallet and accept a configured source', async context => {
+  const root = await mkdtemp(join(tmpdir(), 'ztrace-coverage-'))
+  const source = join(root, 'app.ts'), config = join(root, 'ztrace.config.json')
+  context.after(async () => {await unlink(source); await unlink(config).catch(() => {}); await rmdir(root)})
+  await writeFile(source, "import {readAccount} from 'unknown-wallet';console.log(readAccount().address);")
+  const missing = run('scan', root, '--require-sources', '--format', 'json', '--fail-on', 'never')
+  assert.equal(missing.status, 2)
+  assert.equal(JSON.parse(missing.stdout).modelCoverage.requirementsSatisfied, false)
+  assert.equal(run('scan', root, '--format', 'json').status, 2, 'CLI source recognition is required by default')
+  assert.equal(run('scan', root, '--allow-no-sources', '--format', 'json').status, 0)
+  assert.equal(run('scan', root, '--allow-no-sources', '--require-sources').status, 2)
+  await writeFile(config, JSON.stringify({requireSources: true, requiredSourceKinds: ['shielded-address'], sources: [{module: 'unknown-wallet', export: 'readAccount', path: 'address', kind: 'shielded-address'}]}))
+  assert.equal(run('scan', root, '--format', 'json').status, 1)
+  await writeFile(config, ' '.repeat(100001))
+  assert.equal(run('scan', root).status, 2)
+})
+
 test('PCZT CLI uses actual native parsing and keeps private-role acknowledgment separate', () => {
   const denied = run('inspect', 'pczt', join(fixtures, 'synthetic-v6.pczt.hex'), '--recipient', 'support')
   assert.equal(denied.status, 1)
@@ -93,7 +110,7 @@ test('CLI JSON policy, output, side-effect isolation, and incomplete coverage', 
   await writeFile(config, JSON.stringify({ sources: [], unexpectedOption: true }))
   assert.equal(run('scan', root).status, 2)
   await writeFile(config, '{}')
-  await writeFile(source, 'switch (flag) { case true: break; }')
+  await writeFile(source, 'class Example { get value() { return 1; } } new Example();')
   const incomplete = run('scan', root, '--format', 'json', '--fail-on', 'never')
   assert.equal(incomplete.status, 2)
   assert.equal(JSON.parse(incomplete.stdout).summary.coverage, 'incomplete')

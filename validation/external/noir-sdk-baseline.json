@@ -1,0 +1,284 @@
+{
+  "generatedAt": "2026-10-24T20:40:57.518Z",
+  "source": {
+    "repository": "https://github.com/NoirWallet/noir-wallet-sdk",
+    "commit": "1677b56cc5bc3ecf7f9555e348bce7ea1df28586",
+    "files": [
+      {
+        "path": "example/src/App.tsx",
+        "sha256": "22a1c9bbbd7388760826a9d23c1e3009e06058ae0ef1b971924fec497a18d7c9"
+      },
+      {
+        "path": "example/src/main.tsx",
+        "sha256": "64fd83aa02930427c4a945138cd81989163067bb92ff9f1004088937bdf88b49"
+      },
+      {
+        "path": "example/package.json",
+        "sha256": "600eb679f8f9de1c65ff4607faa8b47cdfdcb00129d9cf8b73dac3d2624422ea"
+      },
+      {
+        "path": "LICENSE",
+        "sha256": "f6610ae74650f2586becd0d73cd6658a1d40df4894cec2851d7c3c64dc1635c4"
+      }
+    ]
+  },
+  "assessment": "Unmodified, independently authored upstream SDK example. Findings are candidate disclosures for review; no production vulnerability or labeled accuracy estimate is asserted.",
+  "milliseconds": 861,
+  "report": {
+    "schemaVersion": 1,
+    "toolVersion": "0.1.0",
+    "files": [
+      "example/src/App.tsx",
+      "example/src/main.tsx"
+    ],
+    "findings": [],
+    "modelCoverage": {
+      "imports": [
+        {
+          "module": "./App",
+          "model": "local",
+          "roles": [],
+          "locations": [
+            {
+              "file": "example/src/main.tsx",
+              "line": 3,
+              "column": 1
+            }
+          ]
+        },
+        {
+          "module": "./App.css",
+          "model": "local",
+          "roles": [],
+          "locations": [
+            {
+              "file": "example/src/App.tsx",
+              "line": 17,
+              "column": 1
+            }
+          ]
+        },
+        {
+          "module": "./index.css",
+          "model": "local",
+          "roles": [],
+          "locations": [
+            {
+              "file": "example/src/main.tsx",
+              "line": 4,
+              "column": 1
+            }
+          ]
+        },
+        {
+          "module": "@noir-wallet/sdk",
+          "model": "built-in",
+          "roles": [
+            "source"
+          ],
+          "locations": [
+            {
+              "file": "example/src/App.tsx",
+              "line": 2,
+              "column": 1
+            }
+          ]
+        },
+        {
+          "module": "react",
+          "model": "built-in",
+          "roles": [
+            "transform"
+          ],
+          "locations": [
+            {
+              "file": "example/src/App.tsx",
+              "line": 1,
+              "column": 1
+            },
+            {
+              "file": "example/src/main.tsx",
+              "line": 1,
+              "column": 1
+            }
+          ]
+        },
+        {
+          "module": "react-dom/client",
+          "model": "unmodeled",
+          "roles": [],
+          "locations": [
+            {
+              "file": "example/src/main.tsx",
+              "line": 2,
+              "column": 1
+            }
+          ]
+        }
+      ],
+      "sourceKinds": [
+        "shielded-address",
+        "wallet-account",
+        "wallet-balance",
+        "wallet-history"
+      ],
+      "requirementsSatisfied": true
+    },
+    "diagnostics": [
+      {
+        "file": "example/src/App.tsx",
+        "line": 99,
+        "column": 11,
+        "code": "UNMODELED_CONSTRUCTOR",
+        "message": "A constructor receives sensitive data. Its side effects need manual review."
+      },
+      {
+        "file": "example/src/App.tsx",
+        "line": 99,
+        "column": 11,
+        "code": "UNMODELED_CALL",
+        "message": "This external call receives sensitive data or a callback. External side effects and callback scheduling need manual review; known sensitive inputs propagate to the result."
+      },
+      {
+        "file": "example/src/App.tsx",
+        "line": 105,
+        "column": 17,
+        "code": "UNMODELED_CALL",
+        "message": "This external call receives sensitive data or a callback. External side effects and callback scheduling need manual review; known sensitive inputs propagate to the result."
+      },
+      {
+        "file": "example/src/App.tsx",
+        "line": 106,
+        "column": 14,
+        "code": "UNMODELED_CALL",
+        "message": "This external call receives sensitive data or a callback. External side effects and callback scheduling need manual review; known sensitive inputs propagate to the result."
+      },
+      {
+        "file": "example/src/App.tsx",
+        "line": 107,
+        "column": 10,
+        "code": "UNMODELED_CALL",
+        "message": "This external call receives sensitive data or a callback. External side effects and callback scheduling need manual review; known sensitive inputs propagate to the result."
+      },
+      {
+        "file": "example/src/App.tsx",
+        "line": 113,
+        "column": 10,
+        "code": "UNMODELED_CALL",
+        "message": "This external call receives sensitive data or a callback. External side effects and callback scheduling need manual review; known sensitive inputs propagate to the result."
+      },
+      {
+        "file": "example/src/App.tsx",
+        "line": 117,
+        "column": 10,
+        "code": "UNMODELED_EXPRESSION",
+        "message": "Expression RegularExpressionLiteral is not modeled."
+      },
+      {
+        "file": "example/src/App.tsx",
+        "line": 228,
+        "column": 5,
+        "code": "UNMODELED_CALL",
+        "message": "This external call receives sensitive data or a callback. External side effects and callback scheduling need manual review; known sensitive inputs propagate to the result."
+      },
+      {
+        "file": "example/src/App.tsx",
+        "line": 229,
+        "column": 18,
+        "code": "UNMODELED_CALL",
+        "message": "This external call receives sensitive data or a callback. External side effects and callback scheduling need manual review; known sensitive inputs propagate to the result."
+      },
+      {
+        "file": "example/src/App.tsx",
+        "line": 312,
+        "column": 5,
+        "code": "UNMODELED_CALL",
+        "message": "This external call receives sensitive data or a callback. External side effects and callback scheduling need manual review; known sensitive inputs propagate to the result."
+      },
+      {
+        "file": "example/src/App.tsx",
+        "line": 342,
+        "column": 5,
+        "code": "UNMODELED_WALLET_METHOD",
+        "message": "This wallet method has no privacy model in this release. Review its returned data."
+      },
+      {
+        "file": "example/src/App.tsx",
+        "line": 342,
+        "column": 5,
+        "code": "UNMODELED_CALL",
+        "message": "This external call receives sensitive data or a callback. External side effects and callback scheduling need manual review; known sensitive inputs propagate to the result."
+      },
+      {
+        "file": "example/src/App.tsx",
+        "line": 473,
+        "column": 7,
+        "code": "UNMODELED_CALL",
+        "message": "This external call receives sensitive data or a callback. External side effects and callback scheduling need manual review; known sensitive inputs propagate to the result."
+      },
+      {
+        "file": "example/src/App.tsx",
+        "line": 547,
+        "column": 7,
+        "code": "UNMODELED_CALL",
+        "message": "This external call receives sensitive data or a callback. External side effects and callback scheduling need manual review; known sensitive inputs propagate to the result."
+      },
+      {
+        "file": "example/src/App.tsx",
+        "line": 559,
+        "column": 13,
+        "code": "UNMODELED_CALL",
+        "message": "This external call receives sensitive data or a callback. External side effects and callback scheduling need manual review; known sensitive inputs propagate to the result."
+      },
+      {
+        "file": "example/src/App.tsx",
+        "line": 561,
+        "column": 7,
+        "code": "UNMODELED_CALL",
+        "message": "This external call receives sensitive data or a callback. External side effects and callback scheduling need manual review; known sensitive inputs propagate to the result."
+      },
+      {
+        "file": "example/src/App.tsx",
+        "line": 586,
+        "column": 28,
+        "code": "UNMODELED_WALLET_METHOD",
+        "message": "This wallet method has no privacy model in this release. Review its returned data."
+      },
+      {
+        "file": "example/src/App.tsx",
+        "line": 681,
+        "column": 28,
+        "code": "UNMODELED_EXPRESSION",
+        "message": "Expression MetaProperty is not modeled."
+      },
+      {
+        "file": "example/src/App.tsx",
+        "line": 1324,
+        "column": 33,
+        "code": "UNMODELED_CALL",
+        "message": "This external call receives sensitive data or a callback. External side effects and callback scheduling need manual review; known sensitive inputs propagate to the result."
+      },
+      {
+        "file": "example/src/App.tsx",
+        "line": 1374,
+        "column": 37,
+        "code": "UNMODELED_CALL",
+        "message": "This external call receives sensitive data or a callback. External side effects and callback scheduling need manual review; known sensitive inputs propagate to the result."
+      },
+      {
+        "file": "example/src/App.tsx",
+        "line": 1436,
+        "column": 1,
+        "code": "UNMODELED_STATEMENT",
+        "message": "Statement ExportAssignment is not modeled. Its contents require review."
+      }
+    ],
+    "summary": {
+      "filesScanned": 2,
+      "sourcesDetected": 20,
+      "errors": 0,
+      "warnings": 0,
+      "coverage": "incomplete"
+    }
+  }
+}

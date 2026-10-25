@@ -16,6 +16,8 @@ node dist-tools/packages/cli/src/cli.js scan ./path/to/app --config ./policy.jso
 | `--format json` | Structured scan report. |
 | `--output file` | Write a report to a new file. |
 | `--config file` | Read a JSON policy; otherwise use `ztrace.config.json` at the scan root. |
+| `--require-sources` | Require a recognized sensitive source. |
+| `--allow-no-sources` | Explicitly permit source-free code; source recognition is otherwise required by default. |
 | `--fail-on warning` | Fail on warnings or errors; default. |
 | `--fail-on error` | Fail on errors. Warnings remain in the report. |
 | `--fail-on never` | Do not fail on findings. Incomplete coverage still requires review. |

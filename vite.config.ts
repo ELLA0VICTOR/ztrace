@@ -4,6 +4,7 @@ import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: process.env.ZTRACE_BASE_PATH ?? '/',
   plugins: [react(), tailwindcss()],
   worker: { format: 'es' },
 })

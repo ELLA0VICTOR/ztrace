@@ -1,0 +1,6 @@
+{
+  "requireSources": true,
+  "requiredSourceKinds": ["shielded-address", "wallet-balance", "wallet-history"],
+  "sinks": [{"module":"checkout-telemetry","export":"capture","kind":"analytics"}],
+  "exclude": ["corrected.ts", "corrected-entry.tsx"]
+}
