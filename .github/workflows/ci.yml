@@ -46,7 +46,7 @@ jobs:
           path: |
             validation/consumer/latest.json
             validation/adversarial/latest.json
-            runtime/evidence/latest.json
+            runtime/evidence/*.json
             benchmarks/latest.json
             .artifacts/release/*.tgz
           retention-days: 14

@@ -31,16 +31,17 @@ console.log('Packed ZTrace. Installing a separate consumer using the local npm c
 npm(['install', '--ignore-scripts', '--omit=optional', '--prefer-offline', '--no-audit', '--no-fund'], consumer)
 const metadata = JSON.parse(await readFile(join(consumer, 'node_modules/ztrace/package.json'), 'utf8'))
 assert.deepEqual(await readFile(join(consumer, 'node_modules/ztrace/dist-tools/packages/core/src/analyzer.js')), await readFile(join(root, 'dist-tools/packages/core/src/analyzer.js')), 'Installed engine must match the packed build')
-for (const name of ['react', 'react-dom', 'motion', 'lucide-react', 'react-markdown', 'remark-gfm']) assert.ok(!metadata.dependencies[name], `Website dependency in tool package: ${name}`)
+for (const name of ['react', 'react-dom', 'motion', 'lucide-react', 'react-markdown', 'remark-gfm', 'ajv']) assert.ok(!metadata.dependencies[name], `Development dependency in tool package: ${name}`)
 const apiPath = join(consumer, 'verify-api.mjs')
 await writeFile(apiPath, `import assert from 'node:assert/strict';
-import {scanSources} from 'ztrace/scanner';
+import {scanSources,toSarif} from 'ztrace/scanner';
 import {auditBrowser,findBrowserPath} from 'ztrace/runtime';
 import {inspectViewingCapability,inspectPcztDisclosure} from 'ztrace/protocol';
 assert.equal(typeof auditBrowser,'function');assert.equal(typeof findBrowserPath,'function');
 assert.equal(inspectViewingCapability('invalid').status,'invalid-or-unsupported');
 const report=scanSources([{path:'app.ts',content:"import {getNoirWallet} from '@noir-wallet/sdk';const a=await getNoirWallet().zcash.getAccounts();console.log(a.shielded)"}],{requireSources:true});
 assert.equal(report.findings.length,1);assert.equal(report.modelCoverage.requirementsSatisfied,true);
+assert.equal(toSarif(report).version,'2.1.0');assert.equal(toSarif(report).runs[0].results.length,1);
 const missing=await inspectPcztDisclosure('50435a5400000000',{recipient:'support'});
 assert.equal(missing.status,'parser-unavailable');assert.equal(missing.decision,'reject');
 console.log('Installed package APIs and missing-native-parser behavior verified');`)
@@ -55,13 +56,14 @@ await writeFile(join(consumer, 'verify-native.mjs'), `import assert from 'node:a
 const native = spawnSync(process.execPath, [join(consumer, 'verify-native.mjs')], {cwd: consumer, encoding: 'utf8', timeout: 30000})
 assert.equal(native.status, 0, native.stderr)
 console.log('Installed native parser and isolated worker verified.')
-await writeFile(join(consumer, 'src', 'package-types.ts'), `import {scanSources,type ScanOptions} from 'ztrace/scanner';
+await writeFile(join(consumer, 'src', 'package-types.ts'), `import {scanSources,toSarif,type ScanOptions,type SarifOptions} from 'ztrace/scanner';
 import {auditBrowser,type RuntimeExpectations} from 'ztrace/runtime';
 import {inspectViewingCapability,type PcztDisclosureOptions} from 'ztrace/protocol';
 const options:ScanOptions={requireSources:true,requiredSourceKinds:['shielded-address']};
+const sarif:SarifOptions={pathPrefix:'src'};
 const expectations:RuntimeExpectations={canariesRead:['address']};
 const role:PcztDisclosureOptions={recipient:'support'};
-export {scanSources,auditBrowser,inspectViewingCapability,options,expectations,role};`)
+export {scanSources,toSarif,auditBrowser,inspectViewingCapability,options,sarif,expectations,role};`)
 npm(['run', 'build'], consumer)
 console.log('Actual Noir SDK consumer compiles and bundles.')
 const scan = variant => JSON.parse(npm(['exec', '--offline', '--', 'ztrace', 'scan', 'src', '--config', `ztrace.${variant}.json`, '--format', 'json'], consumer, variant === 'leaking' ? 1 : 0))

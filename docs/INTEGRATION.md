@@ -47,4 +47,4 @@ npm run test:external
 
 This scans the unmodified Noir SDK example pinned in `validation/external/noir-sdk-source.json`. The script verifies file hashes and reuses its local source cache. Reports retain the original baseline and current observations separately.
 
-Current candidate findings follow transaction-history values into a user-facing block-explorer link. They require review in the context of intentional navigation. Remaining diagnostics cover clipboard export, timer scheduling, and a bounded closure context. The report is an upstream example observation; its programs have no independently assigned safe/leaking labels.
+Current candidate findings follow transaction-history values into a user-facing block-explorer link. They require review in the context of intentional navigation. The remaining diagnostic covers clipboard export. The report is an upstream example observation; its programs have no independently assigned safe/leaking labels.

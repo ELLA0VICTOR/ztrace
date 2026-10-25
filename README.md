@@ -265,7 +265,7 @@ ztrace inspect pczt <local-file> --recipient <role> [--acknowledge-private-discl
 
 | Option | Behavior |
 | --- | --- |
-| `--format text\|json` | Select human-readable or structured output; default is `text`. |
+| `--format text\|json\|sarif` | Select human-readable, JSON, or code-scanning output; default is `text`. |
 | `--output <file>` | Create a new report file. |
 | `--config <file>` | Load a JSON configuration file. |
 | `--require-sources` | Require a recognized sensitive source; enabled by default in the CLI. |
@@ -302,7 +302,7 @@ The built repository exposes three package entry points:
 
 | Import | Exports |
 | --- | --- |
-| `ztrace/scanner` | `scanSources`, `sensitiveKinds`, and scanner types |
+| `ztrace/scanner` | `scanSources`, `toSarif`, `sensitiveKinds`, and scanner types |
 | `ztrace/runtime` | `auditBrowser`, `findBrowserPath`, and runtime types |
 | `ztrace/protocol` | `inspectViewingCapability`, `inspectPcztDisclosure`, and protocol types |
 
@@ -460,12 +460,12 @@ Structural viewing-key checks and PCZT signer-projection inventories have separa
 
 ### Scanner benchmark
 
-The repository includes a fixed, self-authored synthetic corpus of 60 programs: 30 leaking cases and 30 safe cases, organized into regression, integration, and challenge splits.
+The repository includes a fixed, self-authored synthetic corpus of 88 programs: 44 leaking cases and 44 safe cases, organized into regression, integration, and challenge splits.
 
 | Configuration | Detected leaks | Missed leaks | Safe cases flagged | Safe cases clear |
 | --- | ---: | ---: | ---: | ---: |
-| Built-in models | 28 | 2 | 0 | 30 |
-| With two explicit custom-library adapters | 30 | 0 | 0 | 30 |
+| Built-in models | 42 | 2 | 0 | 44 |
+| With two explicit custom-library adapters | 44 | 0 | 0 | 44 |
 
 Results are case-level measurements for this corpus. Reports retain fixture classifications, review diagnostics, timings, and SHA-256 hashes for the corpus, evaluator, and engine.
 
@@ -478,6 +478,8 @@ Read the [benchmark report](benchmarks/latest.md) and [methodology](benchmarks/M
 ### Browser and protocol checks
 
 - **Runtime integration:** five controlled flows cover a leak, its correction, WebSockets, request headers, and redirects. Reports are retained in [runtime/evidence/latest.json](runtime/evidence/latest.json).
+- **Runtime boundaries:** Error/Map/Set/binary console values, WebSocket URLs, overall deadlines, oversized requests, and getter isolation have separate [retained evidence](runtime/evidence/boundaries.json).
+- **SARIF interoperability:** exported reports are validated against the locally retained official SARIF 2.1.0 schema; [code-scanning integration](docs/CLI.md#code-scanning-reports) preserves findings, traces, and review notices.
 - **Protocol vectors:** eight upstream F4Jumble cases and 40 upstream viewing-key encodings, with pinned provenance and hashes.
 - **PCZT fixture:** a locally generated synthetic V6 construction artifact with recorded provenance.
 - **Website checks:** desktop/mobile navigation, keyboard interactions, clipboard actions, real worker analysis, scroll behavior, and automated accessibility checks.

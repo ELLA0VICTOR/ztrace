@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { readFile, readdir, stat, writeFile } from 'node:fs/promises'
 import { dirname, extname, isAbsolute, join, matchesGlob, relative, resolve } from 'node:path'
-import { scanSources, sensitiveKinds } from '../../core/src/index.js'
+import { scanSources, sensitiveKinds, toSarif } from '../../core/src/index.js'
 import type { ScanOptions, ScanReport, SourceFile, SourceRule } from '../../core/src/index.js'
 import { projectAliases } from './project.js'
 
@@ -12,7 +12,7 @@ Usage: ztrace scan [path] [options]
        ztrace inspect key <local-file>
        ztrace inspect pczt <local-file> --recipient support|analytics|broadcast|prover|signer
 
-  --format text|json       Report format (default: text)
+  --format text|json|sarif Report format (default: text)
   --output <file>          Write a report instead of printing it
   --config <file>          Read a JSON policy (default: ztrace.config.json)
   --require-sources       Require a recognized sensitive source
@@ -128,7 +128,7 @@ async function main(): Promise<number> {
     else if (positional) throw new Error('Only one scan path is supported.')
     else { target = arg; positional = true }
   }
-  if (!['text', 'json'].includes(format)) throw new Error('--format must be text or json.')
+  if (!['text', 'json', 'sarif'].includes(format)) throw new Error('--format must be text, json, or sarif.')
   if (!['warning', 'error', 'never'].includes(failOn)) throw new Error('--fail-on must be warning, error, or never.')
   const absolute = resolve(target)
   const info = await stat(absolute)
@@ -170,7 +170,7 @@ async function main(): Promise<number> {
   for (const code of project.diagnostics) report.diagnostics.push({ file: 'tsconfig.json', line: 1, column: 1, code, message: 'Some project path metadata could not be loaded. Provide explicit moduleAliases or review the project configuration.' })
   for (const file of skipped) report.diagnostics.push({ file, line: 1, column: 1, code: 'FILE_LIMIT', message: 'File skipped due to the file-size, total-size, or file-count limit.' })
   if (skipped.length || project.diagnostics.length) report.summary.coverage = 'incomplete'
-  const rendered = format === 'json' ? `${JSON.stringify(report, null, 2)}\n` : formatText(report)
+  const rendered = format === 'text' ? formatText(report) : `${JSON.stringify(format === 'sarif' ? toSarif(report, {pathPrefix: relative(process.cwd(), root)}) : report, null, 2)}\n`
   if (output) {
     const destination = resolve(output)
     // Refuse to overwrite source or policy files, including files outside the target.

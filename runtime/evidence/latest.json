@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-25T00:12:42.342Z",
+  "generatedAt": "2026-10-25T10:14:04.748Z",
   "provenance": "New executions of five local synthetic pages/flows in an installed Chromium; no wallet transaction was performed.",
   "deliveredSensitiveRequests": 0,
   "reports": [
@@ -16,13 +16,6 @@
       },
       "findings": [
         {
-          "channel": "request",
-          "canary": "address",
-          "kind": "shielded-address",
-          "encoding": "base64",
-          "destination": "https://external.example"
-        },
-        {
           "channel": "console",
           "canary": "address",
           "kind": "shielded-address",
@@ -31,10 +24,17 @@
         },
         {
           "channel": "request",
+          "canary": "address",
+          "kind": "shielded-address",
+          "encoding": "base64",
+          "destination": "https://external.example"
+        },
+        {
+          "channel": "request",
           "canary": "viewing_key",
           "kind": "viewing-key",
           "encoding": "plain",
-          "destination": "http://127.0.0.1:52784"
+          "destination": "http://127.0.0.1:52187"
         }
       ],
       "diagnostics": [],
@@ -113,7 +113,7 @@
           "canary": "address",
           "kind": "shielded-address",
           "encoding": "plain",
-          "destination": "http://127.0.0.1:52784"
+          "destination": "http://127.0.0.1:52187"
         }
       ],
       "diagnostics": [],

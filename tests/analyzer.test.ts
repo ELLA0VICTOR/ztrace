@@ -110,9 +110,12 @@ test('calls in branches see the current captured values', () => {
   assert.equal(scan(`let value = ''; function log() { console.log(value); } if (flag) { value = connection.shielded; log(); }`).findings.length, 1)
 })
 
-test('missing local imports and unsupported callback scheduling require review', () => {
+test('missing local imports and unknown callback scheduling require review; known timers retain flows', () => {
   assert.ok(scan(`import { send } from './missing.js'; send(connection.shielded);`).diagnostics.some(diagnostic => diagnostic.code === 'UNRESOLVED_IMPORT'))
-  assert.ok(scan(`setTimeout(() => console.log(connection.shielded), 10);`).diagnostics.some(diagnostic => diagnostic.code === 'UNMODELED_CALL'))
+  assert.ok(scan(`unknownScheduler(() => console.log(connection.shielded));`).diagnostics.some(diagnostic => diagnostic.code === 'UNMODELED_CALL'))
+  const timer = scan(`setTimeout(() => console.log(connection.shielded), 10);`)
+  assert.equal(timer.findings.length, 1)
+  assert.equal(timer.diagnostics.length, 0)
 })
 
 test('preserves helper side effects on a passed object', () => {

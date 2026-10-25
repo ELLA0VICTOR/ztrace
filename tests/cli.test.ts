@@ -28,6 +28,19 @@ test('corrected example returns zero findings and a limited-coverage result', ()
   assert.equal(report.summary.coverage, 'limited')
 })
 
+test('CLI emits SARIF findings and retains exit thresholds', () => {
+  const result = run('scan', join(examples, 'vulnerable'), '--format', 'sarif')
+  assert.equal(result.status, 1, result.stderr)
+  const sarif = JSON.parse(result.stdout)
+  assert.equal(sarif.version, '2.1.0')
+  assert.equal(sarif.runs[0].results.length, 3)
+  assert.equal(sarif.runs[0].results[0].locations[0].physicalLocation.artifactLocation.uri.startsWith('examples/vulnerable/'), true)
+  assert.equal(sarif.runs[0].invocations[0].executionSuccessful, true)
+  const safe = run('scan', join(examples, 'safe'), '--format', 'sarif')
+  assert.equal(safe.status, 0, safe.stderr)
+  assert.deepEqual(JSON.parse(safe.stdout).runs[0].results, [])
+})
+
 test('unknown commands and missing paths return exit code 2', () => {
   assert.equal(run('wat').status, 2)
   assert.equal(run('scan', join(tmpdir(), 'ztrace-directory-that-does-not-exist')).status, 2)

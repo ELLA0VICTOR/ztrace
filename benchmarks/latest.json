@@ -1,26 +1,26 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-25T00:08:45.973Z",
-  "corpusSha256": "440a17e1e2429363c20aac4255e08af3381824c97444d84d8f912f1f4d69bb96",
+  "generatedAt": "2026-10-25T10:17:57.354Z",
+  "corpusSha256": "01525d22d5a4def99d5aa5c20c198c5ab1d1d58944be7706dcacc8a9028201a2",
   "evaluationPolicySha256": "0bdc49e19343520d775ce09a1735bfd98aa0d49ac1fa00d377a6f02c1a380c37",
-  "engineSha256": "d2891f7f535a962683f98e5fcfeff2bf02a617721118e1bcdd4e570df30fc7ae",
+  "engineSha256": "b5b06da79d0d543a84f0ab07abb455377a8933dd7c5e99610bc45aed75e1b396",
   "provenance": "Self-authored, synthetic, API-based fixtures. Challenge cases are a first-run stress split, not an independent external evaluation.",
   "summary": {
-    "TP": 28,
+    "TP": 42,
     "FN": 2,
     "FP": 0,
-    "TN": 30,
-    "reviewCases": 3,
-    "recall": 0.9333333333333333,
+    "TN": 44,
+    "reviewCases": 7,
+    "recall": 0.9545454545454546,
     "precision": 1
   },
   "splits": {
     "regression": {
-      "TP": 6,
+      "TP": 20,
       "FN": 0,
       "FP": 0,
-      "TN": 6,
-      "reviewCases": 0,
+      "TN": 20,
+      "reviewCases": 4,
       "recall": 1,
       "precision": 1
     },
@@ -144,10 +144,10 @@
       "precision": 1
     },
     "field-sensitivity": {
-      "TP": 3,
+      "TP": 4,
       "FN": 0,
       "FP": 0,
-      "TN": 3,
+      "TN": 4,
       "reviewCases": 0,
       "recall": 1,
       "precision": 1
@@ -178,6 +178,51 @@
       "reviewCases": 0,
       "recall": 0,
       "precision": null
+    },
+    "callbacks": {
+      "TP": 5,
+      "FN": 0,
+      "FP": 0,
+      "TN": 5,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
+    },
+    "exceptions": {
+      "TP": 2,
+      "FN": 0,
+      "FP": 0,
+      "TN": 2,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
+    },
+    "accessors": {
+      "TP": 2,
+      "FN": 0,
+      "FP": 0,
+      "TN": 2,
+      "reviewCases": 4,
+      "recall": 1,
+      "precision": 1
+    },
+    "promises": {
+      "TP": 2,
+      "FN": 0,
+      "FP": 0,
+      "TN": 2,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
+    },
+    "function-dispatch": {
+      "TP": 2,
+      "FN": 0,
+      "FP": 0,
+      "TN": 2,
+      "reviewCases": 0,
+      "recall": 1,
+      "precision": 1
     }
   },
   "cases": [
@@ -196,7 +241,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 66.568
+      "milliseconds": 67.624
     },
     {
       "id": "audit-nullable-safe",
@@ -213,7 +258,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 4.242
+      "milliseconds": 4.512
     },
     {
       "id": "audit-comma-leak",
@@ -230,7 +275,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 5.549
+      "milliseconds": 5.632
     },
     {
       "id": "audit-comma-safe",
@@ -247,7 +292,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 4.868
+      "milliseconds": 5.403
     },
     {
       "id": "audit-hook-leak",
@@ -264,7 +309,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 2.907
+      "milliseconds": 3.132
     },
     {
       "id": "audit-hook-safe",
@@ -281,7 +326,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.906
+      "milliseconds": 2.039
     },
     {
       "id": "audit-segment-leak",
@@ -298,7 +343,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 21.489
+      "milliseconds": 21.79
     },
     {
       "id": "audit-segment-safe",
@@ -315,7 +360,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 4.539
+      "milliseconds": 4.399
     },
     {
       "id": "audit-loop-leak",
@@ -332,7 +377,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 6.188
+      "milliseconds": 5.126
     },
     {
       "id": "audit-loop-safe",
@@ -349,7 +394,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 3.518
+      "milliseconds": 2.988
     },
     {
       "id": "audit-reachability-leak",
@@ -366,7 +411,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 3.489
+      "milliseconds": 3.063
     },
     {
       "id": "audit-reachability-safe",
@@ -383,7 +428,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.778
+      "milliseconds": 1.567
     },
     {
       "id": "checkout-telemetry-leak",
@@ -400,7 +445,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 11.111
+      "milliseconds": 9.761
     },
     {
       "id": "checkout-telemetry-safe",
@@ -417,7 +462,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 4.057
+      "milliseconds": 3.018
     },
     {
       "id": "payroll-balance-leak",
@@ -434,7 +479,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 3.002
+      "milliseconds": 2.921
     },
     {
       "id": "payroll-balance-safe",
@@ -451,7 +496,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 4.053
+      "milliseconds": 2.303
     },
     {
       "id": "support-history-leak",
@@ -468,7 +513,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 2.054
+      "milliseconds": 2.215
     },
     {
       "id": "support-history-safe",
@@ -485,7 +530,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.661
+      "milliseconds": 1.844
     },
     {
       "id": "invoice-axios-leak",
@@ -502,7 +547,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 2.337
+      "milliseconds": 2.283
     },
     {
       "id": "invoice-axios-safe",
@@ -519,7 +564,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.835
+      "milliseconds": 2.164
     },
     {
       "id": "session-websocket-leak",
@@ -536,7 +581,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 2.696
+      "milliseconds": 2.333
     },
     {
       "id": "session-websocket-safe",
@@ -553,7 +598,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.815
+      "milliseconds": 1.749
     },
     {
       "id": "session-xhr-leak",
@@ -570,7 +615,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 1.781
+      "milliseconds": 1.737
     },
     {
       "id": "session-xhr-safe",
@@ -587,7 +632,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.394
+      "milliseconds": 1.72
     },
     {
       "id": "server-pino-leak",
@@ -604,7 +649,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 1.504
+      "milliseconds": 1.661
     },
     {
       "id": "server-pino-safe",
@@ -621,7 +666,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.459
+      "milliseconds": 1.534
     },
     {
       "id": "sentry-context-leak",
@@ -638,7 +683,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 1.597
+      "milliseconds": 1.485
     },
     {
       "id": "sentry-context-safe",
@@ -655,7 +700,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 6.234
+      "milliseconds": 5.138
     },
     {
       "id": "react-effect-leak",
@@ -672,7 +717,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 6.966
+      "milliseconds": 6.81
     },
     {
       "id": "react-effect-safe",
@@ -689,7 +734,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 2.291
+      "milliseconds": 2.246
     },
     {
       "id": "react-resource-leak",
@@ -706,7 +751,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 1.948
+      "milliseconds": 2.057
     },
     {
       "id": "react-resource-safe",
@@ -723,7 +768,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.346
+      "milliseconds": 1.299
     },
     {
       "id": "class-logger-leak",
@@ -740,7 +785,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 4.109
+      "milliseconds": 3.74
     },
     {
       "id": "class-logger-safe",
@@ -757,7 +802,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 2.482
+      "milliseconds": 2.277
     },
     {
       "id": "injected-wallet-leak",
@@ -774,7 +819,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 1.5
+      "milliseconds": 1.518
     },
     {
       "id": "injected-wallet-safe",
@@ -791,7 +836,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 0.89
+      "milliseconds": 0.899
     },
     {
       "id": "ledger-pczt-leak",
@@ -808,7 +853,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 1.149
+      "milliseconds": 1.156
     },
     {
       "id": "ledger-pczt-safe",
@@ -825,7 +870,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.217
+      "milliseconds": 1.118
     },
     {
       "id": "viewing-key-leak",
@@ -842,7 +887,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 1.29
+      "milliseconds": 1.155
     },
     {
       "id": "viewing-key-safe",
@@ -859,7 +904,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.072
+      "milliseconds": 1.104
     },
     {
       "id": "alias-module-leak",
@@ -876,7 +921,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 2.21
+      "milliseconds": 2.38
     },
     {
       "id": "alias-module-safe",
@@ -893,7 +938,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 6.7
+      "milliseconds": 7.299
     },
     {
       "id": "indexed-loop-leak",
@@ -910,7 +955,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 4.783
+      "milliseconds": 4.868
     },
     {
       "id": "indexed-loop-safe",
@@ -927,7 +972,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 2.381
+      "milliseconds": 3.211
     },
     {
       "id": "serialized-fields-leak",
@@ -944,7 +989,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 1.445
+      "milliseconds": 1.622
     },
     {
       "id": "serialized-fields-safe",
@@ -961,7 +1006,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.494
+      "milliseconds": 1.537
     },
     {
       "id": "challenge-rest-leak",
@@ -978,7 +1023,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 1.586
+      "milliseconds": 1.585
     },
     {
       "id": "challenge-rest-safe",
@@ -995,7 +1040,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.387
+      "milliseconds": 1.32
     },
     {
       "id": "challenge-conditional-function-leak",
@@ -1012,7 +1057,7 @@
       "classification": "TP",
       "findings": 2,
       "reviewDiagnostics": [],
-      "milliseconds": 2.516
+      "milliseconds": 2.488
     },
     {
       "id": "challenge-conditional-function-safe",
@@ -1029,7 +1074,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 2.022
+      "milliseconds": 2.054
     },
     {
       "id": "challenge-array-spread-leak",
@@ -1046,7 +1091,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 1.81
+      "milliseconds": 1.789
     },
     {
       "id": "challenge-array-spread-safe",
@@ -1063,7 +1108,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.45
+      "milliseconds": 1.481
     },
     {
       "id": "challenge-permission-event-leak",
@@ -1080,7 +1125,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 1.26
+      "milliseconds": 1.221
     },
     {
       "id": "challenge-permission-event-safe",
@@ -1097,7 +1142,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 0.972
+      "milliseconds": 0.969
     },
     {
       "id": "challenge-custom-transport-leak",
@@ -1116,7 +1161,7 @@
       "reviewDiagnostics": [
         "UNMODELED_CALL"
       ],
-      "milliseconds": 1.561
+      "milliseconds": 1.677
     },
     {
       "id": "challenge-custom-transport-safe",
@@ -1133,7 +1178,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.616
+      "milliseconds": 1.674
     },
     {
       "id": "challenge-reflective-sink-leak",
@@ -1152,7 +1197,7 @@
       "reviewDiagnostics": [
         "DYNAMIC_DISPATCH_REVIEW"
       ],
-      "milliseconds": 1.881
+      "milliseconds": 2.347
     },
     {
       "id": "challenge-reflective-sink-safe",
@@ -1171,7 +1216,7 @@
       "reviewDiagnostics": [
         "DYNAMIC_DISPATCH_REVIEW"
       ],
-      "milliseconds": 1.286
+      "milliseconds": 1.733
     },
     {
       "id": "challenge-native-code-leak",
@@ -1188,7 +1233,7 @@
       "classification": "FN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.322
+      "milliseconds": 1.086
     },
     {
       "id": "challenge-native-code-safe",
@@ -1205,7 +1250,491 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.073
+      "milliseconds": 1.011
+    },
+    {
+      "id": "audit-callback-array-leak",
+      "family": "callbacks",
+      "split": "regression",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.803
+    },
+    {
+      "id": "audit-callback-array-safe",
+      "family": "callbacks",
+      "split": "regression",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.732
+    },
+    {
+      "id": "audit-callback-index-leak",
+      "family": "callbacks",
+      "split": "regression",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 2.548
+    },
+    {
+      "id": "audit-callback-index-safe",
+      "family": "callbacks",
+      "split": "regression",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 2.283
+    },
+    {
+      "id": "audit-reduce-leak",
+      "family": "callbacks",
+      "split": "regression",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 2.251
+    },
+    {
+      "id": "audit-reduce-safe",
+      "family": "callbacks",
+      "split": "regression",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.623
+    },
+    {
+      "id": "audit-reduce-direction-leak",
+      "family": "callbacks",
+      "split": "regression",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.759
+    },
+    {
+      "id": "audit-reduce-direction-safe",
+      "family": "callbacks",
+      "split": "regression",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.477
+    },
+    {
+      "id": "audit-catch-state-leak",
+      "family": "exceptions",
+      "split": "regression",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 2.892
+    },
+    {
+      "id": "audit-catch-state-safe",
+      "family": "exceptions",
+      "split": "regression",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.657
+    },
+    {
+      "id": "audit-caught-cause-leak",
+      "family": "exceptions",
+      "split": "regression",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.812
+    },
+    {
+      "id": "audit-caught-cause-safe",
+      "family": "exceptions",
+      "split": "regression",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.736
+    },
+    {
+      "id": "audit-object-getter-leak",
+      "family": "accessors",
+      "split": "regression",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [
+        "ACCESSOR_REVIEW"
+      ],
+      "milliseconds": 2.097
+    },
+    {
+      "id": "audit-object-getter-safe",
+      "family": "accessors",
+      "split": "regression",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [
+        "ACCESSOR_REVIEW"
+      ],
+      "milliseconds": 1.54
+    },
+    {
+      "id": "audit-object-setter-leak",
+      "family": "accessors",
+      "split": "regression",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [
+        "ACCESSOR_REVIEW"
+      ],
+      "milliseconds": 2.947
+    },
+    {
+      "id": "audit-object-setter-safe",
+      "family": "accessors",
+      "split": "regression",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [
+        "ACCESSOR_REVIEW"
+      ],
+      "milliseconds": 1.668
+    },
+    {
+      "id": "audit-promise-executor-leak",
+      "family": "promises",
+      "split": "regression",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.406
+    },
+    {
+      "id": "audit-promise-executor-safe",
+      "family": "promises",
+      "split": "regression",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 7.471
+    },
+    {
+      "id": "audit-promise-reference-leak",
+      "family": "promises",
+      "split": "regression",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.618
+    },
+    {
+      "id": "audit-promise-reference-safe",
+      "family": "promises",
+      "split": "regression",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.432
+    },
+    {
+      "id": "audit-bound-logger-leak",
+      "family": "function-dispatch",
+      "split": "regression",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.194
+    },
+    {
+      "id": "audit-bound-logger-safe",
+      "family": "function-dispatch",
+      "split": "regression",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.375
+    },
+    {
+      "id": "audit-applied-logger-leak",
+      "family": "function-dispatch",
+      "split": "regression",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.539
+    },
+    {
+      "id": "audit-applied-logger-safe",
+      "family": "function-dispatch",
+      "split": "regression",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.14
+    },
+    {
+      "id": "audit-destructure-assignment-leak",
+      "family": "field-sensitivity",
+      "split": "regression",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 2.231
+    },
+    {
+      "id": "audit-destructure-assignment-safe",
+      "family": "field-sensitivity",
+      "split": "regression",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.698
+    },
+    {
+      "id": "audit-timer-arguments-leak",
+      "family": "callbacks",
+      "split": "regression",
+      "vulnerable": true,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 1,
+      "detected": true,
+      "classification": "TP",
+      "findings": 1,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.407
+    },
+    {
+      "id": "audit-timer-arguments-safe",
+      "family": "callbacks",
+      "split": "regression",
+      "vulnerable": false,
+      "expected": {
+        "kind": "shielded-address",
+        "ruleId": "ZT001",
+        "file": "app.tsx"
+      },
+      "matchedFindings": 0,
+      "detected": false,
+      "classification": "TN",
+      "findings": 0,
+      "reviewDiagnostics": [],
+      "milliseconds": 1.317
     }
   ],
   "withExplicitCustomAdapters": {
@@ -1227,11 +1756,11 @@
       ]
     },
     "summary": {
-      "TP": 30,
+      "TP": 44,
       "FN": 0,
       "FP": 0,
-      "TN": 30,
-      "reviewCases": 2,
+      "TN": 44,
+      "reviewCases": 6,
       "recall": 1,
       "precision": 1
     },
@@ -1596,6 +2125,182 @@
       },
       {
         "id": "challenge-native-code-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-callback-array-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-callback-array-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-callback-index-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-callback-index-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-reduce-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-reduce-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-reduce-direction-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-reduce-direction-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-catch-state-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-catch-state-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-caught-cause-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-caught-cause-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-object-getter-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": [
+          "ACCESSOR_REVIEW"
+        ]
+      },
+      {
+        "id": "audit-object-getter-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": [
+          "ACCESSOR_REVIEW"
+        ]
+      },
+      {
+        "id": "audit-object-setter-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": [
+          "ACCESSOR_REVIEW"
+        ]
+      },
+      {
+        "id": "audit-object-setter-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": [
+          "ACCESSOR_REVIEW"
+        ]
+      },
+      {
+        "id": "audit-promise-executor-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-promise-executor-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-promise-reference-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-promise-reference-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-bound-logger-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-bound-logger-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-applied-logger-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-applied-logger-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-destructure-assignment-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-destructure-assignment-safe",
+        "vulnerable": false,
+        "classification": "TN",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-timer-arguments-leak",
+        "vulnerable": true,
+        "classification": "TP",
+        "reviewDiagnostics": []
+      },
+      {
+        "id": "audit-timer-arguments-safe",
         "vulnerable": false,
         "classification": "TN",
         "reviewDiagnostics": []

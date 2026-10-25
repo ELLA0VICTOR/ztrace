@@ -112,3 +112,11 @@ Promise `catch`/`finally`, array `find`/`findIndex`/`some`/`every`, mutable arra
 Nested callback analysis retains observed lexical contexts, including React state setters. Closure expansion has an eight-context bound for entry analysis, and additional contexts are reported for review. These are bounded possible-flow models.
 
 Explicit thrown values propagate into catch bindings, including throws from local function calls and nested catches. Standard Error-family message, stack, and cause fields preserve their respective data flows. Object enumeration and the SDK's pure signing-verification/address-conversion helpers also preserve supported sensitivity. Complex exception control transfers and asynchronous scheduling remain conservative approximations.
+
+Catch environments include modeled assignments performed before a throw. Finite array callbacks receive the element, numeric index, and original array; known empty arrays skip callbacks. Finite `reduce`/`reduceRight` retain accumulator fields and direction up to 128 elements. Unknown-length reductions perform bounded propagation and emit `REDUCTION_REVIEW`.
+
+Promise constructors model resolve/reject callbacks as possible data paths. Rejection handlers, `allSettled`, `race`, and `any` retain supported values. Direct function references, bound callbacks, `call`/`apply`, finite argument spreads, and timer callbacks are supported. Timer and promise models describe possible execution, without simulating the event loop or proving fulfillment/rejection order.
+
+Nested array/object destructuring assignments retain selected fields, defaults, and rest values. Local object/class getter reads and setter writes use their current modeled receiver and captured state. Getter evaluation is included in known JSON serialization, spreads, and object enumeration. Accessors still emit `ACCESSOR_REVIEW`: reflective descriptors, inherited accessors, and arbitrary library access are outside this model.
+
+Known defined literal values skip default initializers; explicit `undefined` and `void` results select them. Unknown defaults join the executed and skipped environments. `typeof` and `void` preserve operand side effects without treating the operand's private value as their output. Known empty `Array.from` mappings skip their callbacks.

@@ -4,12 +4,12 @@ This directory retains reproducible observations for the 0.1.0 release candidate
 
 | Check | Result | Evidence |
 | --- | --- | --- |
-| Core, CLI, and protocol regressions | 78 passing tests | `npm test` |
-| Runtime regressions | 4 passing tests | `npm run test:runtime` |
-| Deterministic adversarial checks | 436 checks across source flows, key encodings, and PCZT input boundaries | [Report](adversarial/latest.json) |
-| Synthetic source benchmark | 28 detected leaks, 2 misses, 0 false positives, 30 safe cases; the two explicit adapters resolve the misses | [Results](../benchmarks/latest.md) |
+| Core, CLI, and protocol regressions | 92 passing tests, including official-schema SARIF validation | `npm test` |
+| Runtime regressions | 7 passing tests | [Baseline flows](../runtime/evidence/latest.json), [boundary flows](../runtime/evidence/boundaries.json) |
+| Deterministic adversarial checks | 520 checks across source flows, key encodings, and PCZT input boundaries | [Report](adversarial/latest.json) |
+| Synthetic source benchmark | 42 detected leaks, 2 misses, 0 false positives, 44 safe cases; the two explicit adapters resolve the misses | [Results](../benchmarks/latest.md) |
 | Installed-package consumer | Actual published Noir SDK; leaking and corrected React flows; static analysis and runtime expectations; zero sensitive collector deliveries | [Report](consumer/latest.json) |
-| Pinned upstream example | 24 recognized sources, 3 candidate disclosure traces, 3 review diagnostics | [Observation](external/noir-sdk-latest.json), [provenance](external/noir-sdk-source.json) |
+| Pinned upstream example | 24 recognized sources, 3 candidate disclosure traces, 1 review diagnostic | [Observation](external/noir-sdk-latest.json), [provenance](external/noir-sdk-source.json) |
 
 The consumer test installs the packed tool outside the repository, verifies ESM exports and TypeScript declarations, exercises the installed CLI, and checks optional native-parser behavior. Its browser flow supplies synthetic wallet values through the extension-provider boundary. It retains a package digest and execution metadata without retaining the canary values.
 

@@ -1,0 +1,135 @@
+{
+  "generatedAt": "2026-10-25T10:15:35.033Z",
+  "provenance": "Three controlled local Chromium flows for console containers, WebSocket URLs, overall deadlines, and inspection limits; synthetic inputs only.",
+  "deliveredSensitiveRequests": 0,
+  "flows": [
+    {
+      "flow": "console-containers-and-websocket-url",
+      "report": {
+        "schemaVersion": 1,
+        "mode": "runtime-canary",
+        "completion": "completed",
+        "browserVersion": "153.0.8010.12",
+        "execution": {
+          "canariesRead": [],
+          "checkpointsReached": [],
+          "expectationsConfigured": false,
+          "expectationsSatisfied": null
+        },
+        "findings": [
+          {
+            "channel": "console",
+            "canary": "message",
+            "kind": "shielded-address",
+            "encoding": "plain",
+            "destination": "local-console"
+          },
+          {
+            "channel": "console",
+            "canary": "cycle",
+            "kind": "shielded-address",
+            "encoding": "plain",
+            "destination": "local-console"
+          },
+          {
+            "channel": "websocket",
+            "canary": "url",
+            "kind": "shielded-address",
+            "encoding": "plain",
+            "destination": "wss://external.example"
+          },
+          {
+            "channel": "console",
+            "canary": "cause",
+            "kind": "shielded-address",
+            "encoding": "plain",
+            "destination": "local-console"
+          },
+          {
+            "channel": "console",
+            "canary": "map",
+            "kind": "shielded-address",
+            "encoding": "plain",
+            "destination": "local-console"
+          },
+          {
+            "channel": "console",
+            "canary": "set",
+            "kind": "shielded-address",
+            "encoding": "plain",
+            "destination": "local-console"
+          },
+          {
+            "channel": "console",
+            "canary": "bytes",
+            "kind": "shielded-address",
+            "encoding": "plain",
+            "destination": "local-console"
+          }
+        ],
+        "diagnostics": [],
+        "summary": {
+          "actionsCompleted": 0,
+          "requestsObserved": 1,
+          "requestsBlocked": 0,
+          "consoleEventsObserved": 5
+        },
+        "scope": "Only supplied synthetic canaries, supported encodings, executed actions, and the bounded observation window were checked. External HTTP and all WebSocket upstream connections were blocked. No payloads, screenshots, HAR, or browser traces were retained."
+      }
+    },
+    {
+      "flow": "overall-deadline",
+      "report": {
+        "schemaVersion": 1,
+        "mode": "runtime-canary",
+        "completion": "incomplete",
+        "browserVersion": "153.0.8010.12",
+        "execution": {
+          "canariesRead": [],
+          "checkpointsReached": [],
+          "expectationsConfigured": false,
+          "expectationsSatisfied": null
+        },
+        "findings": [],
+        "diagnostics": [
+          "RUNTIME_DEADLINE",
+          "RUNTIME_FLOW_INCOMPLETE"
+        ],
+        "summary": {
+          "actionsCompleted": 1,
+          "requestsObserved": 1,
+          "requestsBlocked": 0,
+          "consoleEventsObserved": 0
+        },
+        "scope": "Only supplied synthetic canaries, supported encodings, executed actions, and the bounded observation window were checked. External HTTP and all WebSocket upstream connections were blocked. No payloads, screenshots, HAR, or browser traces were retained."
+      }
+    },
+    {
+      "flow": "inspection-bounds-and-getter-isolation",
+      "report": {
+        "schemaVersion": 1,
+        "mode": "runtime-canary",
+        "completion": "incomplete",
+        "browserVersion": "153.0.8010.12",
+        "execution": {
+          "canariesRead": [],
+          "checkpointsReached": [],
+          "expectationsConfigured": false,
+          "expectationsSatisfied": null
+        },
+        "findings": [],
+        "diagnostics": [
+          "RUNTIME_REQUEST_SIZE_LIMIT",
+          "UNREADABLE_CONSOLE_ARGUMENT"
+        ],
+        "summary": {
+          "actionsCompleted": 0,
+          "requestsObserved": 2,
+          "requestsBlocked": 1,
+          "consoleEventsObserved": 2
+        },
+        "scope": "Only supplied synthetic canaries, supported encodings, executed actions, and the bounded observation window were checked. External HTTP and all WebSocket upstream connections were blocked. No payloads, screenshots, HAR, or browser traces were retained."
+      }
+    }
+  ]
+}

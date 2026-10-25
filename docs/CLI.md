@@ -14,6 +14,7 @@ node dist-tools/packages/cli/src/cli.js scan ./path/to/app --config ./policy.jso
 | --- | --- |
 | `--format text` | Human-readable findings and coverage diagnostics; default. |
 | `--format json` | Structured scan report. |
+| `--format sarif` | SARIF 2.1.0 findings, locations, traces, and analysis notices. |
 | `--output file` | Write a report to a new file. |
 | `--config file` | Read a JSON policy; otherwise use `ztrace.config.json` at the scan root. |
 | `--require-sources` | Require a recognized sensitive source. |
@@ -41,6 +42,29 @@ node dist-tools/packages/cli/src/cli.js scan ../application --format json --outp
 ```
 
 Use a fresh output path per run. A zero exit status means only that the supported analysis did not produce findings at the selected threshold.
+
+## Code-scanning reports
+
+Generate a SARIF report from the application checkout:
+
+```sh
+npx --no-install ztrace scan ./src --format sarif --output ztrace.sarif
+```
+
+The local ZTrace package must already be installed. File locations are relative to the command's working directory, so scanning `./src` produces `src/...` locations suitable for repository review. SARIF preserves rule severity, source-to-sink code flows, source requirements, and incomplete-analysis notices. Exit thresholds remain the same as text and JSON reports. Keep the scanner's exit status as a separate CI check even when another step uploads the report.
+
+The export follows the [OASIS SARIF 2.1.0 standard](https://docs.oasis-open.org/sarif/sarif/v2.1.0/os/sarif-v2.1.0-os.html). [GitHub's supported SARIF properties](https://docs.github.com/en/code-security/reference/code-scanning/sarif-files/sarif-support) explain code-scanning ingestion and repository availability. Its upload action can populate fingerprints from repository source; ZTrace leaves fingerprint generation to that integration. No upload is performed by the CLI.
+
+For an API integration:
+
+```js
+import {scanSources, toSarif} from 'ztrace/scanner'
+
+const report = scanSources(sourceFiles, {requireSources: true})
+const sarif = toSarif(report, {pathPrefix: 'src'})
+```
+
+Use source paths relative to the scan root. `pathPrefix` is the repository-relative path to that root. Absolute paths are rejected by the formatter to avoid embedding local machine directories. Reports retain names and locations but omit copied source snippets and literal payload values.
 
 ## Scanner API
 

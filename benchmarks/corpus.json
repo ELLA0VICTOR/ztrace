@@ -825,6 +825,370 @@
           "content": "import {readAccount} from 'unmodeled-native-wallet';const a=readAccount();console.log('ready');"
         }
       ]
+    },
+    {
+      "id": "audit-callback-array-leak",
+      "family": "callbacks",
+      "split": "regression",
+      "vulnerable": true,
+      "options": {},
+      "files": [
+        {
+          "path": "app.tsx",
+          "content": "import {getNoirWallet} from '@noir-wallet/sdk'; const wallet=getNoirWallet(); const account=await wallet.zcash.getAccounts();\n[account.shielded].forEach((value,index,array)=>console.log(array[index]));"
+        }
+      ]
+    },
+    {
+      "id": "audit-callback-array-safe",
+      "family": "callbacks",
+      "split": "regression",
+      "vulnerable": false,
+      "options": {},
+      "files": [
+        {
+          "path": "app.tsx",
+          "content": "import {getNoirWallet} from '@noir-wallet/sdk'; const wallet=getNoirWallet(); const account=await wallet.zcash.getAccounts();\n[account.shielded].forEach((value,index)=>console.log(index));"
+        }
+      ]
+    },
+    {
+      "id": "audit-callback-index-leak",
+      "family": "callbacks",
+      "split": "regression",
+      "vulnerable": true,
+      "options": {},
+      "files": [
+        {
+          "path": "app.tsx",
+          "content": "import {getNoirWallet} from '@noir-wallet/sdk'; const wallet=getNoirWallet(); const account=await wallet.zcash.getAccounts();\n[account.shielded,'public'].map((value,index)=>{if(index===0)console.log(value);return value;});"
+        }
+      ]
+    },
+    {
+      "id": "audit-callback-index-safe",
+      "family": "callbacks",
+      "split": "regression",
+      "vulnerable": false,
+      "options": {},
+      "files": [
+        {
+          "path": "app.tsx",
+          "content": "import {getNoirWallet} from '@noir-wallet/sdk'; const wallet=getNoirWallet(); const account=await wallet.zcash.getAccounts();\n[account.shielded,'public'].map((value,index)=>{if(index===1)console.log(value);return value;});"
+        }
+      ]
+    },
+    {
+      "id": "audit-reduce-leak",
+      "family": "callbacks",
+      "split": "regression",
+      "vulnerable": true,
+      "options": {},
+      "files": [
+        {
+          "path": "app.tsx",
+          "content": "import {getNoirWallet} from '@noir-wallet/sdk'; const wallet=getNoirWallet(); const account=await wallet.zcash.getAccounts();\nconsole.log([account.shielded].reduce((total,item)=>total+item,''));"
+        }
+      ]
+    },
+    {
+      "id": "audit-reduce-safe",
+      "family": "callbacks",
+      "split": "regression",
+      "vulnerable": false,
+      "options": {},
+      "files": [
+        {
+          "path": "app.tsx",
+          "content": "import {getNoirWallet} from '@noir-wallet/sdk'; const wallet=getNoirWallet(); const account=await wallet.zcash.getAccounts();\nconsole.log([account.shielded,'public'].reduce((total,item)=>item,''));"
+        }
+      ]
+    },
+    {
+      "id": "audit-reduce-direction-leak",
+      "family": "callbacks",
+      "split": "regression",
+      "vulnerable": true,
+      "options": {},
+      "files": [
+        {
+          "path": "app.tsx",
+          "content": "import {getNoirWallet} from '@noir-wallet/sdk'; const wallet=getNoirWallet(); const account=await wallet.zcash.getAccounts();\nconsole.log([account.shielded,'public'].reduceRight((total,item)=>item,''));"
+        }
+      ]
+    },
+    {
+      "id": "audit-reduce-direction-safe",
+      "family": "callbacks",
+      "split": "regression",
+      "vulnerable": false,
+      "options": {},
+      "files": [
+        {
+          "path": "app.tsx",
+          "content": "import {getNoirWallet} from '@noir-wallet/sdk'; const wallet=getNoirWallet(); const account=await wallet.zcash.getAccounts();\nconsole.log([account.shielded,'public'].reduce((total,item)=>item,''));"
+        }
+      ]
+    },
+    {
+      "id": "audit-catch-state-leak",
+      "family": "exceptions",
+      "split": "regression",
+      "vulnerable": true,
+      "options": {},
+      "files": [
+        {
+          "path": "app.tsx",
+          "content": "import {getNoirWallet} from '@noir-wallet/sdk'; const wallet=getNoirWallet(); const account=await wallet.zcash.getAccounts();\nlet value='public';try{value=account.shielded;throw new Error('failure');}catch(error){console.log(value);}"
+        }
+      ]
+    },
+    {
+      "id": "audit-catch-state-safe",
+      "family": "exceptions",
+      "split": "regression",
+      "vulnerable": false,
+      "options": {},
+      "files": [
+        {
+          "path": "app.tsx",
+          "content": "import {getNoirWallet} from '@noir-wallet/sdk'; const wallet=getNoirWallet(); const account=await wallet.zcash.getAccounts();\nlet value='public';try{throw new Error('failure');}catch(error){console.log(value);}"
+        }
+      ]
+    },
+    {
+      "id": "audit-caught-cause-leak",
+      "family": "exceptions",
+      "split": "regression",
+      "vulnerable": true,
+      "options": {},
+      "files": [
+        {
+          "path": "app.tsx",
+          "content": "import {getNoirWallet} from '@noir-wallet/sdk'; const wallet=getNoirWallet(); const account=await wallet.zcash.getAccounts();\ntry{throw new Error('failure',{cause:{address:account.shielded}});}catch(error){console.log(error.cause.address);}"
+        }
+      ]
+    },
+    {
+      "id": "audit-caught-cause-safe",
+      "family": "exceptions",
+      "split": "regression",
+      "vulnerable": false,
+      "options": {},
+      "files": [
+        {
+          "path": "app.tsx",
+          "content": "import {getNoirWallet} from '@noir-wallet/sdk'; const wallet=getNoirWallet(); const account=await wallet.zcash.getAccounts();\ntry{throw new Error('failure',{cause:{address:account.shielded}});}catch(error){console.log(error.message);}"
+        }
+      ]
+    },
+    {
+      "id": "audit-object-getter-leak",
+      "family": "accessors",
+      "split": "regression",
+      "vulnerable": true,
+      "options": {},
+      "files": [
+        {
+          "path": "app.tsx",
+          "content": "import {getNoirWallet} from '@noir-wallet/sdk'; const wallet=getNoirWallet(); const account=await wallet.zcash.getAccounts();\nconst record={get value(){return account.shielded;}};console.log(record.value);"
+        }
+      ]
+    },
+    {
+      "id": "audit-object-getter-safe",
+      "family": "accessors",
+      "split": "regression",
+      "vulnerable": false,
+      "options": {},
+      "files": [
+        {
+          "path": "app.tsx",
+          "content": "import {getNoirWallet} from '@noir-wallet/sdk'; const wallet=getNoirWallet(); const account=await wallet.zcash.getAccounts();\nconst record={get value(){return 'ready';}};console.log(record.value);"
+        }
+      ]
+    },
+    {
+      "id": "audit-object-setter-leak",
+      "family": "accessors",
+      "split": "regression",
+      "vulnerable": true,
+      "options": {},
+      "files": [
+        {
+          "path": "app.tsx",
+          "content": "import {getNoirWallet} from '@noir-wallet/sdk'; const wallet=getNoirWallet(); const account=await wallet.zcash.getAccounts();\nlet value='public';const record={set address(next){value=next;}};record.address=account.shielded;console.log(value);"
+        }
+      ]
+    },
+    {
+      "id": "audit-object-setter-safe",
+      "family": "accessors",
+      "split": "regression",
+      "vulnerable": false,
+      "options": {},
+      "files": [
+        {
+          "path": "app.tsx",
+          "content": "import {getNoirWallet} from '@noir-wallet/sdk'; const wallet=getNoirWallet(); const account=await wallet.zcash.getAccounts();\nlet value='public';const record={set address(next){value='ready';}};record.address=account.shielded;console.log(value);"
+        }
+      ]
+    },
+    {
+      "id": "audit-promise-executor-leak",
+      "family": "promises",
+      "split": "regression",
+      "vulnerable": true,
+      "options": {},
+      "files": [
+        {
+          "path": "app.tsx",
+          "content": "import {getNoirWallet} from '@noir-wallet/sdk'; const wallet=getNoirWallet(); const account=await wallet.zcash.getAccounts();\nconsole.log(await new Promise(resolve=>resolve(account.shielded)));"
+        }
+      ]
+    },
+    {
+      "id": "audit-promise-executor-safe",
+      "family": "promises",
+      "split": "regression",
+      "vulnerable": false,
+      "options": {},
+      "files": [
+        {
+          "path": "app.tsx",
+          "content": "import {getNoirWallet} from '@noir-wallet/sdk'; const wallet=getNoirWallet(); const account=await wallet.zcash.getAccounts();\nconsole.log((await new Promise(resolve=>resolve({address:account.shielded,status:'ready'}))).status);"
+        }
+      ]
+    },
+    {
+      "id": "audit-promise-reference-leak",
+      "family": "promises",
+      "split": "regression",
+      "vulnerable": true,
+      "options": {},
+      "files": [
+        {
+          "path": "app.tsx",
+          "content": "import {getNoirWallet} from '@noir-wallet/sdk'; const wallet=getNoirWallet(); const account=await wallet.zcash.getAccounts();\nawait Promise.reject(account.shielded).catch(console.log);"
+        }
+      ]
+    },
+    {
+      "id": "audit-promise-reference-safe",
+      "family": "promises",
+      "split": "regression",
+      "vulnerable": false,
+      "options": {},
+      "files": [
+        {
+          "path": "app.tsx",
+          "content": "import {getNoirWallet} from '@noir-wallet/sdk'; const wallet=getNoirWallet(); const account=await wallet.zcash.getAccounts();\nawait Promise.reject(account.shielded).catch(()=>console.log('failed'));"
+        }
+      ]
+    },
+    {
+      "id": "audit-bound-logger-leak",
+      "family": "function-dispatch",
+      "split": "regression",
+      "vulnerable": true,
+      "options": {},
+      "files": [
+        {
+          "path": "app.tsx",
+          "content": "import {getNoirWallet} from '@noir-wallet/sdk'; const wallet=getNoirWallet(); const account=await wallet.zcash.getAccounts();\nconst log=console.log.bind(console,account.shielded);log();"
+        }
+      ]
+    },
+    {
+      "id": "audit-bound-logger-safe",
+      "family": "function-dispatch",
+      "split": "regression",
+      "vulnerable": false,
+      "options": {},
+      "files": [
+        {
+          "path": "app.tsx",
+          "content": "import {getNoirWallet} from '@noir-wallet/sdk'; const wallet=getNoirWallet(); const account=await wallet.zcash.getAccounts();\nconst log=console.log.bind(console,'ready');log();"
+        }
+      ]
+    },
+    {
+      "id": "audit-applied-logger-leak",
+      "family": "function-dispatch",
+      "split": "regression",
+      "vulnerable": true,
+      "options": {},
+      "files": [
+        {
+          "path": "app.tsx",
+          "content": "import {getNoirWallet} from '@noir-wallet/sdk'; const wallet=getNoirWallet(); const account=await wallet.zcash.getAccounts();\nconsole.log.apply(console,[account.shielded]);"
+        }
+      ]
+    },
+    {
+      "id": "audit-applied-logger-safe",
+      "family": "function-dispatch",
+      "split": "regression",
+      "vulnerable": false,
+      "options": {},
+      "files": [
+        {
+          "path": "app.tsx",
+          "content": "import {getNoirWallet} from '@noir-wallet/sdk'; const wallet=getNoirWallet(); const account=await wallet.zcash.getAccounts();\nconsole.log.apply(console,['ready']);"
+        }
+      ]
+    },
+    {
+      "id": "audit-destructure-assignment-leak",
+      "family": "field-sensitivity",
+      "split": "regression",
+      "vulnerable": true,
+      "options": {},
+      "files": [
+        {
+          "path": "app.tsx",
+          "content": "import {getNoirWallet} from '@noir-wallet/sdk'; const wallet=getNoirWallet(); const account=await wallet.zcash.getAccounts();\nlet address;({shielded:address}=account);console.log(address);"
+        }
+      ]
+    },
+    {
+      "id": "audit-destructure-assignment-safe",
+      "family": "field-sensitivity",
+      "split": "regression",
+      "vulnerable": false,
+      "options": {},
+      "files": [
+        {
+          "path": "app.tsx",
+          "content": "import {getNoirWallet} from '@noir-wallet/sdk'; const wallet=getNoirWallet(); const account=await wallet.zcash.getAccounts();\nlet status;({status}={address:account.shielded,status:'ready'});console.log(status);"
+        }
+      ]
+    },
+    {
+      "id": "audit-timer-arguments-leak",
+      "family": "callbacks",
+      "split": "regression",
+      "vulnerable": true,
+      "options": {},
+      "files": [
+        {
+          "path": "app.tsx",
+          "content": "import {getNoirWallet} from '@noir-wallet/sdk'; const wallet=getNoirWallet(); const account=await wallet.zcash.getAccounts();\nsetTimeout(console.log,0,account.shielded);"
+        }
+      ]
+    },
+    {
+      "id": "audit-timer-arguments-safe",
+      "family": "callbacks",
+      "split": "regression",
+      "vulnerable": false,
+      "options": {},
+      "files": [
+        {
+          "path": "app.tsx",
+          "content": "import {getNoirWallet} from '@noir-wallet/sdk'; const wallet=getNoirWallet(); const account=await wallet.zcash.getAccounts();\nsetTimeout(console.log,0,'ready');"
+        }
+      ]
     }
   ]
 }

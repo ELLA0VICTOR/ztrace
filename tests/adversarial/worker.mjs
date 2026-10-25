@@ -10,7 +10,7 @@ let checks = 0, rejected = 0
 const clean = report => {assert.ok(!JSON.stringify(report).includes(marker)); checks++}
 if (suite === 'sources') {
   const prelude = "import {getNoirWallet} from '@noir-wallet/sdk';const account=await getNoirWallet().zcash.getAccounts();"
-  const variants = [
+  const original = [
     "console.log(account.shielded);",
     "const x={secret:account.shielded,event:'ready'};console.log(x.secret);",
     "const x=JSON.parse(JSON.stringify({secret:account.shielded}));console.log(x.secret);",
@@ -26,11 +26,35 @@ if (suite === 'sources') {
     "const values=new Map([['secret',account.shielded],['public','ready']]);console.log(values.get('public'));",
     "const values=new Map([['secret',account.shielded]]);values.clear();console.log(Array.from(values.values()));",
   ]
+  const variants = original.map((code, index) => ({code, leak: index < 10, review: false}))
+  for (const [code, leak, review = false] of [
+    ['[account.shielded].forEach((value,index,array)=>console.log(array[index]));', true],
+    ['[account.shielded].forEach((value,index)=>console.log(index));', false],
+    ["console.log([account.shielded].reduce((total,item)=>total+item,''));", true],
+    ["console.log([account.shielded,'public'].reduce((total,item)=>item,''));", false],
+    ["let value='public';try{value=account.shielded;throw 'failed'}catch(error){console.log(value)}", true],
+    ["let value='public';try{throw 'failed'}catch(error){console.log(value)}", false],
+    ['console.log(await new Promise(resolve=>resolve(account.shielded)));', true],
+    ["console.log(await new Promise(resolve=>resolve('ready')));", false],
+    ['console.log.bind(console,account.shielded)();', true],
+    ["console.log.bind(console,'ready')();", false],
+    ['let value;({shielded:value}=account);console.log(value);', true],
+    ["let value;({status:value}={status:'ready',address:account.shielded});console.log(value);", false],
+    ['const record={get value(){return account.shielded}};console.log(record.value);', true, true],
+    ["const record={get value(){return 'ready'}};console.log(record.value);", false, true],
+  ]) variants.push({code, leak, review})
   for (let pass = 0; pass < 6; pass++) for (let index = 0; index < variants.length; index++) {
-    const text = `${prelude}\n/* mutation ${pass} */const sentinel=${JSON.stringify(marker)};${' '.repeat(pass)}${variants[index]}`
+    const variant = variants[index]
+    let body = variant.code
+    if (pass === 1) body = body.replaceAll('.shielded', "['shielded']")
+    if (pass === 2) body = body.replaceAll('console.log', 'globalThis.console.log')
+    if (pass === 3) body = body.replaceAll('console.log', 'emit')
+    if (pass === 4) body = `async function execute(){${body}}await execute();`
+    if (pass === 5) body = body.replaceAll('console.log(', 'console.log.bind(console)(')
+    const text = `${prelude}\n/* mutation ${pass} */const sentinel=${JSON.stringify(marker)};${pass === 3 ? 'const emit=console.log;' : ''}${body}`.replaceAll('account', `walletRecord${pass}`)
     const report = scanSources([{path: 'mutant.ts', content: text}], {requireSources: true})
-    assert.equal(report.findings.length > 0, index < 10, variants[index])
-    assert.equal(report.summary.coverage, 'limited', JSON.stringify(report.diagnostics))
+    assert.equal(report.findings.length > 0, variant.leak, `${pass}: ${variant.code}`)
+    assert.equal(report.summary.coverage, variant.review ? 'incomplete' : 'limited', JSON.stringify(report.diagnostics))
     clean(report)
   }
   const exhausted = scanSources([{path: 'budget.ts', content: prelude + 'console.log(account.shielded)'}], {maxSteps: 1})

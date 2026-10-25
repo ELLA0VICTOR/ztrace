@@ -11,7 +11,7 @@ interface Flow {
   trace: TraceStep[]
 }
 
-type FunctionNode = ts.FunctionDeclaration | ts.FunctionExpression | ts.ArrowFunction | ts.MethodDeclaration | ts.ConstructorDeclaration
+type FunctionNode = ts.FunctionDeclaration | ts.FunctionExpression | ts.ArrowFunction | ts.MethodDeclaration | ts.ConstructorDeclaration | ts.GetAccessorDeclaration | ts.SetAccessorDeclaration
 interface Value {
   flows: Flow[]
   fields: Map<string, Value>
@@ -26,13 +26,15 @@ interface Value {
   setter?: { value: Value }
   array?: boolean
   serialized?: Value
+  bound?: { target: Value; receiver: Value; args: Value[] }
+  accessor?: { get?: ts.GetAccessorDeclaration; set?: ts.SetAccessorDeclaration; closure: Environment }
 }
 type Environment = Map<ts.Symbol, Value>
 
 const empty = (): Value => ({ flows: [], fields: new Map() })
 const ref = (reference: string): Value => ({ ...empty(), reference })
 const isFunction = (node: ts.Node): node is FunctionNode =>
-  ts.isFunctionDeclaration(node) || ts.isFunctionExpression(node) || ts.isArrowFunction(node) || ts.isMethodDeclaration(node) || ts.isConstructorDeclaration(node)
+  ts.isFunctionDeclaration(node) || ts.isFunctionExpression(node) || ts.isArrowFunction(node) || ts.isMethodDeclaration(node) || ts.isConstructorDeclaration(node) || ts.isGetAccessorDeclaration(node) || ts.isSetAccessorDeclaration(node)
 
 function normalize(path: string): string {
   const parts: string[] = []
@@ -71,14 +73,16 @@ function mergeValues(values: Value[], seen: Set<Map<string, Value>>): Value {
     const child = value.fields.get(key) ?? empty()
     return { ...child, trail: [...(child.trail ?? []), ...(value.trail ?? [])] }
   }), new Set(seen)))
-  const capabilities = values.flatMap(value => value.alternatives ?? (value.reference || value.fn || value.classNode || value.setter ? [value] : []))
-  const unique = capabilities.filter((value, index) => capabilities.findIndex(other => other.reference === value.reference && other.fn === value.fn && other.classNode === value.classNode && other.setter === value.setter) === index)
+  const capabilities = values.flatMap(value => value.alternatives ?? (value.reference || value.fn || value.classNode || value.setter || value.bound || value.accessor ? [value] : []))
+  const unique = capabilities.filter((value, index) => capabilities.findIndex(other => other.reference === value.reference && other.fn === value.fn && other.classNode === value.classNode && other.setter === value.setter && other.bound === value.bound && other.accessor === value.accessor) === index)
   if (unique.length === 1) {
     result.reference = unique[0]!.reference
     result.fn = unique[0]!.fn
     result.closure = unique[0]!.closure
     result.classNode = unique[0]!.classNode
     result.setter = unique[0]!.setter
+    result.bound = unique[0]!.bound
+    result.accessor = unique[0]!.accessor
   } else if (unique.length > 1) result.alternatives = unique
   const state = values.find(value => value.state)?.state
   if (state) result.state = state
@@ -232,6 +236,7 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
   }
 
   function symbol(node: ts.Node): ts.Symbol | undefined {
+    if (ts.isIdentifier(node) && ts.isShorthandPropertyAssignment(node.parent)) return checker.getShorthandAssignmentValueSymbol(node.parent) ?? checker.getSymbolAtLocation(node)
     return checker.getSymbolAtLocation(node)
   }
 
@@ -285,11 +290,12 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
     return value
   }
 
-  function property(value: Value, key: string): Value {
-    if (value.state) return property(value.state.value, key)
-    if (value.alternatives) return merge(...value.alternatives.map(alternative => property(alternative, key)))
+  function property(value: Value, key: string, env?: Environment, node?: ts.Node): Value {
+    if (value.state) return property(value.state.value, key, env, node)
+    if (value.alternatives) return merge(...value.alternatives.map(alternative => property(alternative, key, env, node)))
     if (value.reference === 'builtin:map' && key === 'size') return {...empty(), flows: value.flows}
     const child = value.fields.get(key)
+    if (child?.accessor && env && node) return child.accessor.get ? invoke(child.accessor.get, [], env, node, child.accessor.closure, value) : ref('global:undefined')
     if (child) return { ...child, trail: [...(child.trail ?? []), ...(value.trail ?? [])] }
     if (key === 'length' && value.array && !value.flows.length && !value.fields.has('*')) return { ...empty(), literal: [...value.fields.keys()].filter(field => /^\d+$/u.test(field)).length }
     const wildcard = value.fields.get('*')
@@ -300,6 +306,20 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
     if (value.reference?.endsWith(':*')) return ref(`${value.reference.slice(0, -1)}${key}`)
     if (value.reference) return ref(`${value.reference}.${key}`)
     return { ...empty(), flows: value.flows, trail: value.trail }
+  }
+
+  function materialize(value: Value, env: Environment, node: ts.Node, seen = new Set<Value>()): Value {
+    if (seen.has(value)) return {...empty(), flows: allFlows(value)}
+    const visited = new Set(seen).add(value)
+    return {...value, fields: new Map([...value.fields].map(([key]) => [key, materialize(property(value, key, env, node), env, node, visited)]))}
+  }
+
+  function callback(value: Value | undefined): value is Value {
+    return !!value && value.reference !== 'global:undefined' && !!(value.fn || value.reference || value.bound || value.setter || value.alternatives)
+  }
+
+  function invokeCallback(value: Value, args: Value[], env: Environment, node: ts.CallExpression | ts.NewExpression, receiver?: Value): Value {
+    return applyCall(node, value, args, env, receiver, true)
   }
 
   function bind(name: ts.BindingName, value: Value, env: Environment, node: ts.Node): void {
@@ -314,7 +334,7 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
         const fieldName = element.propertyName
         const key = fieldName && (ts.isIdentifier(fieldName) || ts.isStringLiteral(fieldName))
           ? fieldName.text : ts.isObjectBindingPattern(name) && ts.isIdentifier(element.name) ? element.name.text : String(index)
-        let selected = property(value, key)
+        let selected = property(value, key, env, node)
         if (element.dotDotDotToken) {
           selected = { ...empty(), flows: value.flows, array: ts.isArrayBindingPattern(name) }
           for (const [field, child] of value.fields) {
@@ -323,7 +343,7 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
           }
         }
         used.add(key)
-        if (element.initializer) selected = merge(selected, evaluate(element.initializer, env))
+        if (element.initializer) selected = withDefault(selected, element.initializer, env)
         bind(element.name, selected, env, element)
         index++
       }
@@ -404,7 +424,7 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
     fn.parameters.forEach((parameter, index) => {
       const value = parameter.dotDotDotToken
         ? { ...empty(), fields: new Map(args.slice(index).map((arg, i) => [String(i), arg])) }
-        : args[index] ?? (parameter.initializer ? evaluate(parameter.initializer, env) : empty())
+        : parameter.initializer ? args[index] ? withDefault(args[index]!, parameter.initializer, env) : evaluate(parameter.initializer, env) : args[index] ?? empty()
       bind(parameter.name, step(value, node, 'call', 'Passed into a local function'), env, parameter)
       if (ts.isConstructorDeclaration(fn) && instance && parameter.modifiers?.length && ts.isIdentifier(parameter.name)) instance.fields.set(parameter.name.text, value)
     })
@@ -425,13 +445,21 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
 
   function call(node: ts.CallExpression, env: Environment): Value {
     const receiver = ts.isPropertyAccessExpression(node.expression) ? evaluate(node.expression.expression, env) : undefined
-    const target = receiver && ts.isPropertyAccessExpression(node.expression) ? property(receiver, node.expression.name.text) : evaluate(node.expression, env)
-    const args = node.arguments.map(argument => evaluate(argument, env))
+    const target = receiver && ts.isPropertyAccessExpression(node.expression) ? property(receiver, node.expression.name.text, env, node) : evaluate(node.expression, env)
+    const args: Value[] = []
+    for (const argument of node.arguments) {
+      if (!ts.isSpreadElement(argument)) {args.push(evaluate(argument, env)); continue}
+      const spread = evaluate(argument.expression, env)
+      if (spread.array && !spread.fields.has('*') && !spread.flows.length) args.push(...[...spread.fields].filter(([key]) => /^\d+$/u.test(key)).sort(([a], [b]) => Number(a) - Number(b)).map(([, value]) => value))
+      else {diagnostic(argument, 'ARGUMENT_SPREAD_REVIEW', 'The number and positions of spread arguments are unknown.'); args.push({...empty(), flows: allFlows(spread)})}
+    }
     if (target.alternatives) return merge(...target.alternatives.map(alternative => applyCall(node, alternative, args, env, receiver)))
     return applyCall(node, target, args, env, receiver)
   }
 
-  function applyCall(node: ts.CallExpression, target: Value, args: Value[], env: Environment, receiver?: Value): Value {
+  function applyCall(node: ts.CallExpression | ts.NewExpression, target: Value, args: Value[], env: Environment, receiver?: Value, indirect = false): Value {
+    if (target.alternatives) return merge(...target.alternatives.map(value => applyCall(node, value, args, env, receiver, indirect)))
+    if (target.bound) return applyCall(node, target.bound.target, [...target.bound.args, ...args], env, target.bound.receiver, true)
     if (target.setter) {
       const next = args[0]?.fn ? invoke(args[0].fn, [target.setter.value], env, node, args[0].closure) : args[0] ?? empty()
       target.setter.value = merge(target.setter.value, next)
@@ -439,6 +467,19 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
     }
     if (target.fn) return invoke(target.fn, args, env, node, target.closure, receiver)
     const reference = target.reference ?? ''
+    if (!indirect && receiver && ts.isPropertyAccessExpression(node.expression) && ['call', 'apply', 'bind'].includes(node.expression.name.text)) {
+      const method = node.expression.name.text
+      if (method === 'bind') return {...empty(), bound: {target: receiver, receiver: args[0] ?? empty(), args: args.slice(1)}}
+      let forwarded = args.slice(1)
+      if (method === 'apply') {
+        const list = args[1]
+        if (!list || list.literal === null || list.reference === 'global:undefined') forwarded = []
+        else if (list.array && !list.fields.has('*') && !list.flows.length) forwarded = [...list.fields].filter(([key]) => /^\d+$/u.test(key)).sort(([a], [b]) => Number(a) - Number(b)).map(([, value]) => value)
+        else {diagnostic(node, 'ARGUMENT_SPREAD_REVIEW', 'Applied argument positions are unknown.'); forwarded = [{...empty(), flows: allFlows(list)}]}
+      }
+      // Dispatch without reinterpreting the outer .call/.apply syntax a second time.
+      return applyCall(node, {...empty(), bound: {target: receiver, receiver: args[0] ?? empty(), args: forwarded}}, [], env)
+    }
     if (reference === 'global:require' && typeof args[0]?.literal === 'string') {
       const module = args[0].literal
       const configured = [...(options.sources ?? []), ...(options.sinks ?? [])].some(rule => rule.module === module)
@@ -526,25 +567,34 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
     }
     if (['global:JSON.stringify', 'global:JSON.parse', 'global:String', 'global:encodeURIComponent', 'global:btoa', 'global:atob'].includes(reference)) {
       if (reference === 'global:JSON.parse' && args[0]?.serialized) return args[0].serialized
-      return { ...empty(), flows: uniqueFlows(args.flatMap(value => allFlows(value))), serialized: reference === 'global:JSON.stringify' ? args[0] : undefined }
+      const values = reference === 'global:JSON.stringify' ? args.map(value => materialize(value, env, node)) : args
+      return { ...empty(), flows: uniqueFlows(values.flatMap(value => allFlows(value))), serialized: reference === 'global:JSON.stringify' ? values[0] : undefined }
     }
     if (reference === 'global:Object.assign') {
       const result = args[0] ?? empty()
       for (const value of args.slice(1)) {
         result.flows = uniqueFlows([...result.flows, ...value.flows])
-        for (const [key, field] of value.fields) result.fields.set(key, field)
+        for (const [key] of value.fields) result.fields.set(key, property(value, key, env, node))
       }
       return result
     }
     if (reference === 'global:Promise.all') return args[0] ?? empty()
     if (reference === 'global:Promise.resolve') return args[0] ?? empty()
+    if (reference === 'global:Promise.reject') return args[0] ?? empty()
+    if (['global:Promise.race', 'global:Promise.any'].includes(reference)) return merge(...[...(args[0]?.fields.values() ?? [])], {...empty(), flows: args[0]?.flows ?? []})
+    if (reference === 'global:Promise.allSettled') {
+      const input = args[0] ?? empty(), fields = new Map<string, Value>()
+      for (const [key, value] of input.fields) fields.set(key, {...empty(), fields: new Map([['status', empty()], ['value', value], ['reason', value]])})
+      if (input.flows.length) fields.set('*', {...empty(), fields: new Map([['value', {...empty(), flows: input.flows}], ['reason', {...empty(), flows: input.flows}]])})
+      return {...empty(), array: true, fields}
+    }
     if (/^global:(?:Error|TypeError|RangeError|ReferenceError|SyntaxError|URIError|EvalError)$/u.test(reference)) return errorValue(args)
     if (['import:@noir-wallet/sdk:verifyMessageSignature', 'import:@noir-wallet/sdk:publicKeyToAddress', 'import:@noir-wallet/sdk/chains/zcash:verifyMessageSignature', 'import:@noir-wallet/sdk/chains/zcash:publicKeyToAddress'].includes(reference)) return {...empty(), flows: uniqueFlows(args.flatMap(value => allFlows(value)))}
     if (['global:Object.entries', 'global:Object.keys', 'global:Object.values'].includes(reference)) {
       const object = args[0] ?? empty()
-      const items = [...object.fields].map(([key, value]) => reference === 'global:Object.keys' ? {...empty(), literal: key}
-        : reference === 'global:Object.values' ? value
-          : {...empty(), array: true, fields: new Map([['0', {...empty(), literal: key}], ['1', value]])})
+      const items = [...object.fields].map(([key]) => reference === 'global:Object.keys' ? {...empty(), literal: key}
+        : reference === 'global:Object.values' ? property(object, key, env, node)
+          : {...empty(), array: true, fields: new Map([['0', {...empty(), literal: key}], ['1', property(object, key, env, node)]])})
       const fields = new Map(items.map((item, index) => [String(index), item]))
       if (object.flows.length) fields.set('*', reference === 'global:Object.entries' ? {...empty(), array: true, fields: new Map([['0', {...empty(), flows: object.flows}], ['1', {...empty(), flows: object.flows}]])} : {...empty(), flows: object.flows})
       return {...empty(), array: true, fields}
@@ -552,9 +602,15 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
     if (['global:parseFloat', 'global:parseInt', 'global:Number', 'global:Boolean'].includes(reference)) return {...empty(), flows: uniqueFlows(args.flatMap(value => allFlows(value)))}
     if (reference === 'global:Array.from') {
       const input = args[0] ?? empty()
-      if (!args[1]?.fn) return input
-      const element = merge(...[...input.fields.values()])
-      return {...empty(), array: true, fields: new Map([['*', invoke(args[1].fn, [element], env, node, args[1].closure)]])}
+      if (!callback(args[1])) return input
+      if (args[1].fn) expandedFunctions.add(args[1].fn)
+      if (input.array && !input.fields.has('*') && !input.flows.length) {
+        const entries = [...input.fields].filter(([key]) => /^\d+$/u.test(key)).sort(([a], [b]) => Number(a) - Number(b))
+        if (entries.length > 128) diagnostic(node, 'COLLECTION_LIMIT', 'Array conversion exceeds the 128-element analysis bound.')
+        return {...empty(), array: true, fields: new Map(entries.slice(0, 128).map(([key, value]) => [key, invokeCallback(args[1]!, [value, {...empty(), literal: Number(key)}], env, node, args[2])]))}
+      }
+      const element = merge(...[...input.fields.values()], {...empty(), flows: input.flows})
+      return {...empty(), array: true, fields: new Map([['*', invokeCallback(args[1], [element, empty()], env, node, args[2])]])}
     }
     if (reference.startsWith('builtin:map.') && receiver) {
       const method = reference.slice('builtin:map.'.length)
@@ -588,6 +644,10 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
       return empty()
     }
     if (['global:window.removeEventListener', 'global:globalThis.removeEventListener', 'global:removeEventListener'].includes(reference)) return empty()
+    if (/^global:(?:(?:window|globalThis)\.)?(?:setTimeout|setInterval|queueMicrotask|requestAnimationFrame)$/u.test(reference) && callback(args[0])) {
+      invokeCallback(args[0], /(?:setTimeout|setInterval)$/u.test(reference) ? args.slice(2) : [], env, node)
+      return empty()
+    }
     if (/^builtin:(?:date|regexp)\./u.test(reference)) return {...empty(), flows: uniqueFlows([...allFlows(receiver ?? empty()), ...args.flatMap(value => allFlows(value))])}
     if (ts.isPropertyAccessExpression(node.expression)) {
       const method = node.expression.name.text
@@ -606,24 +666,53 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
         }
         return base.fields.has('*') ? empty() : {...empty(), literal: index}
       }
-      if (['catch', 'finally'].includes(method) && args[0]?.fn) {
-        const output = invoke(args[0].fn, method === 'catch' ? [base] : [], env, node, args[0].closure)
+      if (['catch', 'finally'].includes(method) && callback(args[0])) {
+        const output = invokeCallback(args[0], method === 'catch' ? [base] : [], env, node)
         return method === 'finally' ? base : merge(base, output)
       }
-      if (['then', 'map', 'forEach', 'filter', 'flatMap', 'find', 'findIndex', 'some', 'every'].includes(method) && args[0]?.fn) {
-        const elements = [...base.fields.entries()].filter(([key]) => /^\d+$/u.test(key)).map(([, value]) => value)
-        const input = method === 'then' ? base : elements.length ? merge(...elements, ...(base.fields.has('*') ? [base.fields.get('*')!] : [])) : base.fields.get('*') ?? { ...empty(), flows: allFlows(base) }
-        const output = invoke(args[0].fn, [input], env, node, args[0].closure)
+      if (['reduce', 'reduceRight'].includes(method) && callback(args[0])) {
+        if (args[0].fn) expandedFunctions.add(args[0].fn)
+        const entries = [...base.fields].filter(([key]) => /^\d+$/u.test(key)).sort(([a], [b]) => Number(a) - Number(b))
+        if (method === 'reduceRight') entries.reverse()
+        const known = base.array && !base.fields.has('*') && !base.flows.length
+        if (known) {
+          let accumulator = args.length > 1 ? args[1]! : entries.shift()?.[1] ?? empty()
+          for (const [index, value] of entries.slice(0, 128)) accumulator = invokeCallback(args[0], [accumulator, value, {...empty(), literal: Number(index)}, base], env, node)
+          if (entries.length > 128) diagnostic(node, 'COLLECTION_LIMIT', 'Reduction exceeds the 128-element analysis bound.')
+          return accumulator
+        }
+        const input = merge(...entries.map(([, value]) => value), base.fields.get('*') ?? empty(), {...empty(), flows: base.flows})
+        let accumulator = args[1] ?? input
+        for (let iteration = 0; iteration < 2; iteration++) accumulator = merge(accumulator, invokeCallback(args[0], [accumulator, input, empty(), base], env, node))
+        diagnostic(node, 'REDUCTION_REVIEW', 'Unknown-length reductions use bounded possible-flow propagation; review later accumulator behavior.')
+        return accumulator
+      }
+      if (method === 'then' && (callback(args[0]) || callback(args[1]))) {
+        const fulfilled = callback(args[0]) ? invokeCallback(args[0], [base], env, node) : base
+        return callback(args[1]) ? merge(fulfilled, invokeCallback(args[1], [base], env, node)) : fulfilled
+      }
+      if (['map', 'forEach', 'filter', 'flatMap', 'find', 'findIndex', 'some', 'every'].includes(method) && callback(args[0])) {
+        if (args[0].fn) expandedFunctions.add(args[0].fn)
+        const entries = [...base.fields.entries()].filter(([key]) => /^\d+$/u.test(key)).sort(([a], [b]) => Number(a) - Number(b))
+        const known = base.array && !base.fields.has('*') && !base.flows.length
+        const calls = known ? entries : [['*', merge(...entries.map(([, value]) => value), base.fields.get('*') ?? empty(), {...empty(), flows: base.flows})] as const]
+        const outputs: Value[] = [], inputs: Value[] = []
+        for (const [index, input] of calls.slice(0, 128)) {
+          inputs.push(input)
+          outputs.push(invokeCallback(args[0], [input, index === '*' ? empty() : {...empty(), literal: Number(index)}, base], env, node, args[1]))
+        }
+        if (calls.length > 128) diagnostic(node, 'COLLECTION_LIMIT', 'Callback traversal exceeds the 128-element analysis bound.')
+        const input = merge(...inputs), output = merge(...outputs)
         if (method === 'find') return input
         if (['findIndex', 'some', 'every'].includes(method)) return {...empty(), flows: uniqueFlows([...allFlows(input), ...allFlows(output)])}
-        return method === 'filter' ? base : method === 'forEach' ? empty() : method === 'then' ? output : { ...empty(), array: true, fields: new Map([['*', output]]) }
+        return method === 'filter' ? base : method === 'forEach' ? empty() : { ...empty(), array: true, fields: known && method === 'map' ? new Map(entries.slice(0, 128).map(([key], index) => [key, outputs[index]!])) : new Map([['*', output]]) }
       }
       if (['toString', 'toFixed', 'slice', 'substring', 'replace', 'replaceAll', 'join', 'trim', 'toLowerCase', 'toUpperCase'].includes(method)) {
         return { ...empty(), flows: uniqueFlows([allFlows(base), ...args.map(value => allFlows(value))].flat()) }
       }
     }
     const incoming = uniqueFlows([...args.flatMap(value => allFlows(value)), ...allFlows(target)])
-    if (incoming.length || args.some(value => value.fn)) diagnostic(node, 'UNMODELED_CALL', 'This external call receives sensitive data or a callback. External side effects and callback scheduling need manual review; known sensitive inputs propagate to the result.')
+    if (incoming.length || args.some(callback)) diagnostic(node, 'UNMODELED_CALL', 'This external call receives sensitive data or a callback. External side effects and callback scheduling need manual review; known sensitive inputs propagate to the result.')
     return { ...empty(), flows: incoming }
   }
 
@@ -648,12 +737,12 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
     if (ts.isPropertyAccessExpression(node)) {
       const base = evaluate(node.expression, env)
       if (['global:window', 'global:globalThis'].includes(base.reference ?? '') && ['fetch', 'console', 'navigator'].includes(node.name.text)) return ref(`global:${node.name.text}`)
-      return property(base, node.name.text)
+      return property(base, node.name.text, env, node)
     }
     if (ts.isElementAccessExpression(node)) {
       const base = evaluate(node.expression, env)
       const key = node.argumentExpression ? evaluate(node.argumentExpression, env).literal : undefined
-      if (typeof key === 'string' || typeof key === 'number') return property(base, String(key))
+      if (typeof key === 'string' || typeof key === 'number') return property(base, String(key), env, node)
       if (base.reference === 'global:console') {
         diagnostic(node, 'DYNAMIC_DISPATCH_REVIEW', 'The logger method is dynamic; supported logging methods are treated as possible destinations.')
         return { ...empty(), alternatives: [...loggingMethods].map(method => ref(`global:console.${method}`)) }
@@ -667,7 +756,16 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
         if (ts.isSpreadAssignment(entry)) {
           const value = evaluate(entry.expression, env)
           result.flows = uniqueFlows([...result.flows, ...value.flows])
-          for (const [key, field] of value.fields) result.fields.set(key, field)
+          for (const [key] of value.fields) result.fields.set(key, property(value, key, env, node))
+        } else if (ts.isGetAccessorDeclaration(entry) || ts.isSetAccessorDeclaration(entry)) {
+          diagnostic(entry, 'ACCESSOR_REVIEW', 'Local accessor reads and writes are modeled; reflective and indirect accessor behavior requires review.')
+          const key = ts.isComputedPropertyName(entry.name) ? evaluate(entry.name.expression, env).literal : entry.name.text
+          if (typeof key === 'string' || typeof key === 'number') {
+            const accessor: NonNullable<Value['accessor']> = result.fields.get(String(key))?.accessor ?? {closure: env}
+            if (ts.isGetAccessorDeclaration(entry)) accessor.get = entry
+            else accessor.set = entry
+            result.fields.set(String(key), {...empty(), accessor})
+          }
         } else if (ts.isPropertyAssignment(entry) || ts.isShorthandPropertyAssignment(entry) || ts.isMethodDeclaration(entry)) {
           const key = ts.isComputedPropertyName(entry.name) ? evaluate(entry.name.expression, env).literal : entry.name.text
           const value = ts.isPropertyAssignment(entry) ? evaluate(entry.initializer, env)
@@ -763,7 +861,10 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
       }
       return result
     }
-    if (ts.isTypeOfExpression(node) || ts.isVoidExpression(node)) return evaluate(node.expression, env)
+    if (ts.isTypeOfExpression(node) || ts.isVoidExpression(node)) {
+      evaluate(node.expression, env)
+      return ts.isVoidExpression(node) ? ref('global:undefined') : empty()
+    }
     if (ts.isNewExpression(node)) {
       const target = evaluate(node.expression, env)
       const args = node.arguments?.map(argument => evaluate(argument, env)) ?? []
@@ -775,7 +876,16 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
           for (const member of target.classNode.members) {
             if ((ts.isPropertyDeclaration(member) || ts.isMethodDeclaration(member)) && member.name && (ts.isIdentifier(member.name) || ts.isStringLiteral(member.name) || ts.isPrivateIdentifier(member.name))) {
               instance.fields.set(member.name.text, ts.isMethodDeclaration(member) ? { ...empty(), fn: member, closure: env } : member.initializer ? evaluate(member.initializer, env) : empty())
-            } else if (ts.isGetAccessorDeclaration(member) || ts.isSetAccessorDeclaration(member)) diagnostic(member, 'ACCESSOR_REVIEW', 'Class accessors need manual review.')
+            } else if (ts.isGetAccessorDeclaration(member) || ts.isSetAccessorDeclaration(member)) {
+              diagnostic(member, 'ACCESSOR_REVIEW', 'Local accessor reads and writes are modeled; reflective and inherited behavior requires review.')
+              const key = ts.isComputedPropertyName(member.name) ? evaluate(member.name.expression, env).literal : member.name.text
+              if (typeof key === 'string' || typeof key === 'number') {
+                const accessor: NonNullable<Value['accessor']> = instance.fields.get(String(key))?.accessor ?? {closure: env}
+                if (ts.isGetAccessorDeclaration(member)) accessor.get = member
+                else accessor.set = member
+                instance.fields.set(String(key), {...empty(), accessor})
+              }
+            }
           }
           const constructor = target.classNode.members.find(ts.isConstructorDeclaration)
           if (constructor) invoke(constructor, args, env, node, env, instance)
@@ -785,6 +895,12 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
       if (/^import:@rhea-finance\/zcash-wallet-adapter(?:\/walletconnect)?:[A-Za-z]*ZcashWalletAdapter$/u.test(target.reference ?? '')) return ref('noir:wallet')
       if (target.reference === 'global:WebSocket') return ref('transport:websocket')
       if (target.reference === 'global:XMLHttpRequest') return ref('transport:xhr')
+      if (target.reference === 'global:Promise' && callback(args[0])) {
+        const settled = {value: empty()}, thrown: Value[] = []
+        exceptionFrames.push(thrown)
+        try {invokeCallback(args[0], [{...empty(), setter: settled}, {...empty(), setter: settled}], env, node)} finally {exceptionFrames.pop()}
+        return merge(settled.value, ...thrown)
+      }
       if (/^global:(?:Error|TypeError|RangeError|ReferenceError|SyntaxError|URIError|EvalError)$/u.test(target.reference ?? '')) return errorValue(args)
       if (target.reference === 'global:Date' || target.reference === 'global:RegExp') return {...ref(target.reference === 'global:Date' ? 'builtin:date' : 'builtin:regexp'), flows: uniqueFlows(args.flatMap(value => allFlows(value)))}
       if (target.reference === 'global:Map') {
@@ -798,7 +914,7 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
         }
         return result
       }
-      if (args.some(value => allFlows(value).length)) diagnostic(node, 'UNMODELED_CONSTRUCTOR', 'A constructor receives sensitive data. Its side effects need manual review.')
+      if (args.some(value => allFlows(value).length || callback(value))) diagnostic(node, 'UNMODELED_CONSTRUCTOR', 'A constructor receives sensitive data or a callback. Its side effects need manual review.')
       return { ...empty(), flows: uniqueFlows(args.flatMap(value => allFlows(value))) }
     }
     if (ts.isJsxElement(node) || ts.isJsxSelfClosingElement(node) || ts.isJsxFragment(node)) return jsx(node, env)
@@ -850,17 +966,59 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
     if (ts.isPropertyAccessExpression(target) || ts.isElementAccessExpression(target)) {
       const base = evaluate(target.expression, env)
       const key = ts.isPropertyAccessExpression(target) ? target.name.text : target.argumentExpression ? evaluate(target.argumentExpression, env).literal : undefined
-      return { read: () => typeof key === 'string' || typeof key === 'number' ? property(base, String(key)) : { ...empty(), flows: allFlows(base) }, write: value => {
-        if (typeof key === 'string' || typeof key === 'number') base.fields.set(String(key), step(value, node, 'assignment', 'Assigned to an object property'))
+      return { read: () => typeof key === 'string' || typeof key === 'number' ? property(base, String(key), env, node) : { ...empty(), flows: allFlows(base) }, write: value => {
+        const accessor = typeof key === 'string' || typeof key === 'number' ? base.fields.get(String(key))?.accessor : undefined
+        if (accessor?.set) invoke(accessor.set, [value], env, node, accessor.closure, base)
+        else if (accessor) diagnostic(node, 'ACCESSOR_REVIEW', 'An assignment to a getter-only property requires review.')
+        else if (typeof key === 'string' || typeof key === 'number') base.fields.set(String(key), step(value, node, 'assignment', 'Assigned to an object property'))
         else base.flows = uniqueFlows([...base.flows, ...allFlows(value)])
       } }
     }
+    if (ts.isArrayLiteralExpression(target) || ts.isObjectLiteralExpression(target)) return {read: empty, write: value => {
+      if (ts.isArrayLiteralExpression(target)) {
+        target.elements.forEach((element, index) => {
+          if (ts.isOmittedExpression(element)) return
+          if (ts.isSpreadElement(element)) {
+            const rest = {...empty(), array: true, flows: value.flows, fields: new Map<string, Value>()}
+            for (const [key, child] of value.fields) if (key === '*') rest.fields.set('*', child); else if (/^\d+$/u.test(key) && Number(key) >= index) rest.fields.set(String(Number(key) - index), child)
+            assign(element.expression, rest, env, node)
+          } else assignDefault(element, property(value, String(index), env, node), env, node)
+        })
+      } else {
+        const used = new Set<string>()
+        for (const entry of target.properties) {
+          if (ts.isSpreadAssignment(entry)) {assign(entry.expression, {...empty(), flows: value.flows, fields: new Map([...value.fields].filter(([key]) => !used.has(key)))}, env, node); continue}
+          if (!ts.isPropertyAssignment(entry) && !ts.isShorthandPropertyAssignment(entry)) continue
+          const key = ts.isComputedPropertyName(entry.name) ? evaluate(entry.name.expression, env).literal : entry.name.text
+          if (typeof key !== 'string' && typeof key !== 'number') {diagnostic(entry, 'DYNAMIC_PROPERTY', 'A dynamic destructuring key requires review.'); continue}
+          used.add(String(key))
+          const selected = property(value, String(key), env, node)
+          if (ts.isShorthandPropertyAssignment(entry)) assign(entry.name, entry.objectAssignmentInitializer ? withDefault(selected, entry.objectAssignmentInitializer, env) : selected, env, node)
+          else assignDefault(entry.initializer, selected, env, node)
+        }
+      }
+    }}
     diagnostic(node, 'UNMODELED_ASSIGNMENT', 'This assignment form is not modeled. Review its data flow.')
     return { read: empty, write: () => {} }
   }
 
   function assign(target: ts.Expression, value: Value, env: Environment, node: ts.Node): void {
     assignmentTarget(target, env, node).write(value)
+  }
+
+  function assignDefault(target: ts.Expression, value: Value, env: Environment, node: ts.Node): void {
+    if (ts.isBinaryExpression(target) && target.operatorToken.kind === ts.SyntaxKind.EqualsToken) assign(target.left, withDefault(value, target.right, env), env, node)
+    else assign(target, value, env, node)
+  }
+
+  function withDefault(value: Value, initializer: ts.Expression, env: Environment): Value {
+    if (value.literal !== undefined) return value
+    if (value.reference === 'global:undefined') return evaluate(initializer, env)
+    // An unknown value may be defined. Preserve the branch that skips side effects.
+    const skipped = fork(env), executed = fork(env)
+    const fallback = evaluate(initializer, executed)
+    joinEnvironments(env, skipped, executed)
+    return merge(value, fallback)
   }
 
   function joinEnvironments(target: Environment, left: Environment, right: Environment): void {
@@ -1061,11 +1219,13 @@ export function scanSources(inputs: SourceFile[], options: ScanOptions = {}): Sc
         const key = symbol(node.name)
         if (key) env.set(key, functionValue(node, env))
       } else if (ts.isTryStatement(node)) {
-        const bodyEnv = fork(env), catchEnv = fork(env)
+        const bodyEnv = fork(env), beforeTry = fork(env)
         const thrown: Value[] = []
         exceptionFrames.push(thrown)
         let body: Execution
         try {body = statements(node.tryBlock.statements, bodyEnv)} finally {exceptionFrames.pop()}
+        const catchEnv = fork(bodyEnv)
+        joinEnvironments(catchEnv, beforeTry, bodyEnv)
         if (node.catchClause?.variableDeclaration) bind(node.catchClause.variableDeclaration.name, merge(...thrown), catchEnv, node.catchClause.variableDeclaration)
         if (!node.catchClause) exceptionFrames.at(-1)?.push(...thrown)
         const caught = node.catchClause ? statements(node.catchClause.block.statements, catchEnv) : { value: empty(), returned: false }

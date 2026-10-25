@@ -1,26 +1,26 @@
 {
-  "generatedAt": "2026-10-25T00:08:55.433Z",
-  "engineSha256": "ade9ed62e7937e6f3b6bfa1143b2f08f1a57ebeebca559dfb1a4e6d56bbe805d",
+  "generatedAt": "2026-10-25T10:18:07.108Z",
+  "engineSha256": "59adf97b69adf46abf6ca6b48debb2734b9a42268f55c88a5dcd378058d21fcc",
   "scope": "Deterministic synthetic mutation and resource-bound checks; each suite runs in a child process with a 30-second deadline and 256 MB JavaScript heap ceiling.",
   "results": [
     {
       "suite": "sources",
-      "checks": 88,
+      "checks": 172,
       "rejected": 2,
-      "milliseconds": 815
+      "milliseconds": 946
     },
     {
       "suite": "keys",
       "checks": 323,
       "rejected": 323,
-      "milliseconds": 619
+      "milliseconds": 596
     },
     {
       "suite": "pczt",
       "checks": 25,
       "rejected": 25,
-      "milliseconds": 2914
+      "milliseconds": 2730
     }
   ],
-  "totalChecks": 436
+  "totalChecks": 520
 }

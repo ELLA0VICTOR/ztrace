@@ -20,7 +20,7 @@ Each mode answers a different question. A source trace identifies a possible pat
 
 ## What this release includes
 
-ZTrace is a development release, version 0.1.0. It includes a CLI, exported APIs, a 60-case self-authored synthetic scanner benchmark, controlled browser tests, and upstream protocol test vectors. It is used from the project checkout; a public npm package is not available yet.
+ZTrace is a development release, version 0.1.0. It includes a CLI, exported APIs, a 88-case self-authored synthetic scanner benchmark, controlled browser tests, and upstream protocol test vectors. It is used from the project checkout; a public npm package is not available yet.
 
 The landing-page example uses engine-generated fixture results. Its **Run local check** button actually analyzes those fixture files in a browser worker. It does not connect a wallet or execute a transaction.
 

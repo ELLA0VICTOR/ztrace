@@ -43,5 +43,21 @@ pair('challenge-custom-transport', 'unmodeled-transport', noir+`import remote fr
 pair('challenge-reflective-sink', 'dynamic-dispatch', noir+`const method=runtimeMethod;console[method](account.shielded);`, noir+`const method=runtimeMethod;console[method]('ready');`)
 pair('challenge-native-code', 'unmodeled-source', `import {readAccount} from 'unmodeled-native-wallet';const a=readAccount();console.log(a.shielded);`, `import {readAccount} from 'unmodeled-native-wallet';const a=readAccount();console.log('ready');`)
 
+// Later confirmed misses remain in the corpus as paired regressions.
+pair('audit-callback-array', 'callbacks', noir+`[account.shielded].forEach((value,index,array)=>console.log(array[index]));`, noir+`[account.shielded].forEach((value,index)=>console.log(index));`)
+pair('audit-callback-index', 'callbacks', noir+`[account.shielded,'public'].map((value,index)=>{if(index===0)console.log(value);return value;});`, noir+`[account.shielded,'public'].map((value,index)=>{if(index===1)console.log(value);return value;});`)
+pair('audit-reduce', 'callbacks', noir+`console.log([account.shielded].reduce((total,item)=>total+item,''));`, noir+`console.log([account.shielded,'public'].reduce((total,item)=>item,''));`)
+pair('audit-reduce-direction', 'callbacks', noir+`console.log([account.shielded,'public'].reduceRight((total,item)=>item,''));`, noir+`console.log([account.shielded,'public'].reduce((total,item)=>item,''));`)
+pair('audit-catch-state', 'exceptions', noir+`let value='public';try{value=account.shielded;throw new Error('failure');}catch(error){console.log(value);}`, noir+`let value='public';try{throw new Error('failure');}catch(error){console.log(value);}`)
+pair('audit-caught-cause', 'exceptions', noir+`try{throw new Error('failure',{cause:{address:account.shielded}});}catch(error){console.log(error.cause.address);}`, noir+`try{throw new Error('failure',{cause:{address:account.shielded}});}catch(error){console.log(error.message);}`)
+pair('audit-object-getter', 'accessors', noir+`const record={get value(){return account.shielded;}};console.log(record.value);`, noir+`const record={get value(){return 'ready';}};console.log(record.value);`)
+pair('audit-object-setter', 'accessors', noir+`let value='public';const record={set address(next){value=next;}};record.address=account.shielded;console.log(value);`, noir+`let value='public';const record={set address(next){value='ready';}};record.address=account.shielded;console.log(value);`)
+pair('audit-promise-executor', 'promises', noir+`console.log(await new Promise(resolve=>resolve(account.shielded)));`, noir+`console.log((await new Promise(resolve=>resolve({address:account.shielded,status:'ready'}))).status);`)
+pair('audit-promise-reference', 'promises', noir+`await Promise.reject(account.shielded).catch(console.log);`, noir+`await Promise.reject(account.shielded).catch(()=>console.log('failed'));`)
+pair('audit-bound-logger', 'function-dispatch', noir+`const log=console.log.bind(console,account.shielded);log();`, noir+`const log=console.log.bind(console,'ready');log();`)
+pair('audit-applied-logger', 'function-dispatch', noir+`console.log.apply(console,[account.shielded]);`, noir+`console.log.apply(console,['ready']);`)
+pair('audit-destructure-assignment', 'field-sensitivity', noir+`let address;({shielded:address}=account);console.log(address);`, noir+`let status;({status}={address:account.shielded,status:'ready'});console.log(status);`)
+pair('audit-timer-arguments', 'callbacks', noir+`setTimeout(console.log,0,account.shielded);`, noir+`setTimeout(console.log,0,'ready');`)
+
 await writeFile(new URL('./corpus.json',import.meta.url),JSON.stringify({schemaVersion:1,provenance:'Self-authored, synthetic, API-based fixtures. Challenge cases are a first-run stress split, not an independent external evaluation.',cases},null,2)+'\n')
 console.log(`Wrote ${cases.length} labeled cases.`)

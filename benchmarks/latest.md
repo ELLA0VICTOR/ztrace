@@ -1,14 +1,14 @@
 # ZTrace corpus results
 
-Corpus SHA-256: 440a17e1e2429363c20aac4255e08af3381824c97444d84d8f912f1f4d69bb96
-Engine SHA-256: d2891f7f535a962683f98e5fcfeff2bf02a617721118e1bcdd4e570df30fc7ae
+Corpus SHA-256: 01525d22d5a4def99d5aa5c20c198c5ab1d1d58944be7706dcacc8a9028201a2
+Engine SHA-256: b5b06da79d0d543a84f0ab07abb455377a8933dd7c5e99610bc45aed75e1b396
 
 Self-authored, synthetic, API-based fixtures. Challenge cases are a first-run stress split, not an independent external evaluation.
 
 Review diagnostics do not count as detections. These metrics describe this corpus only, not production coverage.
 
-Default models: 60 cases; TP 28; FN 2; FP 0; TN 30; review 3.
-With the two explicitly listed custom adapters: {"TP":30,"FN":0,"FP":0,"TN":30,"reviewCases":2,"recall":1,"precision":1}. This is a configured result, not automatic discovery of unknown SDKs.
+Default models: 88 cases; TP 42; FN 2; FP 0; TN 44; review 7.
+With the two explicitly listed custom adapters: {"TP":44,"FN":0,"FP":0,"TN":44,"reviewCases":6,"recall":1,"precision":1}. This is a configured result, not automatic discovery of unknown SDKs.
 
 | Case | Outcome | Review |
 | --- | --- | --- |
@@ -72,3 +72,31 @@ With the two explicitly listed custom adapters: {"TP":30,"FN":0,"FP":0,"TN":30,"
 | challenge-reflective-sink-safe | TN | DYNAMIC_DISPATCH_REVIEW |
 | challenge-native-code-leak | FN | — |
 | challenge-native-code-safe | TN | — |
+| audit-callback-array-leak | TP | — |
+| audit-callback-array-safe | TN | — |
+| audit-callback-index-leak | TP | — |
+| audit-callback-index-safe | TN | — |
+| audit-reduce-leak | TP | — |
+| audit-reduce-safe | TN | — |
+| audit-reduce-direction-leak | TP | — |
+| audit-reduce-direction-safe | TN | — |
+| audit-catch-state-leak | TP | — |
+| audit-catch-state-safe | TN | — |
+| audit-caught-cause-leak | TP | — |
+| audit-caught-cause-safe | TN | — |
+| audit-object-getter-leak | TP | ACCESSOR_REVIEW |
+| audit-object-getter-safe | TN | ACCESSOR_REVIEW |
+| audit-object-setter-leak | TP | ACCESSOR_REVIEW |
+| audit-object-setter-safe | TN | ACCESSOR_REVIEW |
+| audit-promise-executor-leak | TP | — |
+| audit-promise-executor-safe | TN | — |
+| audit-promise-reference-leak | TP | — |
+| audit-promise-reference-safe | TN | — |
+| audit-bound-logger-leak | TP | — |
+| audit-bound-logger-safe | TN | — |
+| audit-applied-logger-leak | TP | — |
+| audit-applied-logger-safe | TN | — |
+| audit-destructure-assignment-leak | TP | — |
+| audit-destructure-assignment-safe | TN | — |
+| audit-timer-arguments-leak | TP | — |
+| audit-timer-arguments-safe | TN | — |

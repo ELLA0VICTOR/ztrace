@@ -81,9 +81,14 @@ export async function auditBrowser(options: RuntimeOptions): Promise<RuntimeRepo
     return found
   }
   const pending = new Set<Promise<unknown>>()
-  const browser = await chromium.launch({ executablePath, headless: true })
+  const started = Date.now()
+  const browser = await chromium.launch({ executablePath, headless: true, timeout })
   let completed = true
-  try {
+  let deadlineTimer: ReturnType<typeof setTimeout> | undefined
+  const deadline = new Promise<never>((_, reject) => {
+    deadlineTimer = setTimeout(() => {completed = false; diagnostics.add('RUNTIME_DEADLINE'); reject(new Error('Runtime deadline exceeded.'))}, Math.max(1, timeout - (Date.now() - started)))
+  })
+  const execute = async () => {
     const context = await browser.newContext({ serviceWorkers: 'block', acceptDownloads: false })
     context.setDefaultTimeout(timeout)
     await context.exposeBinding('__ZTRACE_RUNTIME_SIGNAL__', (_source, signal: unknown) => {
@@ -133,7 +138,12 @@ export async function auditBrowser(options: RuntimeOptions): Promise<RuntimeRepo
       let headers: Record<string, string>
       try { headers = await request.allHeaders() } catch { completed = false; diagnostics.add('UNREADABLE_REQUEST_HEADERS'); await route.abort().catch(() => {}); return }
       if (summary.requestsObserved > 1000) { completed = false; diagnostics.add('RUNTIME_REQUEST_LIMIT'); summary.requestsBlocked++; await route.abort().catch(() => {}); return }
-      const text = [request.url(), JSON.stringify(headers), request.postData() ?? ''].join('\n')
+      const body = request.postDataBuffer(), headerText = JSON.stringify(headers)
+      if ((body?.byteLength ?? 0) + headerText.length + request.url().length > 1_000_000) {
+        completed = false; diagnostics.add('RUNTIME_REQUEST_SIZE_LIMIT'); summary.requestsBlocked++
+        await route.abort('blockedbyclient').catch(() => {}); return
+      }
+      const text = [request.url(), headerText, body?.toString('utf8') ?? ''].join('\n')
       const exposed = observe('request', text, request.url())
       let local = false
       try { local = new URL(request.url()).origin === app.origin } catch { /* Reject non-HTTP requests. */ }
@@ -157,21 +167,64 @@ export async function auditBrowser(options: RuntimeOptions): Promise<RuntimeRepo
     })
     await context.routeWebSocket('**/*', socket => {
       // No connectToServer(): sockets terminate in this isolated test harness.
+      observe('websocket', socket.url(), socket.url())
       socket.onMessage(message => observe('websocket', typeof message === 'string' ? message : message.toString('utf8'), socket.url()))
     })
     context.on('page', page => {
       page.on('console', message => {
         summary.consoleEventsObserved++
+        if (summary.consoleEventsObserved > 1000) {completed = false; diagnostics.add('RUNTIME_CONSOLE_LIMIT'); return}
+        // Chromium's JSON conversion drops Error, Map, Set, and binary contents.
+        // Inspect data descriptors with explicit bounds, without invoking getters/toJSON.
+        observe('console', message.text().slice(0, 1_000_000), 'console://local')
+        if (message.text().length > 1_000_000) diagnostics.add('CONSOLE_INSPECTION_LIMIT')
         const job = (async () => {
-          const values = await Promise.all(message.args().map(async argument => {
-            try { return JSON.stringify(await argument.jsonValue()) } catch { diagnostics.add('UNREADABLE_CONSOLE_ARGUMENT'); return '' }
+          const args = message.args()
+          if (args.length > 50) diagnostics.add('CONSOLE_INSPECTION_LIMIT')
+          const values = await Promise.all(args.slice(0, 50).map(async argument => {
+            try {
+              const result = await argument.evaluate(value => {
+                const queue: Array<{value: unknown; depth: number}> = [{value, depth: 0}], seen = new Set<object>(), chunks: string[] = []
+                let count = 0, length = 0, limited = false, unreadable = false
+                const append = (text: string) => {const room = Math.max(0, 1_000_000 - length); chunks.push(text.slice(0, room)); length += Math.min(room, text.length); if (text.length > room) limited = true}
+                while (queue.length && count++ < 1000 && length < 1_000_000) {
+                  const item = queue.shift()!, current = item.value
+                  if (typeof current === 'string' || typeof current === 'number' || typeof current === 'bigint' || typeof current === 'boolean') {append(String(current)); continue}
+                  if (!current || typeof current !== 'object' || seen.has(current)) continue
+                  seen.add(current)
+                  if (item.depth > 12) {limited = true; continue}
+                  const enqueue = (next: unknown) => {if (queue.length < 1000) queue.push({value: next, depth: item.depth + 1}); else limited = true}
+                  try {
+                    if (current instanceof Map) {for (const [key, entry] of Map.prototype.entries.call(current)) {enqueue(key); enqueue(entry); if (queue.length >= 1000) {limited = true; break}}}
+                    else if (current instanceof Set) {for (const entry of Set.prototype.values.call(current)) {enqueue(entry); if (queue.length >= 1000) {limited = true; break}}}
+                    else if (current instanceof ArrayBuffer || ArrayBuffer.isView(current)) {
+                      const bytes = current instanceof ArrayBuffer ? new Uint8Array(current) : new Uint8Array(current.buffer, current.byteOffset, current.byteLength)
+                      if (bytes.byteLength > 1_000_000) limited = true
+                      append(new TextDecoder().decode(bytes.subarray(0, 1_000_000)))
+                      continue
+                    }
+                    for (const [key, descriptor] of Object.entries(Object.getOwnPropertyDescriptors(current))) {
+                      append(key)
+                      if ('value' in descriptor) enqueue(descriptor.value)
+                      else if (descriptor.get && !(current instanceof Error && key === 'stack' && /\[native code\]/u.test(Function.prototype.toString.call(descriptor.get)))) unreadable = true
+                      if (queue.length >= 1000 || length >= 1_000_000) {limited = true; break}
+                    }
+                  } catch {unreadable = true}
+                }
+                if (queue.length) limited = true
+                return {text: chunks.join('\n'), limited, unreadable}
+              })
+              if (result.limited) diagnostics.add('CONSOLE_INSPECTION_LIMIT')
+              if (result.unreadable) diagnostics.add('UNREADABLE_CONSOLE_ARGUMENT')
+              return result.text
+            } catch { diagnostics.add('UNREADABLE_CONSOLE_ARGUMENT'); return '' }
           }))
           observe('console', values.join('\n'), 'console://local')
         })()
         pending.add(job)
-        void job.finally(() => pending.delete(job))
+        void job.then(() => pending.delete(job), () => {pending.delete(job); diagnostics.add('UNREADABLE_CONSOLE_ARGUMENT')})
       })
-      page.on('pageerror', () => { diagnostics.add('APPLICATION_ERROR'); completed = false })
+      page.on('pageerror', error => {observe('console', error.message + '\n' + (error.stack ?? ''), 'console://local'); diagnostics.add('APPLICATION_ERROR'); completed = false})
     })
     const page = await context.newPage()
     await page.goto(app.href, { waitUntil: 'domcontentloaded', timeout })
@@ -191,10 +244,14 @@ export async function auditBrowser(options: RuntimeOptions): Promise<RuntimeRepo
       }).catch(() => {if (expectations) {completed = false; diagnostics.add('EXECUTION_SIGNALS_UNREADABLE')}})
     }
     await Promise.allSettled([...pending])
+  }
+  try {
+    await Promise.race([execute(), deadline])
   } catch {
     completed = false
     diagnostics.add('RUNTIME_FLOW_INCOMPLETE')
   } finally {
+    clearTimeout(deadlineTimer)
     await browser.close()
   }
   const expectationsSatisfied = (!expectations?.minActions || summary.actionsCompleted >= expectations.minActions)

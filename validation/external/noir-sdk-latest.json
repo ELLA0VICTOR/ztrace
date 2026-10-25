@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-25T00:09:01.412Z",
+  "generatedAt": "2026-10-25T10:18:13.257Z",
   "source": {
     "repository": "https://github.com/NoirWallet/noir-wallet-sdk",
     "commit": "1677b56cc5bc3ecf7f9555e348bce7ea1df28586",
@@ -22,9 +22,9 @@
       }
     ]
   },
-  "engineSha256": "ade9ed62e7937e6f3b6bfa1143b2f08f1a57ebeebca559dfb1a4e6d56bbe805d",
+  "engineSha256": "59adf97b69adf46abf6ca6b48debb2734b9a42268f55c88a5dcd378058d21fcc",
   "assessment": "Unmodified, independently authored upstream SDK example. Findings are candidate disclosures for review; no production vulnerability or labeled accuracy estimate is asserted.",
-  "milliseconds": 450,
+  "milliseconds": 507,
   "report": {
     "schemaVersion": 1,
     "toolVersion": "0.1.0",
@@ -482,20 +482,6 @@
         "column": 13,
         "code": "UNMODELED_CALL",
         "message": "This external call receives sensitive data or a callback. External side effects and callback scheduling need manual review; known sensitive inputs propagate to the result."
-      },
-      {
-        "file": "example/src/App.tsx",
-        "line": 561,
-        "column": 7,
-        "code": "UNMODELED_CALL",
-        "message": "This external call receives sensitive data or a callback. External side effects and callback scheduling need manual review; known sensitive inputs propagate to the result."
-      },
-      {
-        "file": "example/src/App.tsx",
-        "line": 561,
-        "column": 18,
-        "code": "CLOSURE_CONTEXT_LIMIT",
-        "message": "Additional closure contexts require review."
       }
     ],
     "summary": {
