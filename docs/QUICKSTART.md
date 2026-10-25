@@ -53,6 +53,7 @@ Use a new output filename. Reports omit raw source text but contain file paths, 
 
 ## Next steps
 
+- Follow the [hands-on installation walkthrough](HANDS-ON.md) in a separate application folder.
 - Add [source and sink adapters](SCANNER.md) for custom libraries.
 - Read [CLI options and CI integration](CLI.md) before automating checks.
 - Exercise trusted local flows with [runtime testing](RUNTIME.md).

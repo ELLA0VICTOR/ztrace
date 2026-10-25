@@ -4,7 +4,7 @@ This directory retains reproducible observations for the 0.1.0 release candidate
 
 | Check | Result | Evidence |
 | --- | --- | --- |
-| Core, CLI, and protocol regressions | 92 passing tests, including official-schema SARIF validation | `npm test` |
+| Core, CLI, and protocol regressions | 96 passing tests, including official-schema SARIF validation and terminal formatting | `npm test` |
 | Runtime regressions | 7 passing tests | [Baseline flows](../runtime/evidence/latest.json), [boundary flows](../runtime/evidence/boundaries.json) |
 | Deterministic adversarial checks | 520 checks across source flows, key encodings, and PCZT input boundaries | [Report](adversarial/latest.json) |
 | Synthetic source benchmark | 42 detected leaks, 2 misses, 0 false positives, 44 safe cases; the two explicit adapters resolve the misses | [Results](../benchmarks/latest.md) |

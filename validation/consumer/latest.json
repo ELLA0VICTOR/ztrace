@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-10-25T10:18:40.927Z",
+  "generatedAt": "2026-10-25T10:39:55.263Z",
   "package": {
     "version": "0.1.0",
-    "bytes": 96809,
-    "sha256": "c284e9282fcd772fdf4754ba1015803efda6c6875e1c84645bf4312c5b137bf1"
+    "bytes": 102926,
+    "sha256": "b94d889630fe1ae810c88090ad001bf166135eeb93c3d0dc9740d459db4019bc"
   },
   "integration": {
     "sdk": "@noir-wallet/sdk",
@@ -501,14 +501,14 @@
           "canary": "address",
           "kind": "shielded-address",
           "encoding": "plain",
-          "destination": "http://127.0.0.1:58718"
+          "destination": "http://127.0.0.1:59437"
         },
         {
           "channel": "request",
           "canary": "history",
           "kind": "wallet-history",
           "encoding": "plain",
-          "destination": "http://127.0.0.1:58718"
+          "destination": "http://127.0.0.1:59437"
         }
       ],
       "diagnostics": [],

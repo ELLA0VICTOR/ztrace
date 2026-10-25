@@ -10,7 +10,9 @@
     "docs",
     "benchmarks/METHODOLOGY.md",
     "LICENSE",
-    "public/ztrace.svg"
+    "public/ztrace.svg",
+    "public/terminal-banner.txt",
+    "scripts/postinstall.mjs"
   ],
   "engines": {
     "node": ">=24"
@@ -39,6 +41,7 @@
     "build": "npm run prepare:ui && tsc -b && vite build",
     "build:tools": "tsc -p tsconfig.tools.json",
     "prepack": "npm run build:tools",
+    "postinstall": "node scripts/postinstall.mjs",
     "prescan": "npm run build:tools",
     "scan": "node dist-tools/packages/cli/src/cli.js scan",
     "benchmark": "npm run build:tools && node benchmarks/run.mjs --check",
@@ -50,7 +53,8 @@
     "test:package": "npm run build:tools && node tests/integration/package.mjs",
     "test:adversarial": "npm run build:tools && node tests/adversarial/run.mjs",
     "test:external": "npm run build:tools && node scripts/evaluate-upstream.mjs",
-    "test:site-base": "npm run prepare:ui && node tests/ui/base-path.mjs"
+    "test:site-base": "npm run prepare:ui && node tests/ui/base-path.mjs",
+    "demo:prepare": "npm run build:tools && node scripts/prepare-walkthrough.mjs"
   },
   "dependencies": {
     "@noble/hashes": "2.0.1",

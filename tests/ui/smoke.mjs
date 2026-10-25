@@ -52,7 +52,7 @@ try {
   let accessibility = await new AxeBuilder({page}).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()
   assert.deepEqual(accessibility.violations.map(item => ({id: item.id, nodes: item.nodes.map(node => node.target)})), [], 'Desktop landing accessibility')
   results.push('Landing navigation, correction switch, marquee pause, FAQ, desktop WCAG checks')
-  const docPages = ['introduction', 'quickstart', 'cli', 'integration', 'coverage', 'runtime', 'protocol', 'evidence', 'boundaries', 'troubleshooting', 'releasing']
+  const docPages = ['introduction', 'quickstart', 'hands-on', 'cli', 'integration', 'coverage', 'runtime', 'protocol', 'evidence', 'boundaries', 'troubleshooting', 'releasing']
   for (const id of docPages) {
     await page.goto(url + '/#docs/' + id)
     await page.locator('.markdown-document h1').waitFor()
@@ -76,7 +76,7 @@ try {
   await page.keyboard.press('Enter')
   assert.equal(new URL(page.url()).hash, '#docs/quickstart', 'Skip link must retain docs route')
   assert.equal(await page.evaluate(() => document.activeElement.id), 'main-content')
-  results.push('All 11 docs routes, section navigation, real clipboard copy, keyboard skip link, docs WCAG checks')
+  results.push(`All ${docPages.length} docs routes, section navigation, real clipboard copy, keyboard skip link, docs WCAG checks`)
   await page.setViewportSize({width: 390, height: 844})
   await page.goto(url)
   await page.locator('.hero h1').waitFor()

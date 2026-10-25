@@ -15,6 +15,9 @@ node dist-tools/packages/cli/src/cli.js scan ./path/to/app --config ./policy.jso
 | `--format text` | Human-readable findings and coverage diagnostics; default. |
 | `--format json` | Structured scan report. |
 | `--format sarif` | SARIF 2.1.0 findings, locations, traces, and analysis notices. |
+| `--verbose` | Include every trace step, wallet-input counts, and the model inventory. |
+| `--color auto\|always\|never` | Select terminal color behavior; default is `auto`. |
+| `--no-color` | Disable terminal colors. |
 | `--output file` | Write a report to a new file. |
 | `--config file` | Read a JSON policy; otherwise use `ztrace.config.json` at the scan root. |
 | `--require-sources` | Require a recognized sensitive source. |
@@ -42,6 +45,26 @@ node dist-tools/packages/cli/src/cli.js scan ../application --format json --outp
 ```
 
 Use a fresh output path per run. A zero exit status means only that the supported analysis did not produce findings at the selected threshold.
+
+## Reading terminal results
+
+Interactive text reports show a green ZTRACE banner, a findings summary, and a plain-language explanation for each disclosure. Red marks errors; amber marks warnings and review notices. Each finding shows where the wallet value was read and where it was sent. Use `--verbose` for the full intermediate trace and recognized module models.
+
+```sh
+ztrace scan ./src
+ztrace scan ./src --verbose
+ztrace scan ./src --color always
+```
+
+Color is automatic in an interactive terminal. `NO_COLOR`, `FORCE_COLOR`, and explicit color flags are supported. Saved reports and JSON/SARIF output contain no ANSI styling. Narrow terminals use a compact wordmark.
+
+## Installation banner and learning project
+
+ZTrace's optional postinstall hook prints the wordmark and a starting command. It reads only its own banner/package metadata and performs no network access, writes, or subprocess execution. Installation also works with scripts disabled.
+
+npm normally runs dependency lifecycle scripts in the background. Use `npm install --foreground-scripts` to show the banner during installation, as described in [npm's configuration reference](https://docs.npmjs.com/cli/v11/using-npm/config/#foreground-scripts). Script policies can suppress installation output. The CLI shows its own banner when run interactively.
+
+From the source checkout, `npm run demo:prepare` packs the tool and creates a separate `ztrace-playground` folder beside the repository. It leaves installation to you, preserves existing directories, and writes a `READ-ME-FIRST.md` with exact PowerShell commands. A custom new location can be supplied using `npm run demo:prepare -- --destination /path/to/new-folder`. See [the hands-on guide](HANDS-ON.md).
 
 ## Code-scanning reports
 

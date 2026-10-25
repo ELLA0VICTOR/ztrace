@@ -149,6 +149,10 @@ npm run scan -- examples/safe
 
 The vulnerable example produces three findings across two files: a shielded address passed to analytics, a logged balance, and transaction history sent to a support endpoint. Its exit code is `1`. The corrected example produces zero findings and exits with `0`.
 
+Interactive scans display a green ZTRACE wordmark and plain-language explanations. Errors are red and warnings are amber. Add `--verbose` for the full trace; use `--color always` to force color or `--no-color` to disable it. Saved reports and JSON/SARIF output remain unstyled.
+
+To install the actual local package into a separate learning project, run `npm run demo:prepare` and follow the commands it prints. The [hands-on guide](docs/HANDS-ON.md) explains the leaking and corrected examples. npm's `--foreground-scripts` option displays the cosmetic installation banner; the CLI works when install scripts are disabled.
+
 ### Open the website and documentation
 
 ```sh
@@ -268,6 +272,9 @@ ztrace inspect pczt <local-file> --recipient <role> [--acknowledge-private-discl
 | `--format text\|json\|sarif` | Select human-readable, JSON, or code-scanning output; default is `text`. |
 | `--output <file>` | Create a new report file. |
 | `--config <file>` | Load a JSON configuration file. |
+| `--verbose` | Show every trace step and recognized wallet model. |
+| `--color auto\|always\|never` | Control terminal colors; default is `auto`. |
+| `--no-color` | Disable terminal colors. |
 | `--require-sources` | Require a recognized sensitive source; enabled by default in the CLI. |
 | `--allow-no-sources` | Explicitly permit scanning code without recognized sensitive sources. |
 | `--fail-on warning\|error\|never` | Select the finding threshold; default is `warning`. |
@@ -509,6 +516,7 @@ npm run lint
 | `npm run build:tools` | Compile the CLI and reusable packages into `dist-tools/`. |
 | `npm run prepare:ui` | Build tools and generate browser fixture reports and validation counts. |
 | `npm run scan -- <path>` | Build tools and scan an application. |
+| `npm run demo:prepare` | Pack ZTrace and prepare a separate project for a manual installation walkthrough. |
 | `npm test` | Run the core, application-coverage, CLI, and protocol suites. |
 | `npm run benchmark` | Evaluate the fixed corpus and check regression/integration expectations. |
 | `npm run test:runtime` | Run the Chromium canary integration tests. |

@@ -2,6 +2,8 @@
 
 ## 0.1.0 — release candidate
 
+- Added a green terminal wordmark, concise explanations, severity colors, and optional verbose traces.
+- Added a cosmetic install banner and a separate-project installation walkthrough.
 - Closed callback-array, catch-state, and local-accessor disclosure gaps.
 - Added finite reductions, destructuring assignments, Promise executors, callback references, bound calls, argument spreads, and timer data paths.
 - Added SARIF 2.1.0 export with official-schema validation and preserved incomplete-analysis notices.

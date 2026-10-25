@@ -2,8 +2,10 @@
 import { readFile, readdir, stat, writeFile } from 'node:fs/promises'
 import { dirname, extname, isAbsolute, join, matchesGlob, relative, resolve } from 'node:path'
 import { scanSources, sensitiveKinds, toSarif } from '../../core/src/index.js'
-import type { ScanOptions, ScanReport, SourceFile, SourceRule } from '../../core/src/index.js'
+import type { ScanOptions, SourceFile, SourceRule } from '../../core/src/index.js'
 import { projectAliases } from './project.js'
+import {formatText, supportsColor, terminalHeader} from './terminal.js'
+import type {ColorMode} from './terminal.js'
 
 const usage = `ZTrace 0.1.0 — local Zcash privacy analysis
 
@@ -15,6 +17,10 @@ Usage: ztrace scan [path] [options]
   --format text|json|sarif Report format (default: text)
   --output <file>          Write a report instead of printing it
   --config <file>          Read a JSON policy (default: ztrace.config.json)
+  --verbose               Show every trace step and recognized model
+  --color auto|always|never
+                          Terminal colors (default: auto)
+  --no-color              Disable terminal colors
   --require-sources       Require a recognized sensitive source
   --allow-no-sources      Explicitly permit zero recognized sources
   --fail-on warning|error|never
@@ -80,28 +86,20 @@ function parseConfiguration(value: unknown): Configuration {
   return data as Configuration
 }
 
-function formatText(report: ScanReport): string {
-  const lines = ['ZTrace · local privacy analysis', '']
-  for (const finding of report.findings) {
-    lines.push(`${finding.severity.toUpperCase()} ${finding.ruleId}  ${finding.title}`)
-    lines.push(`  ${finding.sink.file}:${finding.sink.line}:${finding.sink.column}`)
-    for (const item of finding.trace) lines.push(`  ${item.kind.padEnd(10)} ${item.file}:${item.line}:${item.column}  ${item.label}`)
-    lines.push(`  Fix: ${finding.remediation}`, '')
-  }
-  for (const diagnostic of report.diagnostics) lines.push(`REVIEW ${diagnostic.code}  ${diagnostic.file}:${diagnostic.line}:${diagnostic.column}\n  ${diagnostic.message}`)
-  const { filesScanned, sourcesDetected, errors, warnings, coverage } = report.summary
-  lines.push('', `${filesScanned} files · ${sourcesDetected} sensitive sources · ${errors} errors · ${warnings} warnings`)
-  if (report.modelCoverage) {
-    lines.push(`Recognized source categories: ${report.modelCoverage.sourceKinds.join(', ') || 'none'}`)
-    for (const item of report.modelCoverage.imports) lines.push(`  ${item.model.padEnd(10)} ${item.module}  ${item.roles.join(', ') || 'no declared model'}`)
-  }
-  lines.push(coverage === 'incomplete' ? 'Coverage incomplete: review diagnostics before relying on this scan.' : 'Coverage limited to the documented models. No findings does not establish privacy.')
-  return `${lines.join('\n')}\n`
-}
-
 async function main(): Promise<number> {
   const args = process.argv.slice(2)
-  if (args.includes('--help') || args.includes('-h') || args.length === 0) { process.stdout.write(usage); return 0 }
+  let colorMode: ColorMode = 'auto'
+  for (let index = 0; index < args.length; index++) {
+    if (args[index] === '--no-color') {colorMode = 'never'; args.splice(index--, 1)}
+    else if (args[index] === '--color') {
+      const value = args[index + 1]
+      if (!['auto', 'always', 'never'].includes(value ?? '')) throw new Error('Invalid color mode.')
+      colorMode = value as ColorMode
+      args.splice(index--, 2)
+    }
+  }
+  const color = supportsColor(colorMode)
+  if (args.includes('--help') || args.includes('-h') || args.length === 0) { process.stdout.write(terminalHeader(color, process.stdout.columns) + '\n' + usage); return 0 }
   if (args.length === 1 && args[0] === '--version') { process.stdout.write('0.1.0\n'); return 0 }
   if (args[0] === 'runtime') return (await import('../../runtime/src/cli.js')).runRuntimeCommand(args.slice(1))
   if (args[0] === 'inspect') return (await import('../../protocol/src/cli.js')).runInspectCommand(args.slice(1))
@@ -109,9 +107,11 @@ async function main(): Promise<number> {
   let target = '.', format = 'text', failOn = 'warning'
   let output: string | undefined, configPath: string | undefined
   let positional = false
+  let verbose = false
   let sourceRequirement: boolean | undefined
   while (args.length) {
     const arg = args.shift()!
+    if (arg === '--verbose') {verbose = true; continue}
     if (arg === '--require-sources' || arg === '--allow-no-sources') {
       const required = arg === '--require-sources'
       if (sourceRequirement !== undefined && sourceRequirement !== required) throw new Error('Conflicting source requirements.')
@@ -170,7 +170,7 @@ async function main(): Promise<number> {
   for (const code of project.diagnostics) report.diagnostics.push({ file: 'tsconfig.json', line: 1, column: 1, code, message: 'Some project path metadata could not be loaded. Provide explicit moduleAliases or review the project configuration.' })
   for (const file of skipped) report.diagnostics.push({ file, line: 1, column: 1, code: 'FILE_LIMIT', message: 'File skipped due to the file-size, total-size, or file-count limit.' })
   if (skipped.length || project.diagnostics.length) report.summary.coverage = 'incomplete'
-  const rendered = format === 'text' ? formatText(report) : `${JSON.stringify(format === 'sarif' ? toSarif(report, {pathPrefix: relative(process.cwd(), root)}) : report, null, 2)}\n`
+  const rendered = format === 'text' ? formatText(report, {color: color && !output, banner: !output && (!!process.stdout.isTTY || color), verbose, columns: process.stdout.columns}) : `${JSON.stringify(format === 'sarif' ? toSarif(report, {pathPrefix: relative(process.cwd(), root)}) : report, null, 2)}\n`
   if (output) {
     const destination = resolve(output)
     // Refuse to overwrite source or policy files, including files outside the target.

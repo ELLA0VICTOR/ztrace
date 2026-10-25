@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-25T10:17:57.354Z",
+  "generatedAt": "2026-10-25T10:37:50.077Z",
   "corpusSha256": "01525d22d5a4def99d5aa5c20c198c5ab1d1d58944be7706dcacc8a9028201a2",
   "evaluationPolicySha256": "0bdc49e19343520d775ce09a1735bfd98aa0d49ac1fa00d377a6f02c1a380c37",
-  "engineSha256": "b5b06da79d0d543a84f0ab07abb455377a8933dd7c5e99610bc45aed75e1b396",
+  "engineSha256": "5f24a1a32bcb80caaf70824fb4ed07caa45ebca149785c21d0d1598335667852",
   "provenance": "Self-authored, synthetic, API-based fixtures. Challenge cases are a first-run stress split, not an independent external evaluation.",
   "summary": {
     "TP": 42,
@@ -241,7 +241,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 67.624
+      "milliseconds": 78.818
     },
     {
       "id": "audit-nullable-safe",
@@ -258,7 +258,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 4.512
+      "milliseconds": 5.217
     },
     {
       "id": "audit-comma-leak",
@@ -275,7 +275,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 5.632
+      "milliseconds": 7.102
     },
     {
       "id": "audit-comma-safe",
@@ -292,7 +292,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 5.403
+      "milliseconds": 5.504
     },
     {
       "id": "audit-hook-leak",
@@ -309,7 +309,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 3.132
+      "milliseconds": 3.28
     },
     {
       "id": "audit-hook-safe",
@@ -326,7 +326,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 2.039
+      "milliseconds": 2.331
     },
     {
       "id": "audit-segment-leak",
@@ -343,7 +343,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 21.79
+      "milliseconds": 22.508
     },
     {
       "id": "audit-segment-safe",
@@ -360,7 +360,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 4.399
+      "milliseconds": 5.255
     },
     {
       "id": "audit-loop-leak",
@@ -377,7 +377,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 5.126
+      "milliseconds": 6.777
     },
     {
       "id": "audit-loop-safe",
@@ -394,7 +394,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 2.988
+      "milliseconds": 3.348
     },
     {
       "id": "audit-reachability-leak",
@@ -411,7 +411,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 3.063
+      "milliseconds": 3.763
     },
     {
       "id": "audit-reachability-safe",
@@ -428,7 +428,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.567
+      "milliseconds": 1.767
     },
     {
       "id": "checkout-telemetry-leak",
@@ -445,7 +445,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 9.761
+      "milliseconds": 10.737
     },
     {
       "id": "checkout-telemetry-safe",
@@ -462,7 +462,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 3.018
+      "milliseconds": 3.338
     },
     {
       "id": "payroll-balance-leak",
@@ -479,7 +479,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 2.921
+      "milliseconds": 3.4
     },
     {
       "id": "payroll-balance-safe",
@@ -496,7 +496,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 2.303
+      "milliseconds": 2.95
     },
     {
       "id": "support-history-leak",
@@ -513,7 +513,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 2.215
+      "milliseconds": 2.359
     },
     {
       "id": "support-history-safe",
@@ -530,7 +530,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.844
+      "milliseconds": 1.907
     },
     {
       "id": "invoice-axios-leak",
@@ -547,7 +547,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 2.283
+      "milliseconds": 2.512
     },
     {
       "id": "invoice-axios-safe",
@@ -564,7 +564,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 2.164
+      "milliseconds": 1.919
     },
     {
       "id": "session-websocket-leak",
@@ -581,7 +581,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 2.333
+      "milliseconds": 2.43
     },
     {
       "id": "session-websocket-safe",
@@ -598,7 +598,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.749
+      "milliseconds": 1.772
     },
     {
       "id": "session-xhr-leak",
@@ -615,7 +615,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 1.737
+      "milliseconds": 1.943
     },
     {
       "id": "session-xhr-safe",
@@ -632,7 +632,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.72
+      "milliseconds": 2.365
     },
     {
       "id": "server-pino-leak",
@@ -649,7 +649,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 1.661
+      "milliseconds": 1.696
     },
     {
       "id": "server-pino-safe",
@@ -666,7 +666,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.534
+      "milliseconds": 1.636
     },
     {
       "id": "sentry-context-leak",
@@ -683,7 +683,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 1.485
+      "milliseconds": 1.687
     },
     {
       "id": "sentry-context-safe",
@@ -700,7 +700,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 5.138
+      "milliseconds": 5.128
     },
     {
       "id": "react-effect-leak",
@@ -717,7 +717,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 6.81
+      "milliseconds": 9.448
     },
     {
       "id": "react-effect-safe",
@@ -734,7 +734,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 2.246
+      "milliseconds": 3.098
     },
     {
       "id": "react-resource-leak",
@@ -751,7 +751,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 2.057
+      "milliseconds": 2.244
     },
     {
       "id": "react-resource-safe",
@@ -768,7 +768,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.299
+      "milliseconds": 1.579
     },
     {
       "id": "class-logger-leak",
@@ -785,7 +785,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 3.74
+      "milliseconds": 4.334
     },
     {
       "id": "class-logger-safe",
@@ -802,7 +802,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 2.277
+      "milliseconds": 3.545
     },
     {
       "id": "injected-wallet-leak",
@@ -819,7 +819,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 1.518
+      "milliseconds": 2.272
     },
     {
       "id": "injected-wallet-safe",
@@ -836,7 +836,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 0.899
+      "milliseconds": 0.995
     },
     {
       "id": "ledger-pczt-leak",
@@ -853,7 +853,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 1.156
+      "milliseconds": 1.212
     },
     {
       "id": "ledger-pczt-safe",
@@ -870,7 +870,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.118
+      "milliseconds": 1.478
     },
     {
       "id": "viewing-key-leak",
@@ -887,7 +887,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 1.155
+      "milliseconds": 1.408
     },
     {
       "id": "viewing-key-safe",
@@ -904,7 +904,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.104
+      "milliseconds": 1.191
     },
     {
       "id": "alias-module-leak",
@@ -921,7 +921,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 2.38
+      "milliseconds": 2.433
     },
     {
       "id": "alias-module-safe",
@@ -938,7 +938,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 7.299
+      "milliseconds": 9.016
     },
     {
       "id": "indexed-loop-leak",
@@ -955,7 +955,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 4.868
+      "milliseconds": 4.987
     },
     {
       "id": "indexed-loop-safe",
@@ -972,7 +972,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 3.211
+      "milliseconds": 3.245
     },
     {
       "id": "serialized-fields-leak",
@@ -989,7 +989,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 1.622
+      "milliseconds": 2.532
     },
     {
       "id": "serialized-fields-safe",
@@ -1006,7 +1006,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.537
+      "milliseconds": 2.556
     },
     {
       "id": "challenge-rest-leak",
@@ -1023,7 +1023,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 1.585
+      "milliseconds": 2.103
     },
     {
       "id": "challenge-rest-safe",
@@ -1040,7 +1040,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.32
+      "milliseconds": 1.425
     },
     {
       "id": "challenge-conditional-function-leak",
@@ -1057,7 +1057,7 @@
       "classification": "TP",
       "findings": 2,
       "reviewDiagnostics": [],
-      "milliseconds": 2.488
+      "milliseconds": 2.568
     },
     {
       "id": "challenge-conditional-function-safe",
@@ -1074,7 +1074,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 2.054
+      "milliseconds": 2.004
     },
     {
       "id": "challenge-array-spread-leak",
@@ -1091,7 +1091,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 1.789
+      "milliseconds": 1.77
     },
     {
       "id": "challenge-array-spread-safe",
@@ -1108,7 +1108,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.481
+      "milliseconds": 1.682
     },
     {
       "id": "challenge-permission-event-leak",
@@ -1125,7 +1125,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 1.221
+      "milliseconds": 1.393
     },
     {
       "id": "challenge-permission-event-safe",
@@ -1142,7 +1142,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 0.969
+      "milliseconds": 1.145
     },
     {
       "id": "challenge-custom-transport-leak",
@@ -1161,7 +1161,7 @@
       "reviewDiagnostics": [
         "UNMODELED_CALL"
       ],
-      "milliseconds": 1.677
+      "milliseconds": 1.868
     },
     {
       "id": "challenge-custom-transport-safe",
@@ -1178,7 +1178,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.674
+      "milliseconds": 1.782
     },
     {
       "id": "challenge-reflective-sink-leak",
@@ -1197,7 +1197,7 @@
       "reviewDiagnostics": [
         "DYNAMIC_DISPATCH_REVIEW"
       ],
-      "milliseconds": 2.347
+      "milliseconds": 1.87
     },
     {
       "id": "challenge-reflective-sink-safe",
@@ -1216,7 +1216,7 @@
       "reviewDiagnostics": [
         "DYNAMIC_DISPATCH_REVIEW"
       ],
-      "milliseconds": 1.733
+      "milliseconds": 1.303
     },
     {
       "id": "challenge-native-code-leak",
@@ -1233,7 +1233,7 @@
       "classification": "FN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.086
+      "milliseconds": 1.129
     },
     {
       "id": "challenge-native-code-safe",
@@ -1250,7 +1250,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.011
+      "milliseconds": 0.99
     },
     {
       "id": "audit-callback-array-leak",
@@ -1267,7 +1267,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 1.803
+      "milliseconds": 1.754
     },
     {
       "id": "audit-callback-array-safe",
@@ -1284,7 +1284,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.732
+      "milliseconds": 1.691
     },
     {
       "id": "audit-callback-index-leak",
@@ -1301,7 +1301,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 2.548
+      "milliseconds": 2.364
     },
     {
       "id": "audit-callback-index-safe",
@@ -1318,7 +1318,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 2.283
+      "milliseconds": 2.258
     },
     {
       "id": "audit-reduce-leak",
@@ -1335,7 +1335,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 2.251
+      "milliseconds": 2.145
     },
     {
       "id": "audit-reduce-safe",
@@ -1352,7 +1352,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.623
+      "milliseconds": 1.649
     },
     {
       "id": "audit-reduce-direction-leak",
@@ -1369,7 +1369,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 1.759
+      "milliseconds": 1.779
     },
     {
       "id": "audit-reduce-direction-safe",
@@ -1386,7 +1386,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.477
+      "milliseconds": 1.441
     },
     {
       "id": "audit-catch-state-leak",
@@ -1403,7 +1403,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 2.892
+      "milliseconds": 2.911
     },
     {
       "id": "audit-catch-state-safe",
@@ -1420,7 +1420,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.657
+      "milliseconds": 1.653
     },
     {
       "id": "audit-caught-cause-leak",
@@ -1437,7 +1437,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 1.812
+      "milliseconds": 1.863
     },
     {
       "id": "audit-caught-cause-safe",
@@ -1454,7 +1454,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.736
+      "milliseconds": 1.952
     },
     {
       "id": "audit-object-getter-leak",
@@ -1473,7 +1473,7 @@
       "reviewDiagnostics": [
         "ACCESSOR_REVIEW"
       ],
-      "milliseconds": 2.097
+      "milliseconds": 2.351
     },
     {
       "id": "audit-object-getter-safe",
@@ -1492,7 +1492,7 @@
       "reviewDiagnostics": [
         "ACCESSOR_REVIEW"
       ],
-      "milliseconds": 1.54
+      "milliseconds": 1.863
     },
     {
       "id": "audit-object-setter-leak",
@@ -1511,7 +1511,7 @@
       "reviewDiagnostics": [
         "ACCESSOR_REVIEW"
       ],
-      "milliseconds": 2.947
+      "milliseconds": 3.201
     },
     {
       "id": "audit-object-setter-safe",
@@ -1530,7 +1530,7 @@
       "reviewDiagnostics": [
         "ACCESSOR_REVIEW"
       ],
-      "milliseconds": 1.668
+      "milliseconds": 1.854
     },
     {
       "id": "audit-promise-executor-leak",
@@ -1547,7 +1547,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 1.406
+      "milliseconds": 1.617
     },
     {
       "id": "audit-promise-executor-safe",
@@ -1564,7 +1564,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 7.471
+      "milliseconds": 7.922
     },
     {
       "id": "audit-promise-reference-leak",
@@ -1581,7 +1581,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 1.618
+      "milliseconds": 1.672
     },
     {
       "id": "audit-promise-reference-safe",
@@ -1598,7 +1598,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.432
+      "milliseconds": 1.431
     },
     {
       "id": "audit-bound-logger-leak",
@@ -1615,7 +1615,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 1.194
+      "milliseconds": 1.3
     },
     {
       "id": "audit-bound-logger-safe",
@@ -1632,7 +1632,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.375
+      "milliseconds": 1.347
     },
     {
       "id": "audit-applied-logger-leak",
@@ -1649,7 +1649,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 1.539
+      "milliseconds": 1.487
     },
     {
       "id": "audit-applied-logger-safe",
@@ -1666,7 +1666,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.14
+      "milliseconds": 1.112
     },
     {
       "id": "audit-destructure-assignment-leak",
@@ -1683,7 +1683,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 2.231
+      "milliseconds": 2.221
     },
     {
       "id": "audit-destructure-assignment-safe",
@@ -1700,7 +1700,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.698
+      "milliseconds": 1.832
     },
     {
       "id": "audit-timer-arguments-leak",
@@ -1717,7 +1717,7 @@
       "classification": "TP",
       "findings": 1,
       "reviewDiagnostics": [],
-      "milliseconds": 1.407
+      "milliseconds": 1.595
     },
     {
       "id": "audit-timer-arguments-safe",
@@ -1734,7 +1734,7 @@
       "classification": "TN",
       "findings": 0,
       "reviewDiagnostics": [],
-      "milliseconds": 1.317
+      "milliseconds": 1.583
     }
   ],
   "withExplicitCustomAdapters": {

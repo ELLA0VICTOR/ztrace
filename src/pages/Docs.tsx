@@ -6,6 +6,7 @@ import remarkGfm from 'remark-gfm'
 import {ArrowLeft, ArrowRight, ArrowUpRight, BookOpen, Braces, ChartNoAxesCombined, ChevronRight, FileText, KeyRound, LifeBuoy, Radio, Route, ShieldCheck, Terminal} from 'lucide-react'
 import introduction from '../../docs/INTRODUCTION.md?raw'
 import quickstart from '../../docs/QUICKSTART.md?raw'
+import handsOn from '../../docs/HANDS-ON.md?raw'
 import cli from '../../docs/CLI.md?raw'
 import scanner from '../../docs/SCANNER.md?raw'
 import runtime from '../../docs/RUNTIME.md?raw'
@@ -21,6 +22,7 @@ import './Docs.css'
 const documents = {
   introduction: {title: 'Introduction', navigation: 'Introduction', body: introduction, file: 'INTRODUCTION.md', group: 'Getting started', icon: FileText},
   quickstart: {title: 'Quickstart', navigation: 'Quickstart', body: quickstart, file: 'QUICKSTART.md', group: 'Getting started', icon: Terminal},
+  'hands-on': {title: 'Hands-on walkthrough', navigation: 'Hands-on walkthrough', body: handsOn, file: 'HANDS-ON.md', group: 'Getting started', icon: BookOpen},
   cli: {title: 'CLI & integration', navigation: 'CLI & integration', body: cli, file: 'CLI.md', group: 'Getting started', icon: Braces},
   integration: {title: 'Consumer walkthrough', navigation: 'Consumer walkthrough', body: integration, file: 'INTEGRATION.md', group: 'Getting started', icon: Route},
   coverage: {title: 'Sources, adapters & policies', navigation: 'Sources & policies', body: scanner, file: 'SCANNER.md', group: 'Guides', icon: Route},
