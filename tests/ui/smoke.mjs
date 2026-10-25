@@ -57,6 +57,8 @@ try {
     await page.goto(url + '/#docs/' + id)
     await page.locator('.markdown-document h1').waitFor()
     assert.equal(await page.locator('.markdown-document h1').count(), 1)
+    assert.equal(await page.locator('.header-cta').innerText(), 'Back')
+    assert.equal(await page.locator('.header-cta').getAttribute('href'), '#')
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, id + ' desktop overflow')
     const toc = page.locator('.doc-toc button').first()
     if (await toc.count()) {await toc.click(); assert.ok(await page.evaluate(() => scrollY) > 0, 'TOC scrolls')}
@@ -108,6 +110,9 @@ try {
   accessibility = await new AxeBuilder({page}).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()
   assert.deepEqual(accessibility.violations.map(item => ({id: item.id, nodes: item.nodes.map(node => node.target)})), [], 'Mobile documentation accessibility')
   results.push('Mobile menu / Escape focus, all docs without page overflow, mobile docs selector and WCAG checks')
+  await page.locator('.header-cta').click()
+  await page.getByRole('heading', {name: 'Keep private wallet data out of public places.'}).waitFor()
+  assert.match(await page.locator('.header-cta').innerText(), /Documentation/)
   assert.deepEqual(external, [], 'Site must not fetch external resources')
   assert.deepEqual(errors, [], 'No browser execution errors')
   await context.close()

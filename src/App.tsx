@@ -1,6 +1,6 @@
 import {lazy, Suspense, useEffect, useRef, useState} from 'react'
 import {MotionConfig} from 'motion/react'
-import {ArrowRight, Menu, X} from 'lucide-react'
+import {ArrowLeft, ArrowRight, Menu, X} from 'lucide-react'
 import {Logo} from './components/primitives'
 import Landing from './pages/Landing'
 import './App.css'
@@ -33,9 +33,9 @@ function Site() {
     <header className="site-header"><div className="header-inner">
       <a href="#" className="home-link" aria-label="ZTrace home"><Logo/></a>
       <nav className="desktop-nav" aria-label="Main navigation"><a href="#problem">The problem</a><a href="#how-it-works">How it works</a><a href="#coverage">What it checks</a><a href="#evidence">The evidence</a></nav>
-      <a className="button button-dark header-cta" href="#docs/introduction">Documentation <ArrowRight size={16}/></a>
+      <a className={'button button-dark header-cta' + (docs ? ' header-back' : '')} href={docs ? '#' : '#docs/introduction'}>{docs ? <><ArrowLeft size={16}/>Back</> : <>Documentation <ArrowRight size={16}/></>}</a>
       <button ref={menuButton} className="menu-button" aria-label={menu ? 'Close navigation' : 'Open navigation'} aria-expanded={menu} aria-controls="mobile-navigation" onClick={() => setMenu(!menu)}>{menu ? <X/> : <Menu/>}</button>
-    </div>{menu && <nav className="mobile-nav" id="mobile-navigation" aria-label="Mobile navigation" onClick={() => setMenu(false)}><a href="#problem">The problem</a><a href="#how-it-works">How it works</a><a href="#coverage">What it checks</a><a href="#evidence">The evidence</a><a href="#docs/introduction">Documentation <ArrowRight size={17}/></a></nav>}</header>
+    </div>{menu && <nav className="mobile-nav" id="mobile-navigation" aria-label="Mobile navigation" onClick={() => setMenu(false)}><a href="#problem">The problem</a><a href="#how-it-works">How it works</a><a href="#coverage">What it checks</a><a href="#evidence">The evidence</a><a href={docs ? '#' : '#docs/introduction'}>{docs ? <>Back <ArrowLeft size={17}/></> : <>Documentation <ArrowRight size={17}/></>}</a></nav>}</header>
     <main id="main-content" tabIndex={-1} className={docs ? 'site-main docs-main' : 'site-main'}>{docs ? <Suspense fallback={<div className="loading-docs">Loading documentation…</div>}><Docs section={route.split('/')[1]}/></Suspense> : <Landing/>}</main>
     <footer className="site-footer"><div className="footer-intro"><a href="#" aria-label="ZTrace home"><Logo/></a><p>Local privacy analysis for<br/>applications built on Zcash.</p><span className="version-label">Development release · v0.1.0</span></div>
       <div><h2>Start here</h2><a href="#docs/introduction">Introduction</a><a href="#docs/quickstart">Quickstart</a><a href="#how-it-works">How it works</a></div>

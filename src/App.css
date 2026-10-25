@@ -8,3 +8,5 @@
 @media(prefers-contrast:more){:root{--muted:#444;--line:#888}.site-header{background:#fff;backdrop-filter:none}.scroll-heading span{color:#1a1a1a!important}}
 
 .technology-logo{width:32px;height:32px;object-fit:contain;flex-shrink:0}.technology-wordmark{width:108px;height:36px}
+
+.header-cta.header-back{min-width:0;width:auto;gap:10px;padding-inline:18px}

@@ -42,6 +42,15 @@ mnemonic.txt
 /test-results/
 *.tsbuildinfo
 
+# Local release archives, recordings, and assistant instructions
+*.tgz
+*.zip
+*.mp4
+*.mov
+*.webm
+/AGENTS.md
+/apple_frontend_design_skill.md
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
