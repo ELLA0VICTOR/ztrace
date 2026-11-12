@@ -586,6 +586,8 @@ Reports contain locations, categories, trace labels, destination context, and di
 
 ## Contributing
 
+Read [CONTRIBUTING.md](CONTRIBUTING.md) for setup, review, coding, testing, and disclosure guidance.
+
 Use a focused change with an explanation of the affected behavior and relevant verification. For a new source, sink, or language-flow model, include a leaking example and its safe counterpart. Update the coverage documentation when the supported boundary changes.
 
 Run `npm test`, `npm run benchmark`, and `npm run lint` for engine changes. Run the runtime or UI suite when changing those layers. Preserve protocol-vector provenance and intentionally review any corpus or fixture updates.
